@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DesignVerse - For Graphic Designers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Hover effect for elements */
+    .hover-effect:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+  <!-- Navbar -->
+  <header class="flex items-center justify-between px-6 py-4 bg-gray-950 shadow-lg">
+    <h1 class="text-2xl font-bold text-indigo-400">DesignVerse</h1>
+    <nav class="space-x-6 text-sm">
+      <a href="#tutorials" class="hover:text-indigo-400">How to Make This</a>
+      <a href="#palettes" class="hover:text-indigo-400">Color Palettes</a>
+      <a href="#themes" class="hover:text-indigo-400">Themes</a>
+      <a href="#animation" class="hover:text-indigo-400">Animation Principles</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="text-center py-20 px-6 bg-gradient-to-br from-indigo-800 to-purple-900">
+    <h2 class="text-4xl font-extrabold mb-4">Welcome to DesignVerse</h2>
+    <p class="text-lg text-gray-200 mb-8 max-w-2xl mx-auto">Explore tutorials, palettes, themes, and animation principles that help graphic designers level up their creative game.</p>
+    <a href="#tutorials" class="bg-indigo-500 hover:bg-indigo-600 px-6 py-3 rounded-full font-semibold transition">Start Exploring</a>
+  </section>
+
+  <!-- Tutorials Section -->
+  <section id="tutorials" class="px-6 py-16">
+    <h3 class="text-3xl font-bold mb-8 text-center text-indigo-300">How to Make This</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">Logo Design</h4>
+        <p class="text-sm text-gray-300 mb-4">Learn how to create a minimalist logo using basic shapes and color theory.</p>
+        <a href="https://www.youtube.com/watch?v=xxxxxx" class="text-indigo-400 text-sm" target="_blank">Read Tutorial →</a>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">YouTube Thumbnail</h4>
+        <p class="text-sm text-gray-300 mb-4">Step-by-step guide to creating click-worthy thumbnails with text hierarchy.</p>
+        <a href="https://www.youtube.com/watch?v=yyyyyy" class="text-indigo-400 text-sm" target="_blank">Read Tutorial →</a>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">Social Media Post</h4>
+        <p class="text-sm text-gray-300 mb-4">Design eye-catching posts with balanced layout and bold type.</p>
+        <a href="https://www.youtube.com/watch?v=zzzzzz" class="text-indigo-400 text-sm" target="_blank">Read Tutorial →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Color Palettes -->
+  <section id="palettes" class="px-6 py-16 bg-gray-900">
+    <h3 class="text-3xl font-bold mb-8 text-center text-pink-300">Color Palette Suggestions</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="rounded-2xl overflow-hidden shadow-lg hover-effect" data-aos="fade-up">
+        <div class="flex h-16">
+          <div class="flex-1 bg-[#2F3C7E]"></div>
+          <div class="flex-1 bg-[#FBEAEB]"></div>
+          <div class="flex-1 bg-[#F64C72]"></div>
+        </div>
+        <div class="bg-gray-800 p-4">Retro Pop</div>
+      </div>
+      <div class="rounded-2xl overflow-hidden shadow-lg hover-effect" data-aos="fade-up">
+        <div class="flex h-16">
+          <div class="flex-1 bg-[#1A1A40]"></div>
+          <div class="flex-1 bg-[#4E4FEB]"></div>
+          <div class="flex-1 bg-[#F8F0FB]"></div>
+        </div>
+        <div class="bg-gray-800 p-4">Modern Tech</div>
+      </div>
+      <div class="rounded-2xl overflow-hidden shadow-lg hover-effect" data-aos="fade-up">
+        <div class="flex h-16">
+          <div class="flex-1 bg-[#EEF5DB]"></div>
+          <div class="flex-1 bg-[#A2D2FF]"></div>
+          <div class="flex-1 bg-[#B5838D]"></div>
+        </div>
+        <div class="bg-gray-800 p-4">Soft Pastels</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Themes -->
+  <section id="themes" class="px-6 py-16">
+    <h3 class="text-3xl font-bold mb-8 text-center text-yellow-300">Theme Suggestions</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">Minimalist UI</h4>
+        <p class="text-sm text-gray-300 mb-4">Clean lines, neutral colors, and strong focus on spacing and typography.</p>
+        <a href="#" class="text-yellow-300 text-sm">Explore Theme →</a>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">Cyberpunk</h4>
+        <p class="text-sm text-gray-300 mb-4">Bright neons, dark environments, futuristic vibes for creative tech visuals.</p>
+        <a href="#" class="text-yellow-300 text-sm">Explore Theme →</a>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">Vintage Magazine</h4>
+        <p class="text-sm text-gray-300 mb-4">Grainy textures, bold typefaces, and muted tones for nostalgic designs.</p>
+        <a href="#" class="text-yellow-300 text-sm">Explore Theme →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Principles of Animation -->
+  <section id="animation" class="px-6 py-16 bg-gray-900">
+    <h3 class="text-3xl font-bold mb-8 text-center text-green-300">Principles of Animation</h3>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">Squash & Stretch</h4>
+        <p class="text-sm text-gray-300">Adds realism and flexibility. Often used in bouncing ball or face expressions.</p>
+        <a href="https://www.youtube.com/watch?v=xxxxxx" class="text-green-400 text-sm" target="_blank">Watch Video →</a>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">Anticipation</h4>
+        <p class="text-sm text-gray-300">Prepares the viewer for major actions. E.g., winding up before a punch.</p>
+        <a href="https://www.youtube.com/watch?v=yyyyyy" class="text-green-400 text-sm" target="_blank">Watch Video →</a>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">Follow Through</h4>
+        <p class="text-sm text-gray-300">Parts of a body or object continue moving after the action is completed.</p>
+        <a href="https://www.youtube.com/watch?v=zzzzzz" class="text-green-400 text-sm" target="_blank">Watch Video →</a>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-2xl shadow-md hover-effect" data-aos="fade-up">
+        <h4 class="font-bold text-xl mb-2">Timing</h4>
+        <p class="text-sm text-gray-300">How many frames an action takes. Faster timing = more energy.</p>
+        <a href="https://www.youtube.com/watch?v=wwwwww" class="text-green-400 text-sm" target="_blank">Watch Video →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-6 bg-gray-950 text-sm text-gray-400">
+    Created with 💙 by Daksh Gulati | DesignVerse © 2025
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 1200, // Animation duration
+    });
+  </script>
+</body>
+
+</html>
