@@ -61,7 +61,8 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             Design
-            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent animate-pulse-glow">
+            <span className="relative bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+              <span className="absolute inset-0 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent blur-sm opacity-50 animate-pulse-glow"></span>
               Verse
             </span>
           </motion.h1>
@@ -75,29 +76,6 @@ const HeroSection = () => {
             Explore infinite color palettes, discover design principles, and immerse yourself in a premium creative experience powered by AI and space-age aesthetics.
           </motion.p>
 
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            <Button 
-              size="lg" 
-              className="btn-primary group"
-              onClick={() => document.getElementById('palettes')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              Explore Palettes
-              <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="btn-glass"
-            >
-              Watch Demo
-            </Button>
-          </motion.div>
         </motion.div>
 
         {/* Scroll Indicator */}
