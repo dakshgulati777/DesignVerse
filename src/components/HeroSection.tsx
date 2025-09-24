@@ -61,8 +61,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             Design
-            <span className="relative bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-              <span className="absolute inset-0 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent blur-sm opacity-50 animate-pulse-glow"></span>
+            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent animate-pulse-text-glow">
               Verse
             </span>
           </motion.h1>
