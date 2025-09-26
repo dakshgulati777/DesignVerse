@@ -82,27 +82,33 @@
 
   /* Light Mode - Premium Apple Style */
   .light {
-    --background: 240 6% 97%;
-    --foreground: 240 10% 8%;
+    --background: 0 0% 98%;
+    --foreground: 240 10% 5%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 8%;
+    --card-foreground: 240 10% 5%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 8%;
-    --muted: 240 5% 94%;
-    --muted-foreground: 240 5% 35%;
-    --border: 240 6% 85%;
-    --input: 240 6% 85%;
-    --primary: 263 85% 45%;
+    --popover-foreground: 240 10% 5%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 8% 25%;
+    --border: 240 6% 90%;
+    --input: 240 6% 95%;
+    --primary: 263 85% 50%;
     --primary-foreground: 0 0% 98%;
-    --primary-glow: 263 85% 60%;
-    --accent: 263 85% 45%;
+    --primary-glow: 263 85% 65%;
+    --accent: 263 85% 50%;
     --accent-foreground: 0 0% 98%;
     --glass-background: rgba(255, 255, 255, 0.85);
-    --glass-border: rgba(0, 0, 0, 0.1);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    --gradient-hero: linear-gradient(180deg, hsl(240 6% 97%) 0%, hsl(240 8% 92%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(263 85% 45%), hsl(263 85% 60%));
-    --shadow-glow: 0 0 30px rgba(107, 70, 193, 0.2);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(240 8% 96%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(263 85% 50%), hsl(263 85% 65%));
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+    --shadow-glow: 0 0 30px rgba(107, 70, 193, 0.25);
+    
+    /* Better contrast for light mode text */
+    --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.12);
+    --shadow-strong: 0 8px 40px rgba(0, 0, 0, 0.18);
   }
 
   /* Neon Mode - Cyberpunk Aesthetic */
@@ -131,6 +137,20 @@
   body {
     @apply bg-background text-foreground font-inter;
     background: var(--gradient-hero);
+    min-height: 100vh;
+  }
+  
+  /* Responsive typography */
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    html {
+      font-size: 16px;
+    }
   }
 }
 
@@ -145,18 +165,18 @@
   }
 
   .glass-card {
-    @apply glass rounded-2xl p-6;
+    @apply glass rounded-2xl p-4 md:p-6;
     background: var(--gradient-card);
   }
 
   .glass-nav {
-    @apply glass rounded-full px-6 py-3;
+    @apply glass rounded-full px-4 py-2 md:px-6 md:py-3;
     transition: var(--transition-smooth);
   }
 
   /* Premium Button Variants */
   .btn-glass {
-    @apply glass rounded-xl px-6 py-3 font-medium;
+    @apply glass rounded-xl px-4 py-2 md:px-6 md:py-3 font-medium text-sm md:text-base;
     transition: var(--transition-smooth);
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
@@ -169,14 +189,23 @@
 
   .btn-primary {
     background: var(--gradient-primary);
-    @apply text-primary-foreground rounded-xl px-8 py-4 font-semibold;
+    @apply text-primary-foreground rounded-xl px-6 py-3 md:px-8 md:py-4 font-semibold text-sm md:text-base;
     box-shadow: var(--shadow-medium);
     transition: var(--transition-spring);
   }
 
   .btn-primary:hover {
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-2px) scale(1.01);
     box-shadow: var(--shadow-glow);
+  }
+  
+  @media (hover: none) {
+    .btn-primary:hover {
+      transform: none;
+    }
+    .btn-glass:hover {
+      transform: none;
+    }
   }
 
   /* Parallax Hover Effects */
