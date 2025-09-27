@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, RefreshCw, Palette, Check, Sparkles, Wand2 } from 'lucide-react';
+import { Copy, RefreshCw, Palette, Check, Sparkles, Wand2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -11,15 +11,119 @@ interface ColorPalette {
   name: string;
   colors: string[];
   type: 'analogous' | 'monochrome' | 'triad' | 'complementary' | 'shades';
+  isAI?: boolean;
 }
 
 const ColorPalettes = () => {
   const [palettes, setPalettes] = useState<ColorPalette[]>([]);
+  const [showMore, setShowMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
   const [aiPrompt, setAiPrompt] = useState('');
   const [selectedType, setSelectedType] = useState<ColorPalette['type']>('analogous');
   const [aiLoading, setAiLoading] = useState(false);
+
+  // Expanded sample palettes
+  const samplePalettes: ColorPalette[] = [
+    {
+      id: '1',
+      name: 'Cosmic Purple',
+      colors: ['#6B46C1', '#8B5CF6', '#A78BFA', '#C4B5FD', '#E0E7FF'],
+      type: 'analogous'
+    },
+    {
+      id: '2',
+      name: 'Ocean Depths',
+      colors: ['#1E40AF', '#3B82F6', '#60A5FA', '#93C5FD', '#DBEAFE'],
+      type: 'monochrome'
+    },
+    {
+      id: '3',
+      name: 'Sunset Vibes',
+      colors: ['#DC2626', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'],
+      type: 'triad'
+    },
+    {
+      id: '4',
+      name: 'Forest Green',
+      colors: ['#059669', '#10B981', '#34D399', '#6EE7B7', '#A7F3D0'],
+      type: 'shades'
+    },
+    {
+      id: '5',
+      name: 'Coral Sunset',
+      colors: ['#F59E0B', '#FB923C', '#FDBA74', '#FED7AA', '#FFF7ED'],
+      type: 'monochrome'
+    },
+    {
+      id: '6',
+      name: 'Mint Fresh',
+      colors: ['#065F46', '#047857', '#059669', '#10B981', '#34D399'],
+      type: 'analogous'
+    },
+    {
+      id: '7',
+      name: 'Royal Blue',
+      colors: ['#1E3A8A', '#1D4ED8', '#2563EB', '#3B82F6', '#60A5FA'],
+      type: 'shades'
+    },
+    {
+      id: '8',
+      name: 'Cherry Blossom',
+      colors: ['#BE185D', '#DB2777', '#EC4899', '#F472B6', '#FBCFE8'],
+      type: 'monochrome'
+    },
+    {
+      id: '9',
+      name: 'Autumn Leaves',
+      colors: ['#DC2626', '#EA580C', '#F59E0B', '#EAB308', '#84CC16'],
+      type: 'analogous'
+    },
+    {
+      id: '10',
+      name: 'Arctic Ice',
+      colors: ['#0F172A', '#334155', '#64748B', '#94A3B8', '#E2E8F0'],
+      type: 'monochrome'
+    },
+    {
+      id: '11',
+      name: 'Tropical Paradise',
+      colors: ['#0891B2', '#06B6D4', '#22D3EE', '#67E8F9', '#CFFAFE'],
+      type: 'shades'
+    },
+    {
+      id: '12',
+      name: 'Lavender Fields',
+      colors: ['#581C87', '#7C3AED', '#8B5CF6', '#A78BFA', '#DDD6FE'],
+      type: 'analogous'
+    },
+    {
+      id: '13',
+      name: 'Desert Sand',
+      colors: ['#92400E', '#D97706', '#F59E0B', '#FBBF24', '#FEF3C7'],
+      type: 'monochrome'
+    },
+    {
+      id: '14',
+      name: 'Emerald City',
+      colors: ['#064E3B', '#065F46', '#047857', '#059669', '#10B981'],
+      type: 'shades'
+    },
+    {
+      id: '15',
+      name: 'Midnight Storm',
+      colors: ['#1F2937', '#374151', '#4B5563', '#6B7280', '#9CA3AF'],
+      type: 'monochrome'
+    },
+    {
+      id: '16',
+      name: 'Rose Garden',
+      colors: ['#9F1239', '#BE185D', '#DB2777', '#EC4899', '#F472B6'],
+      type: 'analogous'
+    }
+  ];
+
+  const displayedSamplePalettes = showMore ? samplePalettes : samplePalettes.slice(0, 4);
 
   // Generate AI-powered palettes using Colormind API
   const generateAIPalettes = async (prompt?: string, paletteType?: ColorPalette['type']) => {
@@ -30,15 +134,17 @@ const ColorPalettes = () => {
       let aiPalettes: ColorPalette[] = [];
       
       if (prompt) {
-        // AI-based color generation
+        // AI-based color generation - generate 6 palettes
         aiPalettes = await generateAIBasedPalettes(prompt, paletteType || selectedType);
+        // Clear old AI palettes and replace with new ones
+        setPalettes(prev => [...aiPalettes, ...prev.filter(p => !p.isAI)]);
       } else {
-        // Fetch from Colormind API or use samples
-        aiPalettes = await fetchColormindPalettes();
+        // Random palettes generation - generate 6 random palettes
+        aiPalettes = await generateRandomPalettes();
+        setPalettes(aiPalettes);
       }
       
-      setPalettes(prev => isAI ? [...aiPalettes, ...prev] : aiPalettes);
-      toast.success(isAI ? 'AI palettes generated!' : 'New palettes generated!');
+      toast.success(isAI ? `Generated ${aiPalettes.length} AI palettes!` : `Generated ${aiPalettes.length} random palettes!`);
     } catch (error) {
       toast.error('Failed to generate palettes');
       console.error('Palette generation error:', error);
@@ -47,7 +153,7 @@ const ColorPalettes = () => {
     isAI ? setAiLoading(false) : setLoading(false);
   };
 
-  // AI-based palette generation
+  // AI-based palette generation - generate 6 palettes
   const generateAIBasedPalettes = async (prompt: string, type: ColorPalette['type']): Promise<ColorPalette[]> => {
     // Simulate AI processing
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -55,7 +161,7 @@ const ColorPalettes = () => {
     const baseColors = getColorsFromPrompt(prompt);
     const generatedPalettes: ColorPalette[] = [];
     
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 6; i++) {
       const baseColor = baseColors[i % baseColors.length];
       const colors = generatePaletteFromBase(baseColor, type);
       
@@ -63,11 +169,61 @@ const ColorPalettes = () => {
         id: `ai-${Date.now()}-${i}`,
         name: `AI: ${prompt.charAt(0).toUpperCase() + prompt.slice(1)} ${i + 1}`,
         colors,
-        type
+        type,
+        isAI: true
       });
     }
     
     return generatedPalettes;
+  };
+
+  // Generate random palettes
+  const generateRandomPalettes = async (): Promise<ColorPalette[]> => {
+    const palettes: ColorPalette[] = [];
+    const types: ColorPalette['type'][] = ['analogous', 'monochrome', 'triad', 'complementary', 'shades'];
+    const themes = ['Cosmic', 'Ocean', 'Forest', 'Desert', 'Arctic', 'Tropical'];
+    
+    // Try to fetch from Colormind API first
+    try {
+      const response = await fetch('http://colormind.io/api/', {
+        method: 'POST',
+        body: JSON.stringify({ model: 'default' })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        const colors = data.result.map((rgb: number[]) => 
+          `#${rgb.map((c: number) => c.toString(16).padStart(2, '0')).join('')}`
+        );
+        
+        palettes.push({
+          id: `colormind-${Date.now()}`,
+          name: 'Colormind AI',
+          colors,
+          type: 'complementary'
+        });
+      }
+    } catch (error) {
+      console.log('Colormind API unavailable, using fallback');
+    }
+    
+    // Generate 5 more random palettes (6 total)
+    for (let i = palettes.length; i < 6; i++) {
+      const randomHue = Math.floor(Math.random() * 360);
+      const randomType = types[Math.floor(Math.random() * types.length)];
+      const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+      const baseColor = hslToHex(randomHue, 70 + Math.random() * 20, 50 + Math.random() * 20);
+      const colors = generatePaletteFromBase(baseColor, randomType);
+      
+      palettes.push({
+        id: `random-${Date.now()}-${i}`,
+        name: `${randomTheme} ${randomType}`,
+        colors,
+        type: randomType
+      });
+    }
+    
+    return palettes;
   };
 
   // Fetch palettes from Colormind API
@@ -281,8 +437,9 @@ const ColorPalettes = () => {
   };
 
   useEffect(() => {
-    generateAIPalettes();
-  }, []);
+    // Load sample palettes on component mount
+    setPalettes(displayedSamplePalettes);
+  }, [showMore]);
 
   return (
     <section id="palettes" className="py-20 px-6">
@@ -377,73 +534,123 @@ const ColorPalettes = () => {
           {palettes.map((palette, index) => (
             <motion.div
               key={palette.id}
-              className="parallax-card group"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              className="group relative overflow-hidden rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-4 md:p-6 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/30 transition-all duration-500 hover:-translate-y-2 hover:bg-card/70"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ 
+                delay: index * 0.1,
+                type: "spring",
+                stiffness: 100,
+                damping: 15
+              }}
+              whileHover={{ 
+                y: -8, 
+                rotateX: 5,
+                rotateY: 5,
+                transition: { duration: 0.2 }
+              }}
             >
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-                <h3 className="text-lg md:text-xl font-semibold truncate">{palette.name}</h3>
-                <span className="text-xs md:text-sm text-muted-foreground bg-white/10 px-3 py-1 rounded-full self-start sm:self-auto">
-                  {palette.type}
-                </span>
-              </div>
+              {/* Hover Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary-glow/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
+                  <h3 className="text-lg md:text-xl font-semibold truncate group-hover:text-primary transition-colors">
+                    {palette.name}
+                  </h3>
+                  <span className="text-xs md:text-sm text-muted-foreground bg-background/20 px-3 py-1 rounded-full self-start sm:self-auto border border-border/20 group-hover:border-primary/30 transition-colors">
+                    {palette.type}
+                  </span>
+                </div>
 
-              <div className="grid grid-cols-5 gap-1 md:gap-2 mb-4">
-                {palette.colors.map((color, colorIndex) => (
-                  <motion.div
-                    key={colorIndex}
-                    className="relative group/color cursor-pointer"
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => copyColor(color)}
-                  >
-                    <div
-                      className="w-full h-12 sm:h-16 md:h-20 rounded-lg shadow-lg transition-all duration-300"
-                      style={{ backgroundColor: color }}
-                    />
-                    
-                    {/* Color Info Overlay */}
-                    <div className="absolute inset-0 bg-black/60 rounded-lg opacity-0 group-hover/color:opacity-100 transition-all duration-300 flex flex-col items-center justify-center text-white text-xs">
-                      {copiedColor === color ? (
-                        <Check className="w-3 h-3 md:w-4 md:h-4 mb-1" />
-                      ) : (
-                        <Copy className="w-3 h-3 md:w-4 md:h-4 mb-1" />
-                      )}
-                      <span className="font-mono text-xs">{color}</span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                <div className="grid grid-cols-5 gap-1 md:gap-2 mb-4">
+                  {palette.colors.map((color, colorIndex) => (
+                    <motion.div
+                      key={colorIndex}
+                      className="relative group/color cursor-pointer overflow-hidden rounded-lg"
+                      whileHover={{ 
+                        scale: 1.1, 
+                        y: -4,
+                        rotateY: 10,
+                        transition: { duration: 0.2 }
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => copyColor(color)}
+                    >
+                      <div
+                        className="w-full h-12 sm:h-16 md:h-20 rounded-lg shadow-lg transition-all duration-300 group-hover/color:shadow-xl"
+                        style={{ 
+                          backgroundColor: color,
+                          boxShadow: `0 4px 20px ${color}40, 0 0 0 1px ${color}20`
+                        }}
+                      />
+                      
+                      {/* Color Info Overlay */}
+                      <motion.div 
+                        className="absolute inset-0 bg-black/70 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center text-white text-xs"
+                        initial={{ opacity: 0 }}
+                        whileHover={{ opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {copiedColor === color ? (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="flex flex-col items-center"
+                          >
+                            <Check className="w-3 h-3 md:w-4 md:h-4 mb-1 text-green-400" />
+                            <span className="text-green-400">Copied!</span>
+                          </motion.div>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3 md:w-4 md:h-4 mb-1" />
+                            <span className="font-mono text-xs">{color}</span>
+                          </>
+                        )}
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </div>
 
-              {/* Color Format Display */}
-              <div className="space-y-1 md:space-y-2">
-                {palette.colors.slice(0, 2).map((color, i) => {
-                  const formats = getColorFormats(color);
-                  return (
-                    <div key={i} className="text-xs md:text-sm font-mono text-muted-foreground grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
-                      <span className="truncate">HEX: {formats.hex}</span>
-                      <span className="truncate">RGB: {formats.rgb}</span>
-                    </div>
-                  );
-                })}
+                {/* Color Format Display */}
+                <div className="space-y-1 md:space-y-2">
+                  {palette.colors.slice(0, 2).map((color, i) => {
+                    const formats = getColorFormats(color);
+                    return (
+                      <div key={i} className="text-xs md:text-sm font-mono text-muted-foreground grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
+                        <span className="truncate">HEX: {formats.hex}</span>
+                        <span className="truncate">RGB: {formats.rgb}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Show More Button */}
-        <motion.div
-          className="text-center mt-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <Button className="btn-primary">
-            Show More Palettes
-          </Button>
-        </motion.div>
+        {/* Show More Button - Only show if there are sample palettes to show */}
+        {samplePalettes.length > 4 && (
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Button 
+              onClick={() => setShowMore(!showMore)}
+              className="btn-glass hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 group"
+            >
+              <span className="mr-2">{showMore ? 'Show Less' : 'Show More'} Palettes</span>
+              {showMore ? (
+                <ChevronUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+              ) : (
+                <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+              )}
+            </Button>
+          </motion.div>
+        )}
       </div>
     </section>
   );
