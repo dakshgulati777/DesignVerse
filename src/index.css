@@ -80,35 +80,35 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  /* Light Mode - Premium Apple Style */
+  /* Light Mode - White, Orange, Lime Green Theme */
   .light {
-    --background: 0 0% 98%;
-    --foreground: 240 10% 5%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 5%;
+    --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 5%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 8% 25%;
-    --border: 240 6% 90%;
-    --input: 240 6% 95%;
-    --primary: 263 85% 50%;
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 263 85% 65%;
-    --accent: 263 85% 50%;
-    --accent-foreground: 0 0% 98%;
-    --glass-background: rgba(255, 255, 255, 0.85);
-    --glass-border: rgba(0, 0, 0, 0.08);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(240 8% 96%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(263 85% 50%), hsl(263 85% 65%));
-    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
-    --shadow-glow: 0 0 30px rgba(107, 70, 193, 0.25);
+    --popover-foreground: 0 0% 10%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    --border: 0 0% 90%;
+    --input: 0 0% 96%;
+    --primary: 25 95% 53%;  /* Orange */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 25 95% 63%;  /* Lighter orange */
+    --accent: 82 84% 47%;  /* Lime green */
+    --accent-foreground: 0 0% 100%;
+    --glass-background: rgba(255, 255, 255, 0.90);
+    --glass-border: rgba(255, 127, 0, 0.15);  /* Orange border */
+    --glass-shadow: 0 8px 32px rgba(255, 127, 0, 0.08);
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(25 95% 98%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(25 95% 53%), hsl(82 84% 47%));  /* Orange to lime */
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 248, 240, 0.90));
+    --shadow-glow: 0 0 30px rgba(255, 127, 0, 0.25);
     
-    /* Better contrast for light mode text */
-    --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.12);
-    --shadow-strong: 0 8px 40px rgba(0, 0, 0, 0.18);
+    /* Enhanced shadows with orange tint */
+    --shadow-subtle: 0 2px 8px rgba(255, 127, 0, 0.08);
+    --shadow-medium: 0 4px 20px rgba(255, 127, 0, 0.12);
+    --shadow-strong: 0 8px 40px rgba(255, 127, 0, 0.18);
   }
 
   /* Neon Mode - Cyberpunk Aesthetic */
@@ -217,6 +217,54 @@
 
   .parallax-card:hover {
     transform: perspective(1000px) rotateX(5deg) translateZ(20px);
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Enhanced Hover Glowing Effects */
+  .hover-glow {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  /* Section Hover Effects */
+  section:hover .glass-nav {
+    background: rgba(255, 127, 0, 0.1);
+    border-color: rgba(255, 127, 0, 0.2);
+  }
+
+  /* Enhanced Card Hover for Fundamentals */
+  .fundamental-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(255, 127, 0, 0.2);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .parallax-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .glass-nav {
+      @apply px-3 py-2;
+    }
+    
+    .btn-primary, .btn-glass {
+      @apply px-4 py-2 text-sm;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .parallax-card:hover {
+      transform: none;
+    }
+    
+    .hover-glow:hover {
+      transform: none;
+    }
   }
 
   /* Smooth Scrollbar */

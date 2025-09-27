@@ -121,6 +121,7 @@ const BlogSection = () => {
               centeredSlides={true}
               slidesPerView={'auto'}
               loop={true}
+              loopAdditionalSlides={2}
               coverflowEffect={{
                 rotate: 50,
                 stretch: 0,
@@ -139,6 +140,20 @@ const BlogSection = () => {
                 '--swiper-navigation-color': 'hsl(var(--primary))',
                 '--swiper-pagination-color': 'hsl(var(--primary))',
               } as any}
+              breakpoints={{
+                320: {
+                  slidesPerView: 1,
+                  spaceBetween: 20,
+                },
+                640: {
+                  slidesPerView: 'auto',
+                  spaceBetween: 30,
+                },
+                1024: {
+                  slidesPerView: 'auto',
+                  spaceBetween: 40,
+                }
+              }}
             >
               {posts.map((post, index) => (
                 <SwiperSlide key={post.id} className="max-w-md">

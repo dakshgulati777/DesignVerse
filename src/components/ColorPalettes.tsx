@@ -136,7 +136,8 @@ const ColorPalettes = () => {
       if (prompt) {
         // AI-based color generation - generate 6 palettes
         aiPalettes = await generateAIBasedPalettes(prompt, paletteType || selectedType);
-        // Clear old AI palettes and replace with new ones
+        // Hide existing visible palettes and clear old AI palettes
+        setShowMore(false);
         setPalettes(prev => [...aiPalettes, ...prev.filter(p => !p.isAI)]);
       } else {
         // Random palettes generation - generate 6 random palettes

@@ -28,9 +28,9 @@ const Navigation = () => {
       <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50"
+        className="fixed top-3 md:top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] md:w-auto"
       >
-        <div className="glass-nav flex items-center gap-6">
+        <div className="glass-nav flex items-center justify-between md:gap-6">
           {/* Logo */}
           <motion.div 
             whileHover={{ scale: 1.05 }}
@@ -39,14 +39,14 @@ const Navigation = () => {
             role="button"
             tabIndex={0}
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
-              <Palette className="w-4 h-4 text-primary-foreground" />
+            <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
+              <Palette className="w-3 h-3 md:w-4 md:h-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-xl">DesignVerse</span>
+            <span className="font-bold text-lg md:text-xl">DesignVerse</span>
           </motion.div>
 
-          {/* Navigation Items */}
-          <div className="flex items-center gap-4">
+          {/* Navigation Items - Hide text on mobile */}
+          <div className="hidden md:flex items-center gap-4">
             {navItems.map((item, index) => (
               <motion.a
                 key={item.label}
@@ -64,6 +64,24 @@ const Navigation = () => {
             ))}
           </div>
 
+          {/* Mobile Navigation - Icons only */}
+          <div className="flex md:hidden items-center gap-1">
+            {navItems.map((item, index) => (
+              <motion.a
+                key={item.label}
+                href={item.href}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2 rounded-lg transition-all duration-300 hover:bg-white/10"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <item.icon className="w-4 h-4" />
+              </motion.a>
+            ))}
+          </div>
+
           {/* Theme Switcher */}
           <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
             {(['dark', 'light', 'neon'] as const).map((themeOption) => {
@@ -74,13 +92,13 @@ const Navigation = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setTheme(themeOption)}
-                  className={`p-2 rounded-md transition-all duration-300 ${
+                  className={`p-1.5 md:p-2 rounded-md transition-all duration-300 ${
                     theme === themeOption 
                       ? 'bg-primary text-primary-foreground shadow-lg' 
                       : 'hover:bg-white/10'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3 h-3 md:w-4 md:h-4" />
                 </Button>
               );
             })}

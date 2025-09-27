@@ -391,6 +391,8 @@ const DesignPrinciples = () => {
     setFilteredPrinciples(filtered);
   }, [searchTerm, selectedCategory, principles]);
 
+  const displayedPrinciples = filteredPrinciples.slice(0, 6);
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'Design Principles': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
@@ -480,9 +482,64 @@ const DesignPrinciples = () => {
           </div>
         </motion.div>
 
-        {/* Principles Grid */}
+  const displayedPrinciples = filteredPrinciples.slice(0, 6);
+
+  return (
+    <section id="principles" className="py-20 px-6 bg-gradient-to-b from-background to-background/50">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="inline-flex items-center gap-2 glass-nav mb-6">
+            <Lightbulb className="w-5 h-5 text-primary" />
+            <span className="font-medium">Learn & Master</span>
+          </div>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6">
+            Design
+            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent"> Fundamentals</span>
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Master the essential principles that form the foundation of exceptional design
+          </p>
+        </motion.div>
+
+        {/* Search and Filter */}
+        <motion.div
+          className="flex flex-col md:flex-row gap-4 mb-12 max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              type="text"
+              placeholder="Search principles..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 glass-nav"
+            />
+          </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="px-4 py-2 rounded-lg glass-nav bg-transparent focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            {categories.map(category => (
+              <option key={category} value={category} className="bg-background text-foreground">
+                {category}
+              </option>
+            ))}
+          </select>
+        </motion.div>
+
+        {/* Principles Grid - Show only 6 cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPrinciples.map((principle, index) => {
+          {displayedPrinciples.map((principle, index) => {
             const IconComponent = principle.icon;
             return (
               <motion.div
@@ -522,6 +579,25 @@ const DesignPrinciples = () => {
           })}
         </div>
 
+        {/* Show More Button */}
+        {filteredPrinciples.length > 6 && (
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+          >
+            <Button 
+              onClick={() => window.location.href = '/learners'}
+              className="btn-primary group"
+            >
+              <span>Explore All {filteredPrinciples.length} Fundamentals</span>
+              <Sparkles className="w-4 h-4 ml-2 group-hover:rotate-12 transition-transform" />
+            </Button>
+          </motion.div>
+        )}
+
         {/* Empty State */}
         {filteredPrinciples.length === 0 && (
           <motion.div
@@ -548,6 +624,9 @@ const DesignPrinciples = () => {
             </div>
           </motion.div>
         )}
+      </div>
+    </section>
+  );
       </div>
     </section>
   );
