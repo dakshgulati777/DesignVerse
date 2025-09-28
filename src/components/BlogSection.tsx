@@ -116,26 +116,21 @@ const BlogSection = () => {
             viewport={{ once: true }}
           >
             <Swiper
-              effect={'coverflow'}
               grabCursor={true}
               centeredSlides={true}
               slidesPerView={'auto'}
+              spaceBetween={30}
               loop={true}
-              loopAdditionalSlides={2}
-              coverflowEffect={{
-                rotate: 50,
-                stretch: 0,
-                depth: 100,
-                modifier: 1,
-                slideShadows: true,
-              }}
+              loopAdditionalSlides={3}
               pagination={{
                 clickable: true,
                 dynamicBullets: true,
               }}
-              navigation={true}
-              modules={[EffectCoverflow, Pagination, Navigation]}
-              className="blog-swiper pb-12"
+              navigation={{
+                enabled: true,
+              }}
+              modules={[Pagination, Navigation]}
+              className="blog-swiper pb-12 overflow-visible"
               style={{
                 '--swiper-navigation-color': 'hsl(var(--primary))',
                 '--swiper-pagination-color': 'hsl(var(--primary))',
@@ -144,25 +139,42 @@ const BlogSection = () => {
                 320: {
                   slidesPerView: 1,
                   spaceBetween: 20,
+                  centeredSlides: true,
                 },
                 640: {
-                  slidesPerView: 'auto',
+                  slidesPerView: 1.5,
+                  spaceBetween: 24,
+                  centeredSlides: true,
+                },
+                768: {
+                  slidesPerView: 2,
                   spaceBetween: 30,
+                  centeredSlides: false,
                 },
                 1024: {
-                  slidesPerView: 'auto',
+                  slidesPerView: 2.5,
+                  spaceBetween: 32,
+                  centeredSlides: false,
+                },
+                1280: {
+                  slidesPerView: 3,
                   spaceBetween: 40,
+                  centeredSlides: false,
                 }
               }}
             >
               {posts.map((post, index) => (
-                <SwiperSlide key={post.id} className="max-w-md">
+                <SwiperSlide key={post.id} className="!w-80 md:!w-96">
                   <motion.div
-                    className="parallax-card h-full"
+                    className="parallax-card h-full group cursor-pointer"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
+                    whileHover={{ 
+                      y: -8,
+                      transition: { duration: 0.3 }
+                    }}
                   >
                     {/* Post Image */}
                     <div className="relative overflow-hidden rounded-lg mb-6">

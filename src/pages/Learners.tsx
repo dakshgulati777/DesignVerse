@@ -9,18 +9,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { 
-  Sidebar, 
-  SidebarContent, 
-  SidebarGroup, 
-  SidebarGroupContent, 
-  SidebarGroupLabel, 
-  SidebarMenu, 
-  SidebarMenuButton, 
-  SidebarMenuItem, 
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar 
-} from '@/components/ui/sidebar';
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+  DrawerClose
+} from '@/components/ui/drawer';
 
 interface Principle {
   id: string;
@@ -31,16 +26,15 @@ interface Principle {
   icon: any;
 }
 
-const LearnersContent = () => {
+const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCategory: string; onCategoryChange: (category: string) => void }) => {
   const navigate = useNavigate();
   const [principles, setPrinciples] = useState<Principle[]>([]);
   const [filteredPrinciples, setFilteredPrinciples] = useState<Principle[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   const categories = ['All', 'Design Principles', 'Color Fundamentals', 'Typography', 'Layout & Composition', 'Imagery & Visuals', 'Branding & Identity', 'UX & UI Basics', 'Digital Design', 'Design Tools', 'Visual Communication', 'Print & Production', 'Modern Trends'];
 
-  // All comprehensive design principles (same as from DesignPrinciples component)
+  // All comprehensive design principles with more complete data
   const samplePrinciples: Principle[] = [
     // Design Principles
     {
@@ -91,7 +85,91 @@ const LearnersContent = () => {
       example: 'Brand consistency, button styles, icon sets, spacing patterns',
       icon: Sparkles
     },
-    // Add more principles here... (truncated for brevity, but would include all 40+ principles)
+    // Color Fundamentals
+    {
+      id: '7',
+      title: 'Color Harmony',
+      category: 'Color Fundamentals',
+      description: 'Create pleasing color combinations using color wheel relationships like complementary, analogous, or triadic schemes.',
+      example: 'Complementary blue-orange, analogous blues-greens, triadic red-yellow-blue',
+      icon: Palette
+    },
+    {
+      id: '8',
+      title: 'Color Psychology',
+      category: 'Color Fundamentals',
+      description: 'Understand how colors evoke emotions and influence behavior in design applications.',
+      example: 'Red for urgency, blue for trust, green for nature, purple for luxury',
+      icon: Eye
+    },
+    // Typography
+    {
+      id: '9',
+      title: 'Font Pairing',
+      category: 'Typography',
+      description: 'Combine typefaces that complement each other while maintaining readability and visual hierarchy.',
+      example: 'Serif headings with sans-serif body, script accents with clean text',
+      icon: Type
+    },
+    {
+      id: '10',
+      title: 'Hierarchy & Scale',
+      category: 'Typography',
+      description: 'Use size, weight, and spacing to guide readers through content in order of importance.',
+      example: 'H1-H6 progression, bold for emphasis, increased line spacing',
+      icon: Layers
+    },
+    // Layout & Composition
+    {
+      id: '11',
+      title: 'Grid Systems',
+      category: 'Layout & Composition',
+      description: 'Organize content using structured column and row systems for consistent, balanced layouts.',
+      example: '12-column grids, modular grids, baseline grids',
+      icon: Layout
+    },
+    {
+      id: '12',
+      title: 'White Space',
+      category: 'Layout & Composition',
+      description: 'Use empty space strategically to improve readability, focus attention, and create visual breathing room.',
+      example: 'Margins, padding, line spacing, content separation',
+      icon: Minimize2
+    },
+    // Imagery & Visuals
+    {
+      id: '13',
+      title: 'Visual Hierarchy',
+      category: 'Imagery & Visuals',
+      description: 'Arrange visual elements to guide the viewer\'s eye through content in order of importance.',
+      example: 'Size contrast, color emphasis, positioning, depth',
+      icon: Image
+    },
+    {
+      id: '14',
+      title: 'Image Composition',
+      category: 'Imagery & Visuals',
+      description: 'Apply photography principles like rule of thirds and leading lines to create compelling visuals.',
+      example: 'Rule of thirds, symmetry, framing, depth of field',
+      icon: Target
+    },
+    // UX & UI Basics
+    {
+      id: '15',
+      title: 'User-Centered Design',
+      category: 'UX & UI Basics',
+      description: 'Design with the user\'s needs, goals, and behaviors as the primary consideration.',
+      example: 'User personas, journey mapping, usability testing',
+      icon: Users
+    },
+    {
+      id: '16',
+      title: 'Interface Patterns',
+      category: 'UX & UI Basics',
+      description: 'Use established UI conventions to create intuitive and familiar user experiences.',
+      example: 'Navigation menus, button styles, form layouts, card designs',
+      icon: Monitor
+    }
   ];
 
   useEffect(() => {
@@ -120,7 +198,7 @@ const LearnersContent = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-border/50">
+      <div className="flex items-center justify-between p-4 md:p-6 border-b border-border/50">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -131,11 +209,11 @@ const LearnersContent = () => {
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden sm:inline">Back</span>
           </Button>
-          <h1 className="text-2xl md:text-3xl font-bold">Design Learning Hub</h1>
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">Design Learning Hub</h1>
         </div>
         
         {/* Search */}
-        <div className="flex items-center gap-2 max-w-md w-full">
+        <div className="flex items-center gap-2 max-w-sm md:max-w-md w-full">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
@@ -143,10 +221,9 @@ const LearnersContent = () => {
               placeholder="Search principles..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 glass-nav"
+              className="pl-10 glass-nav text-sm"
             />
           </div>
-          <SidebarTrigger className="md:hidden" />
         </div>
       </div>
 
@@ -206,9 +283,7 @@ const LearnersContent = () => {
   );
 };
 
-const LearnersSidebar = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  
+const CategoryDrawer = ({ selectedCategory, onCategoryChange }: { selectedCategory: string; onCategoryChange: (category: string) => void }) => {
   const categories = [
     { id: 'All', label: 'All Topics', icon: Lightbulb },
     { id: 'Design Principles', label: 'Design Principles', icon: Layers },
@@ -226,47 +301,56 @@ const LearnersSidebar = () => {
   ];
 
   return (
-    <Sidebar className="w-80 border-r border-border/50">
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-lg font-semibold mb-4">
-            Learning Topics
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {categories.map((category) => (
-                <SidebarMenuItem key={category.id}>
-                  <SidebarMenuButton
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`w-full justify-start gap-3 py-3 ${
-                      selectedCategory === category.id 
-                        ? 'bg-primary/10 text-primary border-r-2 border-primary' 
-                        : 'hover:bg-muted/50'
-                    }`}
-                  >
-                    <category.icon className="w-5 h-5" />
-                    <span className="font-medium">{category.label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    <Drawer>
+      <DrawerTrigger asChild>
+        <Button variant="outline" size="sm" className="md:hidden fixed top-4 left-4 z-50 bg-background/80 backdrop-blur-md">
+          <Menu className="w-4 h-4" />
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent className="h-[80vh]">
+        <DrawerHeader className="border-b border-border/50">
+          <div className="flex items-center justify-between">
+            <DrawerTitle className="text-xl font-semibold">Learning Topics</DrawerTitle>
+            <DrawerClose asChild>
+              <Button variant="ghost" size="sm">
+                <X className="w-4 h-4" />
+              </Button>
+            </DrawerClose>
+          </div>
+        </DrawerHeader>
+        <div className="p-4 overflow-y-auto">
+          <div className="space-y-2">
+            {categories.map((category) => (
+              <DrawerClose key={category.id} asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() => onCategoryChange(category.id)}
+                  className={`w-full justify-start gap-3 py-3 h-auto ${
+                    selectedCategory === category.id 
+                      ? 'bg-primary/10 text-primary border border-primary/20' 
+                      : 'hover:bg-muted/50'
+                  }`}
+                >
+                  <category.icon className="w-5 h-5" />
+                  <span className="font-medium">{category.label}</span>
+                </Button>
+              </DrawerClose>
+            ))}
+          </div>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
 const Learners = () => {
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <LearnersSidebar />
-        <main className="flex-1">
-          <LearnersContent />
-        </main>
-      </div>
-    </SidebarProvider>
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
+      <CategoryDrawer selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
+      <LearnersContent selectedCategory={selectedCategory} onCategoryChange={setSelectedCategory} />
+    </div>
   );
 };
 
