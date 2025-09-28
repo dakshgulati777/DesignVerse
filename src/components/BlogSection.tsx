@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, EffectCoverflow } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import { ExternalLink, Calendar, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import 'swiper/css/effect-coverflow';
+import 'swiper/css/autoplay';
 
 interface BlogPost {
   id: string;
@@ -119,9 +119,12 @@ const BlogSection = () => {
               grabCursor={true}
               centeredSlides={true}
               slidesPerView={'auto'}
-              spaceBetween={30}
+              spaceBetween={20}
               loop={true}
-              loopAdditionalSlides={3}
+              autoplay={{
+                delay: 4000,
+                disableOnInteraction: false,
+              }}
               pagination={{
                 clickable: true,
                 dynamicBullets: true,
@@ -129,8 +132,8 @@ const BlogSection = () => {
               navigation={{
                 enabled: true,
               }}
-              modules={[Pagination, Navigation]}
-              className="blog-swiper pb-12 overflow-visible"
+              modules={[Pagination, Navigation, Autoplay]}
+              className="blog-swiper pb-12 overflow-visible !pl-4 !pr-4"
               style={{
                 '--swiper-navigation-color': 'hsl(var(--primary))',
                 '--swiper-pagination-color': 'hsl(var(--primary))',
@@ -138,6 +141,11 @@ const BlogSection = () => {
               breakpoints={{
                 320: {
                   slidesPerView: 1,
+                  spaceBetween: 16,
+                  centeredSlides: true,
+                },
+                480: {
+                  slidesPerView: 1.2,
                   spaceBetween: 20,
                   centeredSlides: true,
                 },
@@ -148,7 +156,7 @@ const BlogSection = () => {
                 },
                 768: {
                   slidesPerView: 2,
-                  spaceBetween: 30,
+                  spaceBetween: 28,
                   centeredSlides: false,
                 },
                 1024: {
@@ -164,59 +172,61 @@ const BlogSection = () => {
               }}
             >
               {posts.map((post, index) => (
-                <SwiperSlide key={post.id} className="!w-80 md:!w-96">
+                <SwiperSlide key={post.id} className="!w-72 sm:!w-80 md:!w-96 !h-auto">
                   <motion.div
-                    className="parallax-card h-full group cursor-pointer"
+                    className="parallax-card h-full group cursor-pointer hover-glow"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
                     whileHover={{ 
                       y: -8,
+                      scale: 1.02,
                       transition: { duration: 0.3 }
                     }}
                   >
                     {/* Post Image */}
-                    <div className="relative overflow-hidden rounded-lg mb-6">
+                    <div className="relative overflow-hidden rounded-xl mb-6">
                       <img
                         src={post.imageUrl}
                         alt={post.title}
-                        className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-44 sm:h-48 object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      <div className="absolute top-4 left-4">
-                        <span className="bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm">
                           {post.category}
                         </span>
                       </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
 
                     {/* Post Content */}
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-bold leading-tight group-hover:text-primary transition-colors duration-300">
+                    <div className="space-y-4 p-1">
+                      <h3 className="text-lg sm:text-xl font-bold leading-tight group-hover:text-primary transition-colors duration-300">
                         {post.title}
                       </h3>
                       
-                      <p className="text-muted-foreground leading-relaxed">
+                      <p className="text-muted-foreground leading-relaxed text-sm sm:text-base line-clamp-3">
                         {post.excerpt}
                       </p>
 
                       {/* Meta Information */}
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
-                          <User className="w-4 h-4" />
+                          <User className="w-3 h-3 sm:w-4 sm:h-4" />
                           <span>{post.author}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
+                          <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                           <span>{new Date(post.date).toLocaleDateString()}</span>
                         </div>
                       </div>
 
-                      <div className="flex justify-between items-center pt-4">
-                        <span className="text-sm text-primary font-medium">{post.readTime}</span>
-                        <Button variant="outline" size="sm" className="btn-glass">
+                      <div className="flex justify-between items-center pt-4 border-t border-border/30">
+                        <span className="text-xs sm:text-sm text-primary font-medium">{post.readTime}</span>
+                        <Button variant="outline" size="sm" className="btn-glass text-xs sm:text-sm hover-glow">
                           Read More
-                          <ExternalLink className="w-4 h-4 ml-2" />
+                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
                         </Button>
                       </div>
                     </div>

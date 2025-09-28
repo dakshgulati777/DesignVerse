@@ -28,9 +28,9 @@ const Navigation = () => {
       <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-3 md:top-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] md:w-auto"
+        className="fixed top-2 md:top-4 left-1/2 transform -translate-x-1/2 z-50 w-[96%] md:w-auto max-w-6xl"
       >
-        <div className="glass-nav flex items-center justify-between md:gap-6">
+        <div className="glass-nav flex items-center justify-between md:gap-6 px-3 md:px-6">
           {/* Logo */}
           <motion.div 
             whileHover={{ scale: 1.05 }}
@@ -39,10 +39,12 @@ const Navigation = () => {
             role="button"
             tabIndex={0}
           >
-            <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
+            <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center hover-glow">
               <Palette className="w-3 h-3 md:w-4 md:h-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-lg md:text-xl">DesignVerse</span>
+            <span className="font-bold text-sm md:text-lg lg:text-xl bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+              DesignVerse
+            </span>
           </motion.div>
 
           {/* Navigation Items - Hide text on mobile */}

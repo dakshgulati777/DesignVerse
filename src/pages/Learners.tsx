@@ -32,8 +32,6 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
   const [filteredPrinciples, setFilteredPrinciples] = useState<Principle[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const categories = ['All', 'Design Principles', 'Color Fundamentals', 'Typography', 'Layout & Composition', 'Imagery & Visuals', 'Branding & Identity', 'UX & UI Basics', 'Digital Design', 'Design Tools', 'Visual Communication', 'Print & Production', 'Modern Trends'];
-
   // All comprehensive design principles with more complete data
   const samplePrinciples: Principle[] = [
     // Design Principles
@@ -198,22 +196,24 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/50">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 md:p-6 border-b border-border/50">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between p-4 md:p-6 border-b border-border/50 gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover-glow"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden sm:inline">Back</span>
           </Button>
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold">Design Learning Hub</h1>
+          <h1 className="text-lg md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            Design Learning Hub
+          </h1>
         </div>
         
         {/* Search */}
-        <div className="flex items-center gap-2 max-w-sm md:max-w-md w-full">
+        <div className="flex items-center gap-2 w-full md:max-w-sm lg:max-w-md">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
@@ -221,25 +221,26 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
               placeholder="Search principles..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 glass-nav text-sm"
+              className="pl-10 glass-nav text-sm hover-glow"
             />
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="flex-1 p-4 md:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
           {filteredPrinciples.map((principle, index) => (
             <motion.div
               key={principle.id}
-              className="parallax-card group cursor-pointer hover:shadow-lg transition-all duration-300"
+              className="parallax-card group cursor-pointer hover-glow transition-all duration-300"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               whileHover={{ 
                 scale: 1.02,
-                boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)"
+                y: -5,
+                transition: { duration: 0.3 }
               }}
             >
               <div className="flex items-start gap-4 mb-4">
@@ -303,8 +304,9 @@ const CategoryDrawer = ({ selectedCategory, onCategoryChange }: { selectedCatego
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="outline" size="sm" className="md:hidden fixed top-4 left-4 z-50 bg-background/80 backdrop-blur-md">
+        <Button variant="outline" size="sm" className="fixed top-20 md:top-24 left-4 z-50 bg-background/90 backdrop-blur-md hover-glow border border-primary/20">
           <Menu className="w-4 h-4" />
+          <span className="hidden sm:inline ml-2">Categories</span>
         </Button>
       </DrawerTrigger>
       <DrawerContent className="h-[80vh]">
