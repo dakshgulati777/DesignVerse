@@ -26,13 +26,13 @@ const BlogSection = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Sample blog posts - in production, fetch from Blogger API
+  // Sample blog posts from Daksh Gulati's blog
   const samplePosts: BlogPost[] = [
     {
       id: '1',
       title: 'The Psychology of Color in Modern Design',
       excerpt: 'Explore how different colors affect user behavior and emotions in digital interfaces. Understanding color theory can transform your design approach.',
-      author: 'Sarah Chen',
+      author: 'Daksh Gulati',
       date: '2024-03-15',
       readTime: '5 min read',
       category: 'Color Theory',
@@ -42,7 +42,7 @@ const BlogSection = () => {
       id: '2',
       title: 'Glassmorphism: The Future of UI Design',
       excerpt: 'Discover the trending design aesthetic that combines transparency, blur effects, and subtle borders to create stunning user interfaces.',
-      author: 'Alex Rodriguez',
+      author: 'Daksh Gulati',
       date: '2024-03-12',
       readTime: '7 min read',
       category: 'UI Trends',
@@ -52,7 +52,7 @@ const BlogSection = () => {
       id: '3',
       title: 'AI-Powered Design Tools Revolution',
       excerpt: 'How artificial intelligence is reshaping the design landscape and empowering creators to push boundaries like never before.',
-      author: 'Maya Patel',
+      author: 'Daksh Gulati',
       date: '2024-03-10',
       readTime: '6 min read',
       category: 'AI & Design',
@@ -62,7 +62,7 @@ const BlogSection = () => {
       id: '4',
       title: 'Motion Design Principles for Web',
       excerpt: 'Learn the fundamental principles of motion design and how to apply them effectively in web interfaces for better user experience.',
-      author: 'James Wilson',
+      author: 'Daksh Gulati',
       date: '2024-03-08',
       readTime: '8 min read',
       category: 'Motion Design',
@@ -117,13 +117,15 @@ const BlogSection = () => {
           >
             <Swiper
               grabCursor={true}
-              centeredSlides={true}
+              centeredSlides={false}
               slidesPerView={'auto'}
-              spaceBetween={20}
+              spaceBetween={30}
               loop={true}
+              loopAdditionalSlides={2}
               autoplay={{
                 delay: 4000,
                 disableOnInteraction: false,
+                pauseOnMouseEnter: true,
               }}
               pagination={{
                 clickable: true,
@@ -133,7 +135,7 @@ const BlogSection = () => {
                 enabled: true,
               }}
               modules={[Pagination, Navigation, Autoplay]}
-              className="blog-swiper pb-12 overflow-visible !pl-4 !pr-4"
+              className="blog-swiper pb-12 !px-4"
               style={{
                 '--swiper-navigation-color': 'hsl(var(--primary))',
                 '--swiper-pagination-color': 'hsl(var(--primary))',
@@ -141,38 +143,23 @@ const BlogSection = () => {
               breakpoints={{
                 320: {
                   slidesPerView: 1,
-                  spaceBetween: 16,
-                  centeredSlides: true,
-                },
-                480: {
-                  slidesPerView: 1.2,
                   spaceBetween: 20,
                   centeredSlides: true,
                 },
                 640: {
-                  slidesPerView: 1.5,
-                  spaceBetween: 24,
-                  centeredSlides: true,
-                },
-                768: {
                   slidesPerView: 2,
-                  spaceBetween: 28,
+                  spaceBetween: 24,
                   centeredSlides: false,
                 },
                 1024: {
-                  slidesPerView: 2.5,
-                  spaceBetween: 32,
-                  centeredSlides: false,
-                },
-                1280: {
                   slidesPerView: 3,
-                  spaceBetween: 40,
+                  spaceBetween: 30,
                   centeredSlides: false,
                 }
               }}
             >
               {posts.map((post, index) => (
-                <SwiperSlide key={post.id} className="!w-72 sm:!w-80 md:!w-96 !h-auto">
+                <SwiperSlide key={post.id} className="!h-auto" style={{ width: '350px', maxWidth: '90vw' }}>
                   <motion.div
                     className="parallax-card h-full group cursor-pointer hover-glow"
                     initial={{ opacity: 0, y: 30 }}
@@ -244,7 +231,10 @@ const BlogSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <Button className="btn-primary">
+          <Button 
+            className="btn-primary"
+            onClick={() => window.open('https://dakshgulati23.blogspot.com/', '_blank')}
+          >
             View All Posts
           </Button>
         </motion.div>

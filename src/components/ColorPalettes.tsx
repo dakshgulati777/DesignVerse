@@ -154,7 +154,7 @@ const ColorPalettes = () => {
     isAI ? setAiLoading(false) : setLoading(false);
   };
 
-  // AI-based palette generation - generate 6 palettes
+  // AI-based palette generation - generate 6 unique palettes
   const generateAIBasedPalettes = async (prompt: string, type: ColorPalette['type']): Promise<ColorPalette[]> => {
     // Simulate AI processing
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -162,15 +162,20 @@ const ColorPalettes = () => {
     const baseColors = getColorsFromPrompt(prompt);
     const generatedPalettes: ColorPalette[] = [];
     
+    // Generate 6 unique palettes with different variations
+    const variationTypes: ColorPalette['type'][] = ['analogous', 'complementary', 'monochrome', 'shades', 'triad', 'analogous'];
+    
     for (let i = 0; i < 6; i++) {
-      const baseColor = baseColors[i % baseColors.length];
-      const colors = generatePaletteFromBase(baseColor, type);
+      const baseColorIndex = i % baseColors.length;
+      const baseColor = baseColors[baseColorIndex];
+      const variationType = variationTypes[i];
+      const colors = generatePaletteFromBase(baseColor, variationType);
       
       generatedPalettes.push({
-        id: `ai-${Date.now()}-${i}`,
-        name: `AI: ${prompt.charAt(0).toUpperCase() + prompt.slice(1)} ${i + 1}`,
+        id: `ai-${Date.now()}-${i}-${Math.random()}`,
+        name: `AI: ${prompt.charAt(0).toUpperCase() + prompt.slice(1)} - ${variationType}`,
         colors,
-        type,
+        type: variationType,
         isAI: true
       });
     }

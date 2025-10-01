@@ -80,7 +80,7 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  /* Light Mode - White, Orange, Lime Green Theme */
+  /* Light Mode - White, Orange Theme (no green) */
   .light {
     --background: 0 0% 100%;
     --foreground: 0 0% 10%;
@@ -92,10 +92,10 @@
     --muted-foreground: 0 0% 40%;
     --border: 0 0% 90%;
     --input: 0 0% 96%;
-    --primary: 25 95% 53%;  /* Orange */
+    --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 25 95% 63%;  /* Lighter orange */
-    --accent: 82 84% 47%;  /* Lime green */
+    --primary-glow: 30 100% 60%;
+    --accent: 25 85% 60%;
     --accent-foreground: 0 0% 100%;
     --glass-background: rgba(255, 255, 255, 0.90);
     --glass-border: rgba(255, 127, 0, 0.15);  /* Orange border */
