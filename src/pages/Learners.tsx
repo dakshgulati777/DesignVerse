@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Search, Filter, Eye, Zap, Layers, Minimize2, Palette, Type, Layout, 
-  Image, Briefcase, Users, Monitor, Lightbulb, Code, Sparkles, Target, 
-  Cpu, ArrowLeft, Menu, X 
+  Search, ArrowLeft, Menu, X 
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -16,163 +14,22 @@ import {
   DrawerTrigger,
   DrawerClose
 } from '@/components/ui/drawer';
-
-interface Principle {
-  id: string;
-  title: string;
-  category: 'Design Principles' | 'Color Fundamentals' | 'Typography' | 'Layout & Composition' | 'Imagery & Visuals' | 'Branding & Identity' | 'UX & UI Basics' | 'Digital Design' | 'Design Tools' | 'Visual Communication' | 'Print & Production' | 'Modern Trends';
-  description: string;
-  example: string;
-  icon: any;
-}
+import { designFundamentals, type DesignFundamental } from '@/data/designFundamentals';
+import { 
+  Eye, Filter, Layers, Palette, Type, Layout, 
+  Image, Briefcase, Users, Monitor, Lightbulb, Code, Sparkles
+} from 'lucide-react';
 
 const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCategory: string; onCategoryChange: (category: string) => void }) => {
   const navigate = useNavigate();
-  const [principles, setPrinciples] = useState<Principle[]>([]);
-  const [filteredPrinciples, setFilteredPrinciples] = useState<Principle[]>([]);
+  const [principles, setPrinciples] = useState<DesignFundamental[]>([]);
+  const [filteredPrinciples, setFilteredPrinciples] = useState<DesignFundamental[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-
-  // All comprehensive design principles with more complete data
-  const samplePrinciples: Principle[] = [
-    // Design Principles
-    {
-      id: '1',
-      title: 'Balance (Symmetry, Asymmetry, Radial)',
-      category: 'Design Principles',
-      description: 'Achieve visual equilibrium through symmetrical (mirror-like), asymmetrical (weighted), or radial (center-focused) arrangements of elements.',
-      example: 'Symmetrical logos, asymmetrical web layouts, radial badges',
-      icon: Layers
-    },
-    {
-      id: '2',
-      title: 'Contrast',
-      category: 'Design Principles',
-      description: 'Create visual interest and hierarchy by using opposing elements like light vs dark, large vs small, or thick vs thin.',
-      example: 'High contrast text for readability, contrasting colors for emphasis',
-      icon: Eye
-    },
-    {
-      id: '3',
-      title: 'Emphasis & Focus',
-      category: 'Design Principles',
-      description: 'Direct attention to key elements using size, color, position, or isolation to create focal points in your design.',
-      example: 'Call-to-action buttons, hero headlines, featured products',
-      icon: Target
-    },
-    {
-      id: '4',
-      title: 'Proportion & Scale',
-      category: 'Design Principles',
-      description: 'Use relative size relationships between elements to create harmony, hierarchy, and visual interest in compositions.',
-      example: 'Golden ratio layouts, modular typography scales, responsive sizing',
-      icon: Minimize2
-    },
-    {
-      id: '5',
-      title: 'Alignment',
-      category: 'Design Principles',
-      description: 'Create order and connection by positioning elements along common edges or centers for clean, professional layouts.',
-      example: 'Grid-based layouts, centered text, aligned form fields',
-      icon: Layout
-    },
-    {
-      id: '6',
-      title: 'Repetition & Consistency',
-      category: 'Design Principles',
-      description: 'Establish visual unity by repeating design elements like colors, fonts, shapes, or spacing throughout your work.',
-      example: 'Brand consistency, button styles, icon sets, spacing patterns',
-      icon: Sparkles
-    },
-    // Color Fundamentals
-    {
-      id: '7',
-      title: 'Color Harmony',
-      category: 'Color Fundamentals',
-      description: 'Create pleasing color combinations using color wheel relationships like complementary, analogous, or triadic schemes.',
-      example: 'Complementary blue-orange, analogous blues-greens, triadic red-yellow-blue',
-      icon: Palette
-    },
-    {
-      id: '8',
-      title: 'Color Psychology',
-      category: 'Color Fundamentals',
-      description: 'Understand how colors evoke emotions and influence behavior in design applications.',
-      example: 'Red for urgency, blue for trust, green for nature, purple for luxury',
-      icon: Eye
-    },
-    // Typography
-    {
-      id: '9',
-      title: 'Font Pairing',
-      category: 'Typography',
-      description: 'Combine typefaces that complement each other while maintaining readability and visual hierarchy.',
-      example: 'Serif headings with sans-serif body, script accents with clean text',
-      icon: Type
-    },
-    {
-      id: '10',
-      title: 'Hierarchy & Scale',
-      category: 'Typography',
-      description: 'Use size, weight, and spacing to guide readers through content in order of importance.',
-      example: 'H1-H6 progression, bold for emphasis, increased line spacing',
-      icon: Layers
-    },
-    // Layout & Composition
-    {
-      id: '11',
-      title: 'Grid Systems',
-      category: 'Layout & Composition',
-      description: 'Organize content using structured column and row systems for consistent, balanced layouts.',
-      example: '12-column grids, modular grids, baseline grids',
-      icon: Layout
-    },
-    {
-      id: '12',
-      title: 'White Space',
-      category: 'Layout & Composition',
-      description: 'Use empty space strategically to improve readability, focus attention, and create visual breathing room.',
-      example: 'Margins, padding, line spacing, content separation',
-      icon: Minimize2
-    },
-    // Imagery & Visuals
-    {
-      id: '13',
-      title: 'Visual Hierarchy',
-      category: 'Imagery & Visuals',
-      description: 'Arrange visual elements to guide the viewer\'s eye through content in order of importance.',
-      example: 'Size contrast, color emphasis, positioning, depth',
-      icon: Image
-    },
-    {
-      id: '14',
-      title: 'Image Composition',
-      category: 'Imagery & Visuals',
-      description: 'Apply photography principles like rule of thirds and leading lines to create compelling visuals.',
-      example: 'Rule of thirds, symmetry, framing, depth of field',
-      icon: Target
-    },
-    // UX & UI Basics
-    {
-      id: '15',
-      title: 'User-Centered Design',
-      category: 'UX & UI Basics',
-      description: 'Design with the user\'s needs, goals, and behaviors as the primary consideration.',
-      example: 'User personas, journey mapping, usability testing',
-      icon: Users
-    },
-    {
-      id: '16',
-      title: 'Interface Patterns',
-      category: 'UX & UI Basics',
-      description: 'Use established UI conventions to create intuitive and familiar user experiences.',
-      example: 'Navigation menus, button styles, form layouts, card designs',
-      icon: Monitor
-    }
-  ];
+  const [selectedPrinciple, setSelectedPrinciple] = useState<DesignFundamental | null>(null);
 
   useEffect(() => {
-    setPrinciples(samplePrinciples);
-    setFilteredPrinciples(samplePrinciples);
+    setPrinciples(designFundamentals);
+    setFilteredPrinciples(designFundamentals);
   }, []);
 
   useEffect(() => {
@@ -242,7 +99,9 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
                 y: -5,
                 transition: { duration: 0.3 }
               }}
+              onClick={() => setSelectedPrinciple(principle)}
             >
+              <img src={principle.image} alt={principle.title} className="w-full h-40 object-cover rounded-lg mb-4" />
               <div className="flex items-start gap-4 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
                   <principle.icon className="w-6 h-6 text-primary-foreground" />
@@ -257,12 +116,12 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
                 </div>
               </div>
               
-              <p className="text-muted-foreground mb-3 leading-relaxed">
+              <p className="text-muted-foreground mb-3 leading-relaxed text-sm line-clamp-3">
                 {principle.description}
               </p>
               
               <div className="pt-3 border-t border-border/30">
-                <p className="text-sm font-medium text-accent">
+                <p className="text-sm font-medium text-accent line-clamp-1">
                   Examples: {principle.example}
                 </p>
               </div>
@@ -280,6 +139,54 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
           </div>
         )}
       </div>
+
+      {/* Detail Modal */}
+      <AnimatePresence>
+        {selectedPrinciple && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedPrinciple(null)}
+          >
+            <motion.div
+              className="glass-card max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img src={selectedPrinciple.image} alt={selectedPrinciple.title} className="w-full h-64 object-cover rounded-t-lg mb-6" />
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-4 rounded-xl bg-primary/20 text-primary">
+                      <selectedPrinciple.icon className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h2 className="text-3xl font-bold mb-2">{selectedPrinciple.title}</h2>
+                      <span className="text-sm px-3 py-1 bg-primary/10 text-primary rounded-full">
+                        {selectedPrinciple.category}
+                      </span>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={() => setSelectedPrinciple(null)}>
+                    <X className="w-5 h-5" />
+                  </Button>
+                </div>
+                <div className="prose prose-invert max-w-none">
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{selectedPrinciple.detailedContent}</p>
+                  <div className="mt-6 pt-6 border-t border-border/30">
+                    <h3 className="text-xl font-semibold mb-3 text-primary">Examples</h3>
+                    <p className="text-muted-foreground">{selectedPrinciple.example}</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
