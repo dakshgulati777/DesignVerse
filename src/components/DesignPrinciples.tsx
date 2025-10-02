@@ -222,24 +222,22 @@ const DesignPrinciples = () => {
           })}
         </div>
 
-        {/* Show More Button */}
-        {filteredPrinciples.length > 6 && (
-          <motion.div
-            className="text-center mt-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
+        {/* Explore More Button */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+        >
+          <Button 
+            onClick={() => navigate('/learners')}
+            className="btn-primary group"
           >
-            <Button 
-              onClick={() => navigate('/learners')}
-              className="btn-primary group"
-            >
-              <span>Explore All {filteredPrinciples.length} Fundamentals</span>
-              <Sparkles className="w-4 h-4 ml-2 group-hover:rotate-12 transition-transform" />
-            </Button>
-          </motion.div>
-        )}
+            <span>Explore More Fundamentals</span>
+            <Sparkles className="w-4 h-4 ml-2 group-hover:rotate-12 transition-transform" />
+          </Button>
+        </motion.div>
 
         {/* Empty State */}
         {filteredPrinciples.length === 0 && (
