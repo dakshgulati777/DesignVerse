@@ -100,7 +100,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Achieve visual stability through the arrangement of elements.',
     detailedContent: `Balance in design refers to the distribution of visual weight within a composition. It can be symmetrical, where elements are evenly distributed, or asymmetrical, where different elements balance each other out through contrast and visual interest. Achieving balance is crucial for creating harmonious designs that feel stable and aesthetically pleasing. Designers often use balance to guide the viewer's eye and create a sense of order in their work.`,
     example: 'A symmetrical layout with equal visual weight on both sides.',
-    icon: Balance,
+    icon: Layers,
     image: balanceImg
   },
   {
@@ -230,7 +230,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Combine different fonts to create a cohesive and visually appealing design.',
     detailedContent: `Font pairing involves selecting two or more fonts that complement each other to create a harmonious design. Effective font pairing enhances readability and visual interest. Designers should consider contrast, style, and mood when pairing fonts. A common approach is to pair a serif font with a sans-serif font, as the contrast creates a dynamic look. It's essential to limit the number of fonts used to maintain cohesion and avoid visual clutter. Testing font combinations in various contexts ensures they work well together.`,
     example: 'Pairing a bold sans-serif font for headings with a light serif font for body text.',
-    icon: FontTypes,
+    icon: Type,
     image: fontPairingImg
   },
   {
@@ -240,7 +240,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Establish a clear hierarchy in text to guide the reader.',
     detailedContent: `Font hierarchy is the arrangement of text elements in a way that signifies their importance. It helps guide the reader through the content, making it easier to digest information. Designers can create hierarchy through font size, weight, and style. Headings should be more prominent than subheadings, which should be more noticeable than body text. Consistent use of hierarchy across a design ensures clarity and enhances user experience, allowing readers to quickly identify key information.`,
     example: 'Using larger, bolder fonts for headings and smaller, lighter fonts for body text.',
-    icon: TextAlignment,
+    icon: Type,
     image: typeHierarchyImg
   },
   {
@@ -300,7 +300,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Use contrast in typography to create emphasis and hierarchy.',
     detailedContent: `Typographic contrast involves using different font weights, sizes, and styles to create visual interest and hierarchy. By contrasting bold and light fonts, or large and small text, designers can guide the viewer's eye and emphasize key information. Effective use of contrast enhances readability and ensures that important messages stand out. Designers should consider the overall composition and balance when applying typographic contrast to maintain cohesion and clarity.`,
     example: 'Using bold headings with light body text to create a clear hierarchy.',
-    icon: TextAlignment,
+    icon: ContrastIcon,
     image: typographicContrastImg
   },
   {
@@ -440,7 +440,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Use shadows and layering to create a sense of depth in design.',
     detailedContent: `Depth in design can be achieved through the use of shadows and layering. By adding shadows to elements, designers can create a three-dimensional effect that enhances realism and visual interest. Layering elements can also contribute to depth, allowing for a more dynamic composition. Understanding light and shadow principles is essential for creating convincing depth in design. Designers should consider the direction of light and the placement of elements to achieve a balanced and visually appealing result.`,
     example: 'Using drop shadows on buttons to create a 3D effect.',
-    icon: Depth,
+    icon: Box,
     image: depthImg
   },
   {
@@ -450,7 +450,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Apply perspective techniques to create realistic depth in designs.',
     detailedContent: `Perspective techniques, such as 1-point, 2-point, and 3-point perspective, are essential for creating realistic depth in design. These techniques involve drawing elements in a way that mimics how they appear in the real world, with lines converging at vanishing points. Understanding perspective allows designers to create more immersive and engaging compositions. By applying perspective principles, designers can enhance the spatial relationships between elements and create a sense of realism in their work.`,
     example: 'Using 2-point perspective to create a realistic room layout.',
-    icon: Perspective,
+    icon: Pyramid,
     image: perspectiveImg
   },
   {
@@ -460,7 +460,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Incorporate 3D effects to add dimension to designs.',
     detailedContent: `3D effects can add volume and depth to designs, making them more engaging and visually appealing. Designers can achieve 3D effects through techniques such as shading, gradients, and perspective. By creating the illusion of depth, designers can enhance the viewer's experience and draw attention to specific elements. Understanding how light interacts with objects is crucial for creating convincing 3D effects. Designers should experiment with different techniques to find the best approach for their specific projects.`,
     example: 'Using gradients and shadows to create a 3D button effect.',
-    icon: Volume,
+    icon: Box,
     image: volume3dImg
   },
   {
@@ -490,7 +490,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Learn the fundamentals of creating and using icons.',
     detailedContent: `Iconography involves the design and use of icons to represent ideas, actions, or objects. Effective icons are simple, recognizable, and convey meaning quickly. Designers should consider factors such as style, size, and context when creating or selecting icons. Consistency in icon design enhances usability and contributes to a cohesive visual language. Understanding iconography basics is essential for creating effective user interfaces and enhancing communication through visual means.`,
     example: 'Using a simple trash can icon to represent delete functionality.',
-    icon: IconographySymbols,
+    icon: Shapes,
     image: iconographySymbolsImg
   },
   {
@@ -500,7 +500,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Incorporate texture and patterns to add depth and interest.',
     detailedContent: `Texture and patterns can enhance visual interest and depth in design. Textures add tactile qualities, while patterns create repetition and rhythm. Designers can use texture and patterns to evoke emotions and create a specific atmosphere. It's essential to balance texture and patterns with other design elements to maintain clarity and cohesion. By experimenting with different textures and patterns, designers can create unique and engaging compositions that capture attention.`,
     example: 'Using a subtle fabric texture in the background of a website.',
-    icon: TexturePattern,
+    icon: Paintbrush,
     image: texturePatternImg
   },
   {
@@ -520,7 +520,7 @@ export const designFundamentals: DesignFundamental[] = [
     description: 'Ensure designs are accessible to all users, including those with disabilities.',
     detailedContent: `Accessibility in design refers to creating products that can be used by people with disabilities. The Web Content Accessibility Guidelines (WCAG) provide standards for making web content accessible. Designers should consider factors such as color contrast, keyboard navigation, and screen reader compatibility. By prioritizing accessibility, designers can create inclusive experiences that cater to a diverse audience. Understanding accessibility principles is essential for responsible and effective design.`,
     example: 'Using alt text for images to ensure screen reader compatibility.',
-    icon: Accessibility,
+    icon: Eye,
     image: accessibilityImg
   },
   {
