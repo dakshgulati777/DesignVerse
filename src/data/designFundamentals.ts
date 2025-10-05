@@ -1,3 +1,4 @@
+// v2.0 - Design Fundamentals with 50 unique entries
 import {
   Eye, Zap, Layers, Minimize2, Palette, Type, Layout,
   Image, Briefcase, Users, Monitor, Lightbulb, Code, Sparkles, Target,
