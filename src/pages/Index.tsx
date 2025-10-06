@@ -2,6 +2,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
 import ColorPalettes from '@/components/ColorPalettes';
+import FontSection from '@/components/FontSection';
 import BlogSection from '@/components/BlogSection';
 import DesignPrinciples from '@/components/DesignPrinciples';
 
@@ -13,6 +14,7 @@ const Index = () => {
         <main>
           <HeroSection />
           <ColorPalettes />
+          <FontSection />
           <BlogSection />
           <DesignPrinciples />
         </main>
