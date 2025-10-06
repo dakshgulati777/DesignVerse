@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Type, Download, Sparkles, RefreshCw } from 'lucide-react';
+import { Type, Download, Sparkles, RefreshCw, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
 
 interface FontPairing {
   id: string;
@@ -16,6 +17,7 @@ interface FontPairing {
 }
 
 const FontSection = () => {
+  const navigate = useNavigate();
   const [selectedMood, setSelectedMood] = useState<string>('modern');
   const [currentPairings, setCurrentPairings] = useState<FontPairing[]>([]);
   const [loading, setLoading] = useState(false);
@@ -196,22 +198,41 @@ const FontSection = () => {
     }, 500);
   };
 
-  const downloadFont = (fontName: string) => {
-    const googleFontUrl = `https://fonts.google.com/specimen/${fontName.replace(/ /g, '+')}`;
-    window.open(googleFontUrl, '_blank');
-    toast.success(`Opening ${fontName} download page...`);
+  const downloadFont = async (fontName: string) => {
+    try {
+      const fontUrl = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@400;700&display=swap`;
+      const response = await fetch(fontUrl);
+      const cssText = await response.text();
+      const urlMatches = cssText.match(/url\((https:\/\/[^)]+)\)/g);
+      
+      if (urlMatches && urlMatches.length > 0) {
+        const fontFileUrl = urlMatches[0].match(/https:\/\/[^)]+/)?.[0];
+        if (fontFileUrl) {
+          const fontResponse = await fetch(fontFileUrl);
+          const fontBlob = await fontResponse.blob();
+          const url = window.URL.createObjectURL(fontBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${fontName.replace(/ /g, '-')}.woff2`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+          toast.success(`${fontName} downloaded successfully!`);
+        }
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error(`Failed to download ${fontName}. Please try again.`);
+    }
   };
 
-  const downloadPairedFonts = (pairing: FontPairing) => {
-    const headingUrl = `https://fonts.google.com/specimen/${pairing.heading.replace(/ /g, '+')}`;
-    const bodyUrl = `https://fonts.google.com/specimen/${pairing.body.replace(/ /g, '+')}`;
-    
-    window.open(headingUrl, '_blank');
-    setTimeout(() => {
-      window.open(bodyUrl, '_blank');
-    }, 500);
-    
-    toast.success(`Opening download pages for ${pairing.heading} & ${pairing.body}...`);
+  const downloadPairedFonts = async (pairing: FontPairing) => {
+    toast.info('Downloading font pair...');
+    await downloadFont(pairing.heading);
+    setTimeout(async () => {
+      await downloadFont(pairing.body);
+    }, 1000);
   };
 
   return (
@@ -304,7 +325,7 @@ const FontSection = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className="glass-card group hover:shadow-[var(--shadow-glow)] transition-all duration-300">
+                  <Card className="glass-card group hover:shadow-[var(--shadow-glow)] hover:scale-105 transition-all duration-300 cursor-pointer">
                     <div className="space-y-4">
                       <div className="flex items-start justify-between">
                         <div>
@@ -314,7 +335,7 @@ const FontSection = () => {
                       </div>
                       
                       {/* Font Preview */}
-                      <div className="space-y-4 py-4 border-t border-white/10 bg-background/30 rounded-lg p-4">
+                      <div className="space-y-4 py-4 border-t border-white/10 bg-background/30 rounded-lg p-4 transition-colors group-hover:bg-background/50">
                         <div>
                           <p className="text-xs text-muted-foreground mb-2">Heading Font</p>
                           <p className="text-xs font-medium text-primary mb-1">{pairing.heading}</p>
@@ -369,11 +390,11 @@ const FontSection = () => {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className="glass-card group hover:shadow-[var(--shadow-glow)] transition-all duration-300">
+                <Card className="glass-card group hover:shadow-[var(--shadow-glow)] hover:scale-105 transition-all duration-300 cursor-pointer">
                   <div className="text-center space-y-3">
-                    <div className="bg-background/30 rounded-lg p-6 mb-2">
+                    <div className="bg-background/30 rounded-lg p-6 mb-2 transition-colors group-hover:bg-background/50">
                       <p 
-                        className="text-5xl font-bold text-foreground"
+                        className="text-5xl font-bold text-foreground transition-transform group-hover:scale-110"
                         style={{ fontFamily: `'${font}', sans-serif` }}
                       >
                         Aa
@@ -390,7 +411,7 @@ const FontSection = () => {
                       onClick={() => downloadFont(font)}
                       variant="outline"
                       size="sm"
-                      className="w-full"
+                      className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                     >
                       <Download className="w-3 h-3 mr-1" />
                       Download
@@ -400,6 +421,23 @@ const FontSection = () => {
               </motion.div>
             ))}
           </div>
+          
+          {/* Explore More Button */}
+          <motion.div
+            className="flex justify-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Button
+              onClick={() => navigate('/font-lab')}
+              size="lg"
+              className="button-primary group"
+            >
+              EXPLORE MORE FONTS
+              <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </motion.div>
         </motion.div>
 
         {/* Load Google Fonts for preview */}
