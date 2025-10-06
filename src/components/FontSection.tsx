@@ -314,23 +314,25 @@ const FontSection = () => {
                       </div>
                       
                       {/* Font Preview */}
-                      <div className="space-y-3 py-4 border-t border-white/10">
+                      <div className="space-y-4 py-4 border-t border-white/10 bg-background/30 rounded-lg p-4">
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">Heading Font</p>
+                          <p className="text-xs text-muted-foreground mb-2">Heading Font</p>
+                          <p className="text-xs font-medium text-primary mb-1">{pairing.heading}</p>
                           <p 
-                            className="text-2xl font-bold"
+                            className="text-3xl font-bold text-foreground leading-tight"
                             style={{ fontFamily: `'${pairing.heading}', sans-serif` }}
                           >
-                            {pairing.heading}
+                            Design Matters
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground mb-1">Body Font</p>
+                          <p className="text-xs text-muted-foreground mb-2">Body Font</p>
+                          <p className="text-xs font-medium text-primary mb-1">{pairing.body}</p>
                           <p 
-                            className="text-base"
+                            className="text-sm text-foreground leading-relaxed"
                             style={{ fontFamily: `'${pairing.body}', sans-serif` }}
                           >
-                            {pairing.body}
+                            The quick brown fox jumps over the lazy dog. Typography is the art of arranging letters.
                           </p>
                         </div>
                       </div>
@@ -369,13 +371,21 @@ const FontSection = () => {
               >
                 <Card className="glass-card group hover:shadow-[var(--shadow-glow)] transition-all duration-300">
                   <div className="text-center space-y-3">
-                    <p 
-                      className="text-3xl font-bold"
-                      style={{ fontFamily: `'${font}', sans-serif` }}
-                    >
-                      Aa
-                    </p>
-                    <p className="text-sm font-medium">{font}</p>
+                    <div className="bg-background/30 rounded-lg p-6 mb-2">
+                      <p 
+                        className="text-5xl font-bold text-foreground"
+                        style={{ fontFamily: `'${font}', sans-serif` }}
+                      >
+                        Aa
+                      </p>
+                      <p 
+                        className="text-sm text-muted-foreground mt-3"
+                        style={{ fontFamily: `'${font}', sans-serif` }}
+                      >
+                        Design
+                      </p>
+                    </div>
+                    <p className="text-sm font-medium text-foreground">{font}</p>
                     <Button 
                       onClick={() => downloadFont(font)}
                       variant="outline"
