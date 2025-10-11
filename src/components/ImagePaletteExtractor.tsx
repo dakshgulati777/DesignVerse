@@ -133,8 +133,8 @@ export default function ImagePaletteExtractor() {
   };
 
   return (
-    <div className="glass-card">
-      <div className="mb-6">
+    <div className="glass-card flex flex-col h-full">
+      <div className="mb-4">
         <h3 className="text-xl font-bold mb-2">Image Palette Extractor</h3>
         <p className="text-sm text-muted-foreground">
           Upload an image to automatically extract its dominant colors
@@ -144,30 +144,33 @@ export default function ImagePaletteExtractor() {
       <canvas ref={canvasRef} className="hidden" />
 
       {!image ? (
-        <div
-          className="border-2 border-dashed border-white/20 rounded-lg p-12 text-center hover:border-primary/50 transition-colors cursor-pointer group"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground group-hover:text-primary transition-colors" />
-          <p className="text-lg font-medium mb-2">Upload an Image</p>
-          <p className="text-sm text-muted-foreground">
-            Click to browse or drag and drop
-          </p>
-          <p className="text-xs text-muted-foreground mt-2">
-            Supports JPG, PNG, WEBP
-          </p>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
+        <div className="flex-1 flex items-center justify-center">
+          <div
+            className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer group w-full"
+            onClick={() => fileInputRef.current?.click()}
+            style={{ minHeight: '320px' }}
+          >
+            <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <p className="text-lg font-medium mb-2">Upload an Image</p>
+            <p className="text-sm text-muted-foreground">
+              Click to browse or drag and drop
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Supports JPG, PNG, WEBP
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+          </div>
         </div>
       ) : (
-        <div className="space-y-6">
-          <div className="relative rounded-lg overflow-hidden border border-white/10">
-            <img src={image} alt="Uploaded" className="w-full h-64 object-cover" />
+        <div className="space-y-4 flex-1 flex flex-col">
+          <div className="relative rounded-lg overflow-hidden border border-white/10 bg-white" style={{ height: '320px' }}>
+            <img src={image} alt="Uploaded" className="w-full h-full object-contain" />
             <Button
               size="icon"
               variant="ghost"
@@ -184,9 +187,9 @@ export default function ImagePaletteExtractor() {
               <p className="text-sm text-muted-foreground mt-4">Extracting colors...</p>
             </div>
           ) : palette.length > 0 ? (
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Extracted Palette</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex-1">
+              <h4 className="text-sm font-semibold mb-3">Extracted Palette</h4>
+              <div className="grid grid-cols-4 gap-2">
                 <AnimatePresence>
                   {palette.map((color, index) => (
                     <motion.div
@@ -199,19 +202,18 @@ export default function ImagePaletteExtractor() {
                       onClick={() => copyColor(color.hex)}
                     >
                       <div
-                        className="h-24 w-full transition-transform group-hover:scale-110"
+                        className="h-16 w-full transition-transform group-hover:scale-110"
                         style={{ backgroundColor: color.hex }}
                       />
-                      <div className="p-3 bg-background/95 backdrop-blur-sm">
+                      <div className="p-2 bg-background/95 backdrop-blur-sm">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-mono font-semibold">{color.hex}</span>
+                          <span className="text-xs font-mono font-semibold truncate">{color.hex}</span>
                           {copiedColor === color.hex ? (
-                            <Check className="w-4 h-4 text-green-500" />
+                            <Check className="w-3 h-3 text-green-500 flex-shrink-0" />
                           ) : (
-                            <Copy className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <Copy className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                           )}
                         </div>
-                        <span className="text-xs text-muted-foreground">{color.rgb}</span>
                       </div>
                     </motion.div>
                   ))}
