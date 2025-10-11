@@ -23,8 +23,6 @@ const DesignPrinciples = () => {
   const [selectedPrinciple, setSelectedPrinciple] = useState<Principle | null>(null);
   const navigate = useNavigate();
 
-  const categories = ['All', 'Design Principles', 'Color Fundamentals', 'Typography', 'Layout & Composition', 'Imagery & Visuals', 'Branding & Identity', 'UX & UI Basics', 'Digital Design', 'Design Tools', 'Visual Communication', 'Print & Production', 'Modern Trends'];
-
   // Comprehensive design principles with detailed information
   const samplePrinciples: Principle[] = [
     {
@@ -82,6 +80,10 @@ const DesignPrinciples = () => {
       detailedInfo: 'Repetition creates unity and strengthens brand identity. Repeat colors, fonts, spacing values, and shapes consistently. Create a design system with reusable components. Consistency builds user trust and makes interfaces predictable and easy to use. Establish patterns early and maintain them throughout.'
     }
   ];
+
+  // Only show categories that have actual principles in samplePrinciples
+  const availableCategories = Array.from(new Set(samplePrinciples.map(p => p.category)));
+  const categories = ['All', ...availableCategories];
 
   useEffect(() => {
     setPrinciples(samplePrinciples);

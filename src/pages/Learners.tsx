@@ -192,20 +192,29 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
 };
 
 const CategoryDrawer = ({ selectedCategory, onCategoryChange }: { selectedCategory: string; onCategoryChange: (category: string) => void }) => {
+  // Get unique categories from the actual design fundamentals data
+  const allCategories = Array.from(new Set(designFundamentals.map(f => f.category)));
+  
+  const categoryIconMap: Record<string, any> = {
+    'Design Principles': Layers,
+    'Color Fundamentals': Palette,
+    'Typography': Type,
+    'Layout & Composition': Layout,
+    'Shape & Form': Image,
+    'UI Design': Monitor,
+    'Motion & Animation': Sparkles,
+    'Branding': Briefcase,
+    'UX Process': Users,
+    'Modern Trends': Sparkles,
+  };
+
   const categories = [
     { id: 'All', label: 'All Topics', icon: Lightbulb },
-    { id: 'Design Principles', label: 'Design Principles', icon: Layers },
-    { id: 'Color Fundamentals', label: 'Color Theory', icon: Palette },
-    { id: 'Typography', label: 'Typography', icon: Type },
-    { id: 'Layout & Composition', label: 'Layout & Composition', icon: Layout },
-    { id: 'Imagery & Visuals', label: 'Imagery & Visuals', icon: Image },
-    { id: 'Branding & Identity', label: 'Branding & Identity', icon: Briefcase },
-    { id: 'UX & UI Basics', label: 'UX & UI Basics', icon: Users },
-    { id: 'Digital Design', label: 'Digital Design', icon: Monitor },
-    { id: 'Design Tools', label: 'Design Tools', icon: Code },
-    { id: 'Visual Communication', label: 'Visual Communication', icon: Eye },
-    { id: 'Print & Production', label: 'Print & Production', icon: Filter },
-    { id: 'Modern Trends', label: 'Modern Trends', icon: Sparkles },
+    ...allCategories.map(cat => ({
+      id: cat,
+      label: cat,
+      icon: categoryIconMap[cat] || Code
+    }))
   ];
 
   return (

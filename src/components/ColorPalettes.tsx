@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, RefreshCw, Palette, Check, Sparkles, Wand2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, RefreshCw, Palette, Check, Sparkles, Wand2, ChevronDown, ChevronUp, Box } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import ColorSphere3D from './ColorSphere3D';
+import ImagePaletteExtractor from './ImagePaletteExtractor';
 
 interface ColorPalette {
   id: string;
@@ -534,6 +536,25 @@ const ColorPalettes = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* 3D Color Sphere and Image Palette Extractor */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <ColorSphere3D />
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <ImagePaletteExtractor />
+          </motion.div>
+        </div>
 
         {/* Palettes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
