@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Search, ArrowLeft, Menu, X 
+  Search, ArrowLeft, Menu, X, Bookmark, BookmarkCheck 
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,8 @@ import {
   Eye, Filter, Layers, Palette, Type, Layout, 
   Image, Briefcase, Users, Monitor, Lightbulb, Code, Sparkles
 } from 'lucide-react';
+import { useBookmarks } from '@/hooks/useBookmarks';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCategory: string; onCategoryChange: (category: string) => void }) => {
   const navigate = useNavigate();
@@ -26,6 +28,27 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
   const [filteredPrinciples, setFilteredPrinciples] = useState<DesignFundamental[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPrinciple, setSelectedPrinciple] = useState<DesignFundamental | null>(null);
+  const { user } = useAuth();
+  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+
+  const handleBookmark = async (e: React.MouseEvent, principle: DesignFundamental) => {
+    e.stopPropagation();
+    if (!user) {
+      return;
+    }
+
+    const fundamentalId = `fundamental-${principle.id}`;
+    if (isBookmarked('fundamental', fundamentalId)) {
+      await removeBookmark('fundamental', fundamentalId);
+    } else {
+      await addBookmark('fundamental', fundamentalId, {
+        name: principle.title,
+        category: principle.category,
+        description: principle.description,
+        image: principle.image
+      });
+    }
+  };
 
   useEffect(() => {
     setPrinciples(designFundamentals);
@@ -90,7 +113,7 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
           {filteredPrinciples.map((principle, index) => (
             <motion.div
               key={principle.id}
-              className="parallax-card group cursor-pointer hover-glow transition-all duration-300"
+              className="parallax-card group cursor-pointer hover-glow transition-all duration-300 relative"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
@@ -101,19 +124,23 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
               }}
               onClick={() => setSelectedPrinciple(principle)}
             >
-              <img src={principle.image} alt={principle.title} className="w-full h-40 object-cover rounded-lg mb-4" />
+              <div className="relative">
+                <img src={principle.image} alt={principle.title} className="w-full h-40 object-cover rounded-lg mb-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => handleBookmark(e, principle)}
+                  className="absolute top-2 right-2 h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
+                >
+                  {isBookmarked('fundamental', `fundamental-${principle.id}`) ? (
+                    <BookmarkCheck className="w-4 h-4 text-primary fill-primary" />
+                  ) : (
+                    <Bookmark className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
-                  <principle.icon className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">
-                    {principle.title}
-                  </h3>
-                  <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
-                    {principle.category}
-                  </span>
-                </div>
+...
               </div>
               
               <p className="text-muted-foreground mb-3 leading-relaxed text-sm line-clamp-3">
@@ -160,20 +187,33 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
               <img src={selectedPrinciple.image} alt={selectedPrinciple.title} className="w-full h-64 object-cover rounded-t-lg mb-6" />
               <div className="p-6">
                 <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 flex-1">
                     <div className="p-4 rounded-xl bg-primary/20 text-primary">
                       <selectedPrinciple.icon className="w-8 h-8" />
                     </div>
-                    <div>
-                      <h2 className="text-3xl font-bold mb-2">{selectedPrinciple.title}</h2>
+                    <div className="flex-1">
+                      <h2 className="text-2xl md:text-3xl font-bold mb-2">{selectedPrinciple.title}</h2>
                       <span className="text-sm px-3 py-1 bg-primary/10 text-primary rounded-full">
                         {selectedPrinciple.category}
                       </span>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => setSelectedPrinciple(null)}>
-                    <X className="w-5 h-5" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => handleBookmark(e, selectedPrinciple)}
+                    >
+                      {isBookmarked('fundamental', `fundamental-${selectedPrinciple.id}`) ? (
+                        <BookmarkCheck className="w-5 h-5 text-primary fill-primary" />
+                      ) : (
+                        <Bookmark className="w-5 h-5" />
+                      )}
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => setSelectedPrinciple(null)}>
+                      <X className="w-5 h-5" />
+                    </Button>
+                  </div>
                 </div>
                 <div className="prose prose-invert max-w-none">
                   <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{selectedPrinciple.detailedContent}</p>

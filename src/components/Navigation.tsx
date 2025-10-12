@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Palette, BookOpen, Search, Moon, Sun, Zap, Rocket, GraduationCap, LogOut, LogIn } from 'lucide-react';
+import { Palette, BookOpen, Search, Moon, Sun, Zap, Rocket, GraduationCap, LogOut, LogIn, Type, Bookmark } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -13,9 +13,11 @@ const Navigation = () => {
 
   const navItems = [
     { icon: Palette, label: 'Palettes', href: '#palettes', type: 'hash' },
+    { icon: Type, label: 'Fonts', href: '/font-lab', type: 'route' },
     { icon: BookOpen, label: 'Blog', href: '#blog', type: 'hash' },
     { icon: Search, label: 'Principles', href: '#principles', type: 'hash' },
     { icon: GraduationCap, label: 'Learning Hub', href: '/learners', type: 'route' },
+    { icon: Bookmark, label: 'Bookmarks', href: '/bookmarks', type: 'route' },
   ];
 
   const themeIcons = {

@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
-import { ExternalLink, Calendar, User } from 'lucide-react';
+import { ExternalLink, Calendar, User, Bookmark, BookmarkCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useBookmarks } from '@/hooks/useBookmarks';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -25,6 +27,27 @@ interface BlogPost {
 const BlogSection = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+
+  const handleBookmark = async (post: BlogPost) => {
+    if (!user) {
+      return;
+    }
+
+    const blogId = `blog-${post.id}`;
+    if (isBookmarked('blog', blogId)) {
+      await removeBookmark('blog', blogId);
+    } else {
+      await addBookmark('blog', blogId, {
+        title: post.title,
+        description: post.excerpt,
+        category: post.category,
+        author: post.author,
+        date: post.date
+      });
+    }
+  };
 
   // Sample blog posts from Daksh Gulati's blog
   const samplePosts: BlogPost[] = [
@@ -179,10 +202,25 @@ const BlogSection = () => {
                         alt={post.title}
                         className="w-full h-44 sm:h-48 object-cover transition-transform duration-700 group-hover:scale-110"
                       />
-                      <div className="absolute top-3 left-3">
+                      <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
                         <span className="bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-xs sm:text-sm font-medium backdrop-blur-sm">
                           {post.category}
                         </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleBookmark(post);
+                          }}
+                          className="h-8 w-8 bg-background/80 backdrop-blur-sm hover:bg-background"
+                        >
+                          {isBookmarked('blog', `blog-${post.id}`) ? (
+                            <BookmarkCheck className="w-4 h-4 text-primary fill-primary" />
+                          ) : (
+                            <Bookmark className="w-4 h-4" />
+                          )}
+                        </Button>
                       </div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
