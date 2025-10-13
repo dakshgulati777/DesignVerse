@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, RefreshCw, Palette, Check, Sparkles, Wand2, ChevronDown, ChevronUp, Bookmark, BookmarkCheck } from 'lucide-react';
+import { Copy, RefreshCw, Palette, Check, Sparkles, Wand2, ChevronDown, ChevronUp, Box } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import ColorSphere3D from './ColorSphere3D';
 import ImagePaletteExtractor from './ImagePaletteExtractor';
-import { useBookmarks } from '@/hooks/useBookmarks';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface ColorPalette {
   id: string;
@@ -26,8 +24,6 @@ const ColorPalettes = () => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [selectedType, setSelectedType] = useState<ColorPalette['type']>('analogous');
   const [aiLoading, setAiLoading] = useState(false);
-  const { user } = useAuth();
-  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
 
   // Expanded sample palettes
   const samplePalettes: ColorPalette[] = [
@@ -315,54 +311,39 @@ const ColorPalettes = () => {
     return matchedColors.length > 0 ? matchedColors : ['#6B46C1', '#3B82F6', '#10B981'];
   };
 
-  // Generate palette variations from base color with improved algorithm
+  // Generate palette variations from base color
   const generatePaletteFromBase = (baseColor: string, type: ColorPalette['type']): string[] => {
     const hsl = hexToHsl(baseColor);
     const colors: string[] = [];
     
     switch (type) {
       case 'analogous':
-        // Improved analogous with better color harmony
         for (let i = 0; i < 5; i++) {
-          const hueShift = (i - 2) * 25; // -50 to +50 degrees
-          const satShift = Math.sin(i * Math.PI / 4) * 15; // Varied saturation
-          const lightShift = (i - 2) * 8; // Varied lightness
-          colors.push(hslToHex(
-            (hsl.h + hueShift + 360) % 360,
-            Math.max(40, Math.min(100, hsl.s + satShift)),
-            Math.max(25, Math.min(85, hsl.l + lightShift))
-          ));
+          colors.push(hslToHex(hsl.h + i * 30, hsl.s, Math.max(20, Math.min(80, hsl.l + i * 10))));
         }
         break;
       case 'monochrome':
-        // Improved monochrome with better contrast
         for (let i = 0; i < 5; i++) {
-          const lightness = 15 + i * 18; // Better distribution
-          const satVariation = hsl.s * (0.8 + i * 0.05); // Subtle saturation variation
-          colors.push(hslToHex(hsl.h, Math.min(100, satVariation), lightness));
+          colors.push(hslToHex(hsl.h, hsl.s, 20 + i * 15));
         }
         break;
       case 'complementary':
         colors.push(baseColor);
         colors.push(hslToHex((hsl.h + 180) % 360, hsl.s, hsl.l));
-        colors.push(hslToHex(hsl.h, Math.max(30, hsl.s - 25), Math.min(90, hsl.l + 25)));
-        colors.push(hslToHex((hsl.h + 180) % 360, Math.max(30, hsl.s - 25), Math.min(90, hsl.l + 25)));
-        colors.push(hslToHex((hsl.h + 15) % 360, hsl.s * 0.6, Math.min(95, hsl.l + 35)));
+        colors.push(hslToHex(hsl.h, hsl.s - 20, hsl.l + 20));
+        colors.push(hslToHex((hsl.h + 180) % 360, hsl.s - 20, hsl.l + 20));
+        colors.push(hslToHex(hsl.h, hsl.s / 2, hsl.l + 30));
         break;
       case 'triad':
-        // Perfect triadic harmony
         colors.push(baseColor);
         colors.push(hslToHex((hsl.h + 120) % 360, hsl.s, hsl.l));
         colors.push(hslToHex((hsl.h + 240) % 360, hsl.s, hsl.l));
-        // Add tints for better palette
-        colors.push(hslToHex(hsl.h, Math.max(30, hsl.s - 35), Math.min(90, hsl.l + 30)));
-        colors.push(hslToHex((hsl.h + 60) % 360, Math.max(25, hsl.s - 40), Math.min(92, hsl.l + 32)));
+        colors.push(hslToHex(hsl.h, hsl.s - 30, hsl.l + 20));
+        colors.push(hslToHex((hsl.h + 60) % 360, hsl.s - 20, hsl.l + 10));
         break;
       case 'shades':
-        // Better shade distribution
         for (let i = 0; i < 5; i++) {
-          const lightness = 12 + i * 19; // Even distribution from dark to light
-          colors.push(hslToHex(hsl.h, Math.max(50, hsl.s), lightness));
+          colors.push(hslToHex(hsl.h, hsl.s, 15 + i * 17));
         }
         break;
     }
@@ -461,24 +442,6 @@ const ColorPalettes = () => {
       s: Math.round(s * 100),
       l: Math.round(l * 100)
     };
-  };
-
-  const handleBookmark = async (palette: ColorPalette) => {
-    if (!user) {
-      toast.error('Please sign in to bookmark palettes');
-      return;
-    }
-
-    const paletteId = `palette-${palette.id}`;
-    if (isBookmarked('palette', paletteId)) {
-      await removeBookmark('palette', paletteId);
-    } else {
-      await addBookmark('palette', paletteId, {
-        name: palette.name,
-        colors: palette.colors,
-        type: palette.type
-      });
-    }
   };
 
   useEffect(() => {
@@ -594,111 +557,105 @@ const ColorPalettes = () => {
         </div>
 
         {/* Palettes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-12">
-          {palettes.map((palette, index) => {
-            const paletteId = `palette-${palette.id}`;
-            const bookmarked = isBookmarked('palette', paletteId);
-            
-            return (
-              <motion.div
-                key={palette.id}
-                className="group relative overflow-hidden rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-4 md:p-6 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/30 transition-all duration-500 hover:-translate-y-2 hover:bg-card/70"
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ 
-                  delay: index * 0.1,
-                  type: "spring",
-                  stiffness: 100,
-                  damping: 15
-                }}
-                whileHover={{ 
-                  y: -8, 
-                  rotateX: 5,
-                  rotateY: 5,
-                  transition: { duration: 0.2 }
-                }}
-              >
-                {/* Hover Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary-glow/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                <div className="relative z-10">
-                  <div className="flex justify-between items-start mb-4 gap-2">
-                    <h3 className="text-lg md:text-xl font-semibold truncate group-hover:text-primary transition-colors flex-1">
-                      {palette.name}
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs md:text-sm text-muted-foreground bg-background/20 px-3 py-1 rounded-full border border-border/20 group-hover:border-primary/30 transition-colors whitespace-nowrap">
-                        {palette.type}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleBookmark(palette)}
-                        className="h-8 w-8 hover:bg-primary/10"
-                      >
-                        {bookmarked ? (
-                          <BookmarkCheck className="w-4 h-4 text-primary fill-primary" />
-                        ) : (
-                          <Bookmark className="w-4 h-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-5 gap-1 md:gap-2 mb-4">
-...
-                  </div>
-
-                  {/* Color Format Display */}
-                  <div className="space-y-1 md:space-y-2">
-                    {palette.colors.slice(0, 2).map((color, i) => {
-                      const formats = getColorFormats(color);
-                      return (
-                        <div key={i} className="text-xs md:text-sm font-mono text-muted-foreground grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
-                          <span className="truncate">HEX: {formats.hex}</span>
-                          <span className="truncate">RGB: {formats.rgb}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+          {palettes.map((palette, index) => (
+            <motion.div
+              key={palette.id}
+              className="group relative overflow-hidden rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-4 md:p-6 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/30 transition-all duration-500 hover:-translate-y-2 hover:bg-card/70"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ 
+                delay: index * 0.1,
+                type: "spring",
+                stiffness: 100,
+                damping: 15
+              }}
+              whileHover={{ 
+                y: -8, 
+                rotateX: 5,
+                rotateY: 5,
+                transition: { duration: 0.2 }
+              }}
+            >
+              {/* Hover Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary-glow/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
+                  <h3 className="text-lg md:text-xl font-semibold truncate group-hover:text-primary transition-colors">
+                    {palette.name}
+                  </h3>
+                  <span className="text-xs md:text-sm text-muted-foreground bg-background/20 px-3 py-1 rounded-full self-start sm:self-auto border border-border/20 group-hover:border-primary/30 transition-colors">
+                    {palette.type}
+                  </span>
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>
 
-        {/* 3D Color Sphere and Image Palette Extractor */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-12"
-        >
-          <div className="text-center mb-8">
-            <h3 className="text-2xl md:text-3xl font-bold mb-2">Interactive Color Tools</h3>
-            <p className="text-muted-foreground">Explore colors in 3D or extract palettes from images</p>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              <ColorSphere3D />
+                <div className="grid grid-cols-5 gap-1 md:gap-2 mb-4">
+                  {palette.colors.map((color, colorIndex) => (
+                    <motion.div
+                      key={colorIndex}
+                      className="relative group/color cursor-pointer overflow-hidden rounded-lg"
+                      whileHover={{ 
+                        scale: 1.1, 
+                        y: -4,
+                        rotateY: 10,
+                        transition: { duration: 0.2 }
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => copyColor(color)}
+                    >
+                      <div
+                        className="w-full h-12 sm:h-16 md:h-20 rounded-lg shadow-lg transition-all duration-300 group-hover/color:shadow-xl"
+                        style={{ 
+                          backgroundColor: color,
+                          boxShadow: `0 4px 20px ${color}40, 0 0 0 1px ${color}20`
+                        }}
+                      />
+                      
+                      {/* Color Info Overlay */}
+                      <motion.div 
+                        className="absolute inset-0 bg-black/70 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center text-white text-xs"
+                        initial={{ opacity: 0 }}
+                        whileHover={{ opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {copiedColor === color ? (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="flex flex-col items-center"
+                          >
+                            <Check className="w-3 h-3 md:w-4 md:h-4 mb-1 text-green-400" />
+                            <span className="text-green-400">Copied!</span>
+                          </motion.div>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3 md:w-4 md:h-4 mb-1" />
+                            <span className="font-mono text-xs">{color}</span>
+                          </>
+                        )}
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Color Format Display */}
+                <div className="space-y-1 md:space-y-2">
+                  {palette.colors.slice(0, 2).map((color, i) => {
+                    const formats = getColorFormats(color);
+                    return (
+                      <div key={i} className="text-xs md:text-sm font-mono text-muted-foreground grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
+                        <span className="truncate">HEX: {formats.hex}</span>
+                        <span className="truncate">RGB: {formats.rgb}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-            >
-              <ImagePaletteExtractor />
-            </motion.div>
-          </div>
-        </motion.div>
+          ))}
+        </div>
 
         {/* Show More Button - Only show if there are sample palettes to show */}
         {samplePalettes.length > 4 && (
