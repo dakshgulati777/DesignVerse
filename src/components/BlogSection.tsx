@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
-import { ExternalLink, Calendar, User } from 'lucide-react';
+import { ExternalLink, Calendar, User, Bookmark, BookmarkCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useBookmarks } from '@/hooks/useBookmarks';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -25,6 +27,8 @@ interface BlogPost {
 const BlogSection = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const { fadeInUp } = useScrollAnimation();
 
   // Sample blog posts from Daksh Gulati's blog
   const samplePosts: BlogPost[] = [
@@ -88,9 +92,8 @@ const BlogSection = () => {
         {/* Section Header */}
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          {...fadeInUp}
+          transition={{ duration: 0.6 }}
         >
           <div className="inline-flex items-center gap-2 glass-nav mb-6">
             <ExternalLink className="w-5 h-5 text-primary" />
@@ -210,7 +213,29 @@ const BlogSection = () => {
                       </div>
 
                       <div className="flex justify-between items-center pt-4 border-t border-border/30">
-                        <span className="text-xs sm:text-sm text-primary font-medium">{post.readTime}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs sm:text-sm text-primary font-medium">{post.readTime}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const bookmarked = isBookmarked('blog', post.id);
+                              if (bookmarked) {
+                                removeBookmark('blog', post.id);
+                              } else {
+                                addBookmark('blog', post.id, post);
+                              }
+                            }}
+                            className="p-1 hover:text-primary"
+                          >
+                            {isBookmarked('blog', post.id) ? (
+                              <BookmarkCheck className="w-4 h-4 fill-current" />
+                            ) : (
+                              <Bookmark className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </div>
                         <Button variant="outline" size="sm" className="btn-glass text-xs sm:text-sm hover-glow">
                           Read More
                           <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
@@ -227,9 +252,8 @@ const BlogSection = () => {
         {/* View All Button */}
         <motion.div
           className="text-center mt-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          {...fadeInUp}
+          transition={{ duration: 0.6 }}
         >
           <Button 
             className="btn-primary"

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Palette, BookOpen, Search, Moon, Sun, Zap, Rocket, GraduationCap, LogOut, LogIn } from 'lucide-react';
+import { Palette, BookOpen, Search, Moon, Sun, Zap, Rocket, GraduationCap, LogOut, LogIn, Bookmark, Type } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -13,9 +13,11 @@ const Navigation = () => {
 
   const navItems = [
     { icon: Palette, label: 'Palettes', href: '#palettes', type: 'hash' },
+    { icon: Type, label: 'Fonts', href: '/font-lab', type: 'route' },
     { icon: BookOpen, label: 'Blog', href: '#blog', type: 'hash' },
     { icon: Search, label: 'Principles', href: '#principles', type: 'hash' },
-    { icon: GraduationCap, label: 'Learning Hub', href: '/learners', type: 'route' },
+    { icon: GraduationCap, label: 'Learning', href: '/learners', type: 'route' },
+    { icon: Bookmark, label: 'Bookmarks', href: '/bookmarks', type: 'route' },
   ];
 
   const themeIcons = {
@@ -49,27 +51,27 @@ const Navigation = () => {
       <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-2 md:top-4 left-1/2 transform -translate-x-1/2 z-50 w-[96%] md:w-auto max-w-6xl"
+        className="fixed top-2 md:top-4 left-1/2 transform -translate-x-1/2 z-50 w-[98%] md:w-auto max-w-[95vw]"
       >
-        <div className="glass-nav flex items-center justify-between md:gap-6 px-3 md:px-6">
+        <div className="glass-nav flex items-center justify-between md:gap-3 lg:gap-4 px-2 md:px-4 lg:px-6 py-2 md:py-3">
           {/* Logo */}
           <motion.div 
             whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 md:gap-2 cursor-pointer"
             onClick={scrollToTop}
             role="button"
             tabIndex={0}
           >
-            <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center hover-glow">
+            <div className="w-5 h-5 md:w-7 md:h-7 lg:w-8 lg:h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center hover-glow">
               <Palette className="w-3 h-3 md:w-4 md:h-4 text-primary-foreground" />
             </div>
-            <span className="font-bold text-sm md:text-lg lg:text-xl bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            <span className="hidden sm:block font-bold text-xs md:text-base lg:text-lg bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
               DesignVerse
             </span>
           </motion.div>
 
-          {/* Navigation Items - Hide text on mobile */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* Navigation Items - Hide on smallest screens */}
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3">
             {navItems.map((item, index) => (
               item.type === 'hash' ? (
                 <motion.a
@@ -77,13 +79,13 @@ const Navigation = () => {
                   href={item.href}
                   whileHover={{ y: -2 }}
                   whileTap={{ y: 0 }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10"
+                  className="flex items-center gap-1.5 px-2 xl:px-3 py-1.5 rounded-lg transition-all duration-300 hover:bg-white/10"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <item.icon className="w-4 h-4" />
-                  <span className="font-medium">{item.label}</span>
+                  <item.icon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
+                  <span className="text-xs xl:text-sm font-medium">{item.label}</span>
                 </motion.a>
               ) : (
                 <motion.button
@@ -91,20 +93,20 @@ const Navigation = () => {
                   onClick={() => handleNavClick(item)}
                   whileHover={{ y: -2 }}
                   whileTap={{ y: 0 }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 hover:bg-white/10"
+                  className="flex items-center gap-1.5 px-2 xl:px-3 py-1.5 rounded-lg transition-all duration-300 hover:bg-white/10"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <item.icon className="w-4 h-4" />
-                  <span className="font-medium">{item.label}</span>
+                  <item.icon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
+                  <span className="text-xs xl:text-sm font-medium">{item.label}</span>
                 </motion.button>
               )
             ))}
           </div>
 
-          {/* Mobile Navigation - Icons only */}
-          <div className="flex md:hidden items-center gap-1">
+          {/* Mobile/Tablet Navigation */}
+          <div className="flex lg:hidden items-center gap-1">
             {navItems.map((item, index) => (
               item.type === 'hash' ? (
                 <motion.a
@@ -137,8 +139,8 @@ const Navigation = () => {
           </div>
 
           {/* Theme Switcher & Auth */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
+          <div className="flex items-center gap-1 md:gap-2">
+            <div className="flex items-center gap-0.5 md:gap-1 bg-white/5 rounded-lg p-0.5 md:p-1">
               {(['dark', 'light', 'neon'] as const).map((themeOption) => {
                 const Icon = themeIcons[themeOption];
                 return (
@@ -147,7 +149,7 @@ const Navigation = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => setTheme(themeOption)}
-                    className={`p-1.5 md:p-2 rounded-md transition-all duration-300 ${
+                    className={`p-1 md:p-1.5 rounded-md transition-all duration-300 ${
                       theme === themeOption 
                         ? 'bg-primary text-primary-foreground shadow-lg' 
                         : 'hover:bg-white/10'
@@ -163,7 +165,8 @@ const Navigation = () => {
               onClick={handleAuthAction}
               variant="ghost"
               size="sm"
-              className="p-1.5 md:p-2 rounded-md transition-all duration-300 hover:bg-white/10"
+              className="p-1 md:p-1.5 rounded-md transition-all duration-300 hover:bg-white/10"
+              title={user ? 'Sign out' : 'Sign in'}
             >
               {user ? <LogOut className="w-3 h-3 md:w-4 md:h-4" /> : <LogIn className="w-3 h-3 md:w-4 md:h-4" />}
             </Button>

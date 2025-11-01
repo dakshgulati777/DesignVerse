@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Search, ArrowLeft, Menu, X 
+  Search, ArrowLeft, Menu, X, Bookmark, BookmarkCheck
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,8 @@ import {
   Eye, Filter, Layers, Palette, Type, Layout, 
   Image, Briefcase, Users, Monitor, Lightbulb, Code, Sparkles
 } from 'lucide-react';
+import { useBookmarks } from '@/hooks/useBookmarks';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCategory: string; onCategoryChange: (category: string) => void }) => {
   const navigate = useNavigate();
@@ -26,6 +28,8 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
   const [filteredPrinciples, setFilteredPrinciples] = useState<DesignFundamental[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPrinciple, setSelectedPrinciple] = useState<DesignFundamental | null>(null);
+  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const { fadeInUp } = useScrollAnimation();
 
   useEffect(() => {
     setPrinciples(designFundamentals);
@@ -114,6 +118,26 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
                     {principle.category}
                   </span>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const bookmarked = isBookmarked('fundamental', principle.id);
+                    if (bookmarked) {
+                      removeBookmark('fundamental', principle.id);
+                    } else {
+                      addBookmark('fundamental', principle.id, principle);
+                    }
+                  }}
+                  className="p-2 hover:text-primary"
+                >
+                  {isBookmarked('fundamental', principle.id) ? (
+                    <BookmarkCheck className="w-4 h-4 fill-current" />
+                  ) : (
+                    <Bookmark className="w-4 h-4" />
+                  )}
+                </Button>
               </div>
               
               <p className="text-muted-foreground mb-3 leading-relaxed text-sm line-clamp-3">

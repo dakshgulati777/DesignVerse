@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, RefreshCw, Palette, Check, Sparkles, Wand2, ChevronDown, ChevronUp, Box } from 'lucide-react';
+import { Copy, RefreshCw, Palette, Check, Sparkles, Wand2, ChevronDown, ChevronUp, Bookmark, BookmarkCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import ColorSphere3D from './ColorSphere3D';
 import ImagePaletteExtractor from './ImagePaletteExtractor';
+import { useBookmarks } from '@/hooks/useBookmarks';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 interface ColorPalette {
   id: string;
@@ -24,6 +26,8 @@ const ColorPalettes = () => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [selectedType, setSelectedType] = useState<ColorPalette['type']>('analogous');
   const [aiLoading, setAiLoading] = useState(false);
+  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const { fadeInUp, fadeInLeft, fadeInRight } = useScrollAnimation();
 
   // Expanded sample palettes
   const samplePalettes: ColorPalette[] = [
@@ -455,9 +459,8 @@ const ColorPalettes = () => {
         {/* Section Header */}
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          {...fadeInUp}
+          transition={{ duration: 0.6 }}
         >
           <div className="inline-flex items-center gap-2 glass-nav mb-6">
             <Palette className="w-5 h-5 text-primary" />
@@ -475,9 +478,8 @@ const ColorPalettes = () => {
         {/* AI Color Generation */}
         <motion.div
           className="max-w-4xl mx-auto mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          {...fadeInUp}
+          transition={{ duration: 0.6 }}
         >
           <div className="glass-card">
             <div className="flex items-center gap-2 mb-6">
@@ -537,25 +539,6 @@ const ColorPalettes = () => {
           </div>
         </motion.div>
 
-        {/* 3D Color Sphere and Image Palette Extractor */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <ColorSphere3D />
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <ImagePaletteExtractor />
-          </motion.div>
-        </div>
-
         {/* Palettes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
           {palettes.map((palette, index) => (
@@ -582,13 +565,36 @@ const ColorPalettes = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary-glow/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
               <div className="relative z-10">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-                  <h3 className="text-lg md:text-xl font-semibold truncate group-hover:text-primary transition-colors">
-                    {palette.name}
-                  </h3>
-                  <span className="text-xs md:text-sm text-muted-foreground bg-background/20 px-3 py-1 rounded-full self-start sm:self-auto border border-border/20 group-hover:border-primary/30 transition-colors">
-                    {palette.type}
-                  </span>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-2">
+                  <div className="flex-1">
+                    <h3 className="text-lg md:text-xl font-semibold truncate group-hover:text-primary transition-colors">
+                      {palette.name}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs md:text-sm text-muted-foreground bg-background/20 px-3 py-1 rounded-full border border-border/20 group-hover:border-primary/30 transition-colors">
+                      {palette.type}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const bookmarked = isBookmarked('palette', palette.id);
+                        if (bookmarked) {
+                          removeBookmark('palette', palette.id);
+                        } else {
+                          addBookmark('palette', palette.id, palette);
+                        }
+                      }}
+                      className="p-2 hover:text-primary"
+                    >
+                      {isBookmarked('palette', palette.id) ? (
+                        <BookmarkCheck className="w-4 h-4 fill-current" />
+                      ) : (
+                        <Bookmark className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-5 gap-1 md:gap-2 mb-4">
@@ -661,9 +667,8 @@ const ColorPalettes = () => {
         {samplePalettes.length > 4 && (
           <motion.div
             className="text-center mt-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            {...fadeInUp}
+            transition={{ duration: 0.6 }}
           >
             <Button 
               onClick={() => setShowMore(!showMore)}
@@ -678,6 +683,37 @@ const ColorPalettes = () => {
             </Button>
           </motion.div>
         )}
+
+        {/* 3D Color Sphere and Image Palette Extractor Section */}
+        <motion.div className="mt-20" {...fadeInUp} transition={{ duration: 0.6 }}>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Color <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Exploration Tools</span>
+            </h2>
+            <p className="text-muted-foreground">
+              Interactive tools to discover and extract perfect color harmonies
+            </p>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <motion.div
+              initial={{ opacity: 0, x: -60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6 }}
+            >
+              <ColorSphere3D />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6 }}
+            >
+              <ImagePaletteExtractor />
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
