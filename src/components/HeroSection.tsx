@@ -1,19 +1,33 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Palette, Wand2, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroImage from '@/assets/hero-bg.jpg';
+import Floating3DElement from './Floating3DElement';
 
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      <motion.div 
+        className="absolute inset-0 z-0"
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.5 }}
+      >
         <img 
           src={heroImage} 
           alt="DesignVerse space background" 
-          className="w-full h-full object-cover dark:opacity-40 light:opacity-25 neon:opacity-30"
+          className="w-full h-full object-cover dark:opacity-50 light:opacity-30 neon:opacity-40"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/50 to-background/90" />
+      </motion.div>
+
+      {/* Floating 3D Elements */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
+        <Floating3DElement icon={<Palette className="w-6 h-6" />} delay={0} duration={15} size="md" />
+        <Floating3DElement icon={<Wand2 className="w-5 h-5" />} delay={2} duration={18} size="sm" />
+        <Floating3DElement icon={<Layers className="w-5 h-5" />} delay={4} duration={20} size="sm" />
+        <Floating3DElement icon={<Sparkles className="w-6 h-6" />} delay={1} duration={16} size="md" />
       </div>
 
       {/* Floating Elements */}

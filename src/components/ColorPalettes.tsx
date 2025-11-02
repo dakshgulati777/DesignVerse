@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Copy, RefreshCw, Palette, Check, Sparkles, Wand2, ChevronDown, ChevronUp, Bookmark, BookmarkCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import ColorSphere3D from './ColorSphere3D';
 import ImagePaletteExtractor from './ImagePaletteExtractor';
+import ParallaxCard from './ParallaxCard';
+import Interactive3DCard from './Interactive3DCard';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
@@ -28,6 +30,13 @@ const ColorPalettes = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const { fadeInUp, fadeInLeft, fadeInRight } = useScrollAnimation();
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
   // Expanded sample palettes
   const samplePalettes: ColorPalette[] = [
@@ -454,7 +463,7 @@ const ColorPalettes = () => {
   }, [showMore]);
 
   return (
-    <section id="palettes" className="py-20 px-6">
+    <section id="palettes" className="py-20 px-6 relative" ref={sectionRef}>
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <motion.div
@@ -540,27 +549,22 @@ const ColorPalettes = () => {
         </motion.div>
 
         {/* Palettes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8">
           {palettes.map((palette, index) => (
-            <motion.div
-              key={palette.id}
-              className="group relative overflow-hidden rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-4 md:p-6 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/30 transition-all duration-500 hover:-translate-y-2 hover:bg-card/70"
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ 
-                delay: index * 0.1,
-                type: "spring",
-                stiffness: 100,
-                damping: 15
-              }}
-              whileHover={{ 
-                y: -8, 
-                rotateX: 5,
-                rotateY: 5,
-                transition: { duration: 0.2 }
-              }}
-            >
+            <ParallaxCard key={palette.id} offset={30}>
+              <Interactive3DCard>
+                <motion.div
+                  className="group relative overflow-hidden rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-4 md:p-6 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/30 transition-all duration-500 hover:-translate-y-2 hover:bg-card/70 h-full"
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ 
+                    delay: index * 0.05,
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 15
+                  }}
+                >
               {/* Hover Glow Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary-glow/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
@@ -659,7 +663,9 @@ const ColorPalettes = () => {
                   })}
                 </div>
               </div>
-            </motion.div>
+                </motion.div>
+              </Interactive3DCard>
+            </ParallaxCard>
           ))}
         </div>
 

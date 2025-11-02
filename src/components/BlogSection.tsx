@@ -145,17 +145,27 @@ const BlogSection = () => {
               } as any}
               breakpoints={{
                 320: {
-                  slidesPerView: 1,
-                  spaceBetween: 20,
-                  centeredSlides: true,
+                  slidesPerView: 2,
+                  spaceBetween: 15,
+                  centeredSlides: false,
                 },
                 640: {
-                  slidesPerView: 2,
-                  spaceBetween: 24,
+                  slidesPerView: 3,
+                  spaceBetween: 20,
+                  centeredSlides: false,
+                },
+                768: {
+                  slidesPerView: 4,
+                  spaceBetween: 20,
                   centeredSlides: false,
                 },
                 1024: {
-                  slidesPerView: 3,
+                  slidesPerView: 5,
+                  spaceBetween: 25,
+                  centeredSlides: false,
+                },
+                1280: {
+                  slidesPerView: 6,
                   spaceBetween: 30,
                   centeredSlides: false,
                 }

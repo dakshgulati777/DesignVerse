@@ -317,7 +317,7 @@ const FontSection = () => {
             <h3 className="text-2xl font-bold mb-8 text-center">
               Curated Pairings for <span className="text-primary capitalize">{selectedMood}</span> Mood
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
               {currentPairings.map((pairing, index) => (
                 <motion.div
                   key={pairing.id}
@@ -380,8 +380,8 @@ const FontSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h3 className="text-2xl font-bold mb-8 text-center">Popular Google Fonts</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            <h3 className="text-2xl font-bold mb-8 text-center">Popular Google Fonts</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {popularFonts.map((font, index) => (
               <motion.div
                 key={font}
