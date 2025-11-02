@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Type, Download, Sparkles, RefreshCw, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,14 @@ const FontSection = () => {
   const [selectedMood, setSelectedMood] = useState<string>('modern');
   const [currentPairings, setCurrentPairings] = useState<FontPairing[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Curated font pairings based on different themes and moods
   const fontPairings: { [key: string]: FontPairing[] } = {
@@ -317,8 +325,8 @@ const FontSection = () => {
             <h3 className="text-2xl font-bold mb-8 text-center">
               Curated Pairings for <span className="text-primary capitalize">{selectedMood}</span> Mood
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-              {currentPairings.map((pairing, index) => (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              {(isMobile ? currentPairings.slice(0, 6) : currentPairings).map((pairing, index) => (
                 <motion.div
                   key={pairing.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -381,8 +389,8 @@ const FontSection = () => {
           viewport={{ once: true }}
         >
             <h3 className="text-2xl font-bold mb-8 text-center">Popular Google Fonts</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {popularFonts.map((font, index) => (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {(isMobile ? popularFonts.slice(0, 6) : popularFonts).map((font, index) => (
               <motion.div
                 key={font}
                 initial={{ opacity: 0, scale: 0.9 }}

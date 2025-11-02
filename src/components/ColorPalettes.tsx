@@ -139,6 +139,18 @@ const ColorPalettes = () => {
   ];
 
   const displayedSamplePalettes = showMore ? samplePalettes : samplePalettes.slice(0, 4);
+  
+  // Responsive display logic - limit to 6 on mobile/tablet
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  const displayedPalettes = isMobile ? palettes.slice(0, 6) : palettes;
 
   // Generate AI-powered palettes using Colormind API
   const generateAIPalettes = async (prompt?: string, paletteType?: ColorPalette['type']) => {
@@ -549,8 +561,8 @@ const ColorPalettes = () => {
         </motion.div>
 
         {/* Palettes Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8">
-          {palettes.map((palette, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+          {displayedPalettes.map((palette, index) => (
             <ParallaxCard key={palette.id} offset={30}>
               <Interactive3DCard>
                 <motion.div

@@ -30,6 +30,14 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
   const [selectedPrinciple, setSelectedPrinciple] = useState<DesignFundamental | null>(null);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const { fadeInUp } = useScrollAnimation();
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     setPrinciples(designFundamentals);
@@ -90,8 +98,8 @@ const LearnersContent = ({ selectedCategory, onCategoryChange }: { selectedCateg
 
       {/* Main Content */}
       <div className="flex-1 p-4 md:p-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-          {filteredPrinciples.map((principle, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+          {(isMobile ? filteredPrinciples.slice(0, 6) : filteredPrinciples).map((principle, index) => (
             <motion.div
               key={principle.id}
               className="parallax-card group cursor-pointer hover-glow transition-all duration-300"
