@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Chrome, Palette, Mail, Lock } from 'lucide-react';
+import { Chrome, Palette, Mail, Lock, ArrowLeft } from 'lucide-react';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -100,19 +100,21 @@ const Auth = () => {
       });
 
       if (error) {
+        console.error('Google OAuth error:', error);
         toast({
-          title: 'Google Sign-In Not Configured',
-          description: 'Please configure Google OAuth in your backend settings or use email/password to sign in.',
+          title: 'Google Sign-In Not Available',
+          description: 'Google authentication is not configured. Please use email and password to continue.',
           variant: 'destructive',
         });
+        setLoading(false);
       }
     } catch (error: any) {
+      console.error('Google OAuth error:', error);
       toast({
-        title: 'Authentication Error',
-        description: 'Google sign-in is not available. Please use email/password.',
+        title: 'Google Sign-In Not Available',
+        description: 'Please use email and password to sign in.',
         variant: 'destructive',
       });
-    } finally {
       setLoading(false);
     }
   };
@@ -122,9 +124,20 @@ const Auth = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card max-w-md w-full"
+        className="glass-card max-w-md w-full relative"
       >
-        <div className="text-center mb-8">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/')}
+          className="absolute top-4 left-4 text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
+
+        <div className="text-center mb-8 mt-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center hover-glow">
               <Palette className="w-7 h-7 text-primary-foreground" />
