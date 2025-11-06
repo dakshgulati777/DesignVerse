@@ -122,14 +122,9 @@ const BlogSection = () => {
               grabCursor={true}
               centeredSlides={false}
               slidesPerView={'auto'}
-              spaceBetween={30}
+              spaceBetween={24}
               loop={true}
-              loopAdditionalSlides={2}
-              autoplay={{
-                delay: 4000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-              }}
+              speed={600}
               pagination={{
                 clickable: true,
                 dynamicBullets: true,
@@ -137,42 +132,29 @@ const BlogSection = () => {
               navigation={{
                 enabled: true,
               }}
-              modules={[Pagination, Navigation, Autoplay]}
-              className="blog-swiper pb-12 !px-4"
+              modules={[Pagination, Navigation]}
+              className="blog-swiper pb-12 !px-2"
               style={{
                 '--swiper-navigation-color': 'hsl(var(--primary))',
                 '--swiper-pagination-color': 'hsl(var(--primary))',
               } as any}
               breakpoints={{
                 320: {
-                  slidesPerView: 2,
-                  spaceBetween: 15,
-                  centeredSlides: false,
+                  slidesPerView: 1.2,
+                  spaceBetween: 16,
                 },
                 640: {
-                  slidesPerView: 3,
+                  slidesPerView: 2,
                   spaceBetween: 20,
-                  centeredSlides: false,
-                },
-                768: {
-                  slidesPerView: 4,
-                  spaceBetween: 20,
-                  centeredSlides: false,
                 },
                 1024: {
-                  slidesPerView: 5,
-                  spaceBetween: 25,
-                  centeredSlides: false,
+                  slidesPerView: 3,
+                  spaceBetween: 24,
                 },
-                1280: {
-                  slidesPerView: 6,
-                  spaceBetween: 30,
-                  centeredSlides: false,
-                }
               }}
             >
               {posts.map((post, index) => (
-                <SwiperSlide key={post.id} className="!h-auto" style={{ width: '350px', maxWidth: '90vw' }}>
+                <SwiperSlide key={post.id} className="!h-auto" style={{ width: '400px', maxWidth: '85vw' }}>
                   <motion.div
                     className="parallax-card h-full group cursor-pointer hover-glow"
                     initial={{ opacity: 0, y: 30 }}
