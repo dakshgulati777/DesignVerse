@@ -325,7 +325,7 @@ const FontSection = () => {
             <h3 className="text-2xl font-bold mb-8 text-center">
               Curated Pairings for <span className="text-primary capitalize">{selectedMood}</span> Mood
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
               {(isMobile ? currentPairings.slice(0, 6) : currentPairings).map((pairing, index) => (
                 <motion.div
                   key={pairing.id}
@@ -389,7 +389,7 @@ const FontSection = () => {
           viewport={{ once: true }}
         >
             <h3 className="text-2xl font-bold mb-8 text-center">Popular Google Fonts</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {(isMobile ? popularFonts.slice(0, 6) : popularFonts).map((font, index) => (
               <motion.div
                 key={font}
