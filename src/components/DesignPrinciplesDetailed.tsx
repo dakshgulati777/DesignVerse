@@ -20,7 +20,9 @@ interface DesignPrinciplesDetailedProps {
 const DesignPrinciplesDetailed = ({ principle, onClose }: DesignPrinciplesDetailedProps) => {
   if (!principle) return null;
 
+  // Icon might not be available when loaded from bookmarks
   const IconComponent = principle.icon;
+  const hasValidIcon = IconComponent && typeof IconComponent === 'function';
 
   return (
     <motion.div
@@ -39,9 +41,11 @@ const DesignPrinciplesDetailed = ({ principle, onClose }: DesignPrinciplesDetail
       >
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-4">
-            <div className="p-4 rounded-xl bg-primary/20 text-primary">
-              <IconComponent className="w-8 h-8" />
-            </div>
+            {hasValidIcon && (
+              <div className="p-4 rounded-xl bg-primary/20 text-primary">
+                <IconComponent className="w-8 h-8" />
+              </div>
+            )}
             <div>
               <h2 className="text-3xl font-bold mb-2">{principle.title}</h2>
               <span className="inline-block px-3 py-1 rounded-full text-sm border border-primary/30 bg-primary/10 text-primary">
