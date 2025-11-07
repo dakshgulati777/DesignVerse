@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bookmark, Palette, BookOpen, GraduationCap, Trash2, ArrowLeft } from 'lucide-react';
+import { Bookmark, Palette, BookOpen, GraduationCap, Trash2, ArrowLeft, Copy, Check, Share2 } from 'lucide-react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import Navigation from '@/components/Navigation';
 import { useBookmarks } from '@/hooks/useBookmarks';
@@ -8,12 +8,51 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import DesignPrinciplesDetailed from '@/components/DesignPrinciplesDetailed';
+import { toast } from 'sonner';
 
 const Bookmarks = () => {
   const { bookmarks, loading, removeBookmark } = useBookmarks();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedPrinciple, setSelectedPrinciple] = useState<any>(null);
+  const [copiedColor, setCopiedColor] = useState<string | null>(null);
+
+  const copyColor = async (color: string) => {
+    try {
+      await navigator.clipboard.writeText(color);
+      setCopiedColor(color);
+      toast.success(`Copied ${color}!`);
+      setTimeout(() => setCopiedColor(null), 2000);
+    } catch (err) {
+      toast.error('Failed to copy color');
+    }
+  };
+
+  const shareItem = async (itemType: string, itemData: any) => {
+    const shareText = itemType === 'palette' 
+      ? `Check out this color palette: ${itemData.name} - ${itemData.colors.join(', ')}`
+      : itemType === 'blog'
+      ? `Read this article: ${itemData.title}`
+      : `Learn about: ${itemData.title}`;
+
+    const shareUrl = window.location.origin;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: itemData.name || itemData.title,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (err) {
+        // User cancelled or error occurred
+      }
+    } else {
+      // Fallback: copy to clipboard
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      toast.success('Copied to clipboard!');
+    }
+  };
 
   if (!user) {
     return (
@@ -121,22 +160,60 @@ const Bookmarks = () => {
                         >
                           <div className="flex justify-between items-start mb-4">
                             <h3 className="font-semibold">{bookmark.item_data?.name}</h3>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeBookmark(bookmark.item_type, bookmark.item_id)}
-                              className="hover:text-red-500"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => shareItem('palette', bookmark.item_data)}
+                                className="hover:text-primary"
+                              >
+                                <Share2 className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeBookmark(bookmark.item_type, bookmark.item_id)}
+                                className="hover:text-red-500"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                           <div className="grid grid-cols-5 gap-2">
                             {bookmark.item_data?.colors?.map((color: string, i: number) => (
-                              <div
+                              <motion.div
                                 key={i}
-                                className="h-16 rounded-lg"
-                                style={{ backgroundColor: color }}
-                              />
+                                className="relative group/color cursor-pointer overflow-hidden rounded-lg"
+                                whileHover={{ scale: 1.1, y: -4 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => copyColor(color)}
+                              >
+                                <div
+                                  className="h-16 rounded-lg shadow-lg transition-all"
+                                  style={{ backgroundColor: color }}
+                                />
+                                <motion.div 
+                                  className="absolute inset-0 bg-black/70 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center text-white text-xs"
+                                  initial={{ opacity: 0 }}
+                                  whileHover={{ opacity: 1 }}
+                                >
+                                  {copiedColor === color ? (
+                                    <motion.div
+                                      initial={{ scale: 0 }}
+                                      animate={{ scale: 1 }}
+                                      className="flex flex-col items-center"
+                                    >
+                                      <Check className="w-4 h-4 mb-1 text-green-400" />
+                                      <span className="text-green-400">Copied!</span>
+                                    </motion.div>
+                                  ) : (
+                                    <>
+                                      <Copy className="w-4 h-4 mb-1" />
+                                      <span className="font-mono">{color}</span>
+                                    </>
+                                  )}
+                                </motion.div>
+                              </motion.div>
                             ))}
                           </div>
                         </motion.div>
@@ -165,14 +242,24 @@ const Bookmarks = () => {
                               <h3 className="font-semibold text-lg mb-2">{bookmark.item_data?.title}</h3>
                               <p className="text-sm text-muted-foreground">{bookmark.item_data?.description}</p>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeBookmark(bookmark.item_type, bookmark.item_id)}
-                              className="hover:text-red-500"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => shareItem('blog', bookmark.item_data)}
+                                className="hover:text-primary"
+                              >
+                                <Share2 className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeBookmark(bookmark.item_type, bookmark.item_id)}
+                                className="hover:text-red-500"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                         </motion.div>
                       ))}
@@ -198,17 +285,30 @@ const Bookmarks = () => {
                         >
                           <div className="flex justify-between items-start">
                             <h3 className="font-semibold text-lg">{bookmark.item_data?.title}</h3>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                removeBookmark(bookmark.item_type, bookmark.item_id);
-                              }}
-                              className="hover:text-red-500"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  shareItem('fundamental', bookmark.item_data);
+                                }}
+                                className="hover:text-primary"
+                              >
+                                <Share2 className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeBookmark(bookmark.item_type, bookmark.item_id);
+                                }}
+                                className="hover:text-red-500"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                           {bookmark.item_data?.category && (
                             <span className="inline-block mt-2 text-xs text-muted-foreground bg-background/20 px-3 py-1 rounded-full border border-border/20">
