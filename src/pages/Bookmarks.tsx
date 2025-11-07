@@ -1,16 +1,19 @@
-import { motion } from 'framer-motion';
-import { Bookmark, Palette, BookOpen, GraduationCap, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Bookmark, Palette, BookOpen, GraduationCap, Trash2, ArrowLeft } from 'lucide-react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import Navigation from '@/components/Navigation';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import DesignPrinciplesDetailed from '@/components/DesignPrinciplesDetailed';
 
 const Bookmarks = () => {
   const { bookmarks, loading, removeBookmark } = useBookmarks();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [selectedPrinciple, setSelectedPrinciple] = useState<any>(null);
 
   if (!user) {
     return (
@@ -47,6 +50,22 @@ const Bookmarks = () => {
         <Navigation />
         <main className="pt-32 px-6 pb-20">
           <div className="max-w-7xl mx-auto">
+            {/* Back Button */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="mb-8"
+            >
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/')}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Home
+              </Button>
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -174,19 +193,28 @@ const Bookmarks = () => {
                           key={bookmark.id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="glass-card group hover:shadow-2xl hover:shadow-primary/20 transition-all"
+                          className="glass-card group hover:shadow-2xl hover:shadow-primary/20 transition-all cursor-pointer"
+                          onClick={() => setSelectedPrinciple(bookmark.item_data)}
                         >
                           <div className="flex justify-between items-start">
                             <h3 className="font-semibold text-lg">{bookmark.item_data?.title}</h3>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => removeBookmark(bookmark.item_type, bookmark.item_id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeBookmark(bookmark.item_type, bookmark.item_id);
+                              }}
                               className="hover:text-red-500"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
+                          {bookmark.item_data?.category && (
+                            <span className="inline-block mt-2 text-xs text-muted-foreground bg-background/20 px-3 py-1 rounded-full border border-border/20">
+                              {bookmark.item_data.category}
+                            </span>
+                          )}
                         </motion.div>
                       ))}
                     </div>
@@ -196,6 +224,16 @@ const Bookmarks = () => {
             )}
           </div>
         </main>
+
+        {/* Fundamental Details Modal */}
+        <AnimatePresence>
+          {selectedPrinciple && (
+            <DesignPrinciplesDetailed
+              principle={selectedPrinciple}
+              onClose={() => setSelectedPrinciple(null)}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </ThemeProvider>
   );

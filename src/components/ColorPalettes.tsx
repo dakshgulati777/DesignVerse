@@ -135,10 +135,34 @@ const ColorPalettes = () => {
       name: 'Rose Garden',
       colors: ['#9F1239', '#BE185D', '#DB2777', '#EC4899', '#F472B6'],
       type: 'analogous'
+    },
+    {
+      id: '17',
+      name: 'Peachy Keen',
+      colors: ['#EA580C', '#FB923C', '#FDBA74', '#FED7AA', '#FFEDD5'],
+      type: 'monochrome'
+    },
+    {
+      id: '18',
+      name: 'Electric Blue',
+      colors: ['#0284C7', '#0EA5E9', '#38BDF8', '#7DD3FC', '#E0F2FE'],
+      type: 'shades'
+    },
+    {
+      id: '19',
+      name: 'Plum Perfect',
+      colors: ['#4C1D95', '#5B21B6', '#6D28D9', '#7C3AED', '#8B5CF6'],
+      type: 'analogous'
+    },
+    {
+      id: '20',
+      name: 'Lime Zest',
+      colors: ['#4D7C0F', '#65A30D', '#84CC16', '#A3E635', '#D9F99D'],
+      type: 'shades'
     }
   ];
 
-  const displayedSamplePalettes = showMore ? samplePalettes : samplePalettes.slice(0, 4);
+  const displayedSamplePalettes = showMore ? samplePalettes : samplePalettes.slice(0, 20);
   
   // Responsive display logic - limit to 6 on mobile/tablet
   const [isMobile, setIsMobile] = useState(false);
@@ -181,7 +205,7 @@ const ColorPalettes = () => {
     isAI ? setAiLoading(false) : setLoading(false);
   };
 
-  // AI-based palette generation - generate 6 unique palettes
+  // AI-based palette generation - generate 4 unique palettes
   const generateAIBasedPalettes = async (prompt: string, type: ColorPalette['type']): Promise<ColorPalette[]> => {
     // Simulate AI processing
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -189,10 +213,10 @@ const ColorPalettes = () => {
     const baseColors = getColorsFromPrompt(prompt);
     const generatedPalettes: ColorPalette[] = [];
     
-    // Generate 6 unique palettes with different variations
-    const variationTypes: ColorPalette['type'][] = ['analogous', 'complementary', 'monochrome', 'shades', 'triad', 'analogous'];
+    // Generate 4 unique palettes with different variations
+    const variationTypes: ColorPalette['type'][] = ['analogous', 'complementary', 'monochrome', 'shades'];
     
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 4; i++) {
       const baseColorIndex = i % baseColors.length;
       const baseColor = baseColors[baseColorIndex];
       const variationType = variationTypes[i];
@@ -240,8 +264,8 @@ const ColorPalettes = () => {
       console.log('Colormind API unavailable, using fallback');
     }
     
-    // Generate 5 more random palettes (6 total)
-    for (let i = palettes.length; i < 6; i++) {
+    // Generate more random palettes (4 total)
+    for (let i = palettes.length; i < 4; i++) {
       const randomHue = Math.floor(Math.random() * 360);
       const randomType = types[Math.floor(Math.random() * types.length)];
       const randomTheme = themes[Math.floor(Math.random() * themes.length)];
@@ -560,8 +584,8 @@ const ColorPalettes = () => {
           </div>
         </motion.div>
 
-        {/* Palettes Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+        {/* Palettes Grid - Max 4 per row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
           {displayedPalettes.map((palette, index) => (
             <ParallaxCard key={palette.id} offset={30}>
               <Interactive3DCard>
@@ -682,7 +706,7 @@ const ColorPalettes = () => {
         </div>
 
         {/* Show More Button - Only show if there are sample palettes to show */}
-        {samplePalettes.length > 4 && (
+        {samplePalettes.length > 20 && (
           <motion.div
             className="text-center mt-12"
             {...fadeInUp}
