@@ -9,6 +9,7 @@ import Learners from "./pages/Learners";
 import Auth from "./pages/Auth";
 import FontLab from "./pages/FontLab";
 import Bookmarks from "./pages/Bookmarks";
+import TextureLabs from "./pages/TextureLabs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/font-lab" element={<FontLab />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/texture-labs" element={<TextureLabs />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
