@@ -3,6 +3,7 @@ import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
 import ColorPalettes from '@/components/ColorPalettes';
 import FontSection from '@/components/FontSection';
+import TextureLabsSection from '@/components/TextureLabsSection';
 import BlogSection from '@/components/BlogSection';
 import DesignPrinciples from '@/components/DesignPrinciples';
 
@@ -15,6 +16,7 @@ const Index = () => {
           <HeroSection />
           <ColorPalettes />
           <FontSection />
+          <TextureLabsSection />
           <BlogSection />
           <DesignPrinciples />
         </main>

@@ -179,6 +179,12 @@ const ColorPalettes = () => {
   // Generate AI-powered palettes using Colormind API
   const generateAIPalettes = async (prompt?: string, paletteType?: ColorPalette['type']) => {
     const isAI = !!prompt;
+    
+    if (isAI && prompt && !isValidColorPrompt(prompt)) {
+      toast.error('Please use color-related words (e.g., blue, sunset, forest, ocean)');
+      return;
+    }
+    
     isAI ? setAiLoading(true) : setLoading(true);
     
     try {
@@ -342,16 +348,37 @@ const ColorPalettes = () => {
     return palettes.length > 0 ? palettes : fallbackPalettes;
   };
 
+  // Validate color-related input
+  const isValidColorPrompt = (prompt: string): boolean => {
+    const colorKeywords = [
+      'red', 'blue', 'green', 'yellow', 'purple', 'pink', 'orange', 'brown', 'black', 'white', 'gray', 'grey',
+      'cyan', 'magenta', 'violet', 'indigo', 'turquoise', 'teal', 'lime', 'olive', 'navy', 'maroon',
+      'ocean', 'sky', 'forest', 'nature', 'sunset', 'sunrise', 'cosmic', 'space', 'fire', 'ice',
+      'warm', 'cool', 'dark', 'light', 'bright', 'pastel', 'neon', 'muted', 'vibrant',
+      'earth', 'sea', 'sun', 'moon', 'star', 'night', 'day', 'dawn', 'dusk',
+      'spring', 'summer', 'autumn', 'fall', 'winter', 'tropical', 'arctic', 'desert',
+      'gold', 'silver', 'copper', 'bronze', 'coral', 'lavender', 'mint', 'rose', 'peach',
+      'aqua', 'jade', 'ruby', 'sapphire', 'emerald', 'amber', 'pearl'
+    ];
+    
+    const words = prompt.toLowerCase().split(/\s+/);
+    return words.some(word => colorKeywords.includes(word));
+  };
+
   // Generate colors from text prompt
   const getColorsFromPrompt = (prompt: string): string[] => {
     const colorMap: { [key: string]: string } = {
-      'ocean': '#0EA5E9', 'blue': '#3B82F6', 'sky': '#38BDF8',
-      'forest': '#10B981', 'green': '#22C55E', 'nature': '#059669',
-      'sunset': '#F59E0B', 'orange': '#F97316', 'warm': '#EF4444',
-      'purple': '#8B5CF6', 'cosmic': '#6B46C1', 'space': '#7C3AED',
-      'pink': '#EC4899', 'rose': '#F43F5E', 'love': '#E11D48',
-      'yellow': '#EAB308', 'gold': '#F59E0B', 'sun': '#FACC15',
-      'red': '#EF4444', 'fire': '#DC2626', 'passion': '#B91C1C'
+      'ocean': '#0EA5E9', 'blue': '#3B82F6', 'sky': '#38BDF8', 'cyan': '#06B6D4', 'aqua': '#22D3EE',
+      'forest': '#10B981', 'green': '#22C55E', 'nature': '#059669', 'lime': '#84CC16', 'jade': '#10B981',
+      'sunset': '#F59E0B', 'orange': '#F97316', 'warm': '#EF4444', 'peach': '#FB923C', 'coral': '#F97316',
+      'purple': '#8B5CF6', 'cosmic': '#6B46C1', 'space': '#7C3AED', 'violet': '#7C3AED', 'indigo': '#6366F1',
+      'pink': '#EC4899', 'rose': '#F43F5E', 'love': '#E11D48', 'magenta': '#EC4899',
+      'yellow': '#EAB308', 'gold': '#F59E0B', 'sun': '#FACC15', 'amber': '#F59E0B',
+      'red': '#EF4444', 'fire': '#DC2626', 'passion': '#B91C1C', 'ruby': '#DC2626',
+      'brown': '#92400E', 'earth': '#78350F', 'copper': '#B45309', 'bronze': '#92400E',
+      'gray': '#6B7280', 'grey': '#6B7280', 'silver': '#9CA3AF',
+      'teal': '#14B8A6', 'turquoise': '#06B6D4', 'mint': '#34D399', 'emerald': '#059669',
+      'lavender': '#A78BFA', 'sapphire': '#3B82F6', 'navy': '#1E40AF'
     };
     
     const words = prompt.toLowerCase().split(' ');

@@ -44,13 +44,19 @@ const Bookmarks = () => {
           text: shareText,
           url: shareUrl,
         });
-      } catch (err) {
-        // User cancelled or error occurred
+        toast.success('Shared successfully!');
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          toast.error('Failed to share');
+        }
       }
     } else {
-      // Fallback: copy to clipboard
-      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-      toast.success('Copied to clipboard!');
+      try {
+        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+        toast.success('Link copied to clipboard!');
+      } catch (err) {
+        toast.error('Failed to copy to clipboard');
+      }
     }
   };
 
