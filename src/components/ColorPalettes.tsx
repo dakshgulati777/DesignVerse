@@ -16,7 +16,7 @@ interface ColorPalette {
   id: string;
   name: string;
   colors: string[];
-  type: 'analogous' | 'monochrome' | 'triad' | 'complementary' | 'shades';
+  type: 'monochrome' | 'triad' | 'complementary' | 'shades';
   isAI?: boolean;
 }
 
@@ -26,7 +26,7 @@ const ColorPalettes = () => {
   const [loading, setLoading] = useState(false);
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
   const [aiPrompt, setAiPrompt] = useState('');
-  const [selectedType, setSelectedType] = useState<ColorPalette['type']>('analogous');
+  const [selectedType, setSelectedType] = useState<ColorPalette['type']>('complementary');
   const [aiLoading, setAiLoading] = useState(false);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const { fadeInUp, fadeInLeft, fadeInRight } = useScrollAnimation();
@@ -44,7 +44,7 @@ const ColorPalettes = () => {
       id: '1',
       name: 'Cosmic Purple',
       colors: ['#6B46C1', '#8B5CF6', '#A78BFA', '#C4B5FD', '#E0E7FF'],
-      type: 'analogous'
+      type: 'shades'
     },
     {
       id: '2',
@@ -74,7 +74,7 @@ const ColorPalettes = () => {
       id: '6',
       name: 'Mint Fresh',
       colors: ['#065F46', '#047857', '#059669', '#10B981', '#34D399'],
-      type: 'analogous'
+      type: 'shades'
     },
     {
       id: '7',
@@ -92,7 +92,7 @@ const ColorPalettes = () => {
       id: '9',
       name: 'Autumn Leaves',
       colors: ['#DC2626', '#EA580C', '#F59E0B', '#EAB308', '#84CC16'],
-      type: 'analogous'
+      type: 'complementary'
     },
     {
       id: '10',
@@ -110,7 +110,7 @@ const ColorPalettes = () => {
       id: '12',
       name: 'Lavender Fields',
       colors: ['#581C87', '#7C3AED', '#8B5CF6', '#A78BFA', '#DDD6FE'],
-      type: 'analogous'
+      type: 'monochrome'
     },
     {
       id: '13',
@@ -134,7 +134,7 @@ const ColorPalettes = () => {
       id: '16',
       name: 'Rose Garden',
       colors: ['#9F1239', '#BE185D', '#DB2777', '#EC4899', '#F472B6'],
-      type: 'analogous'
+      type: 'shades'
     },
     {
       id: '17',
@@ -152,7 +152,7 @@ const ColorPalettes = () => {
       id: '19',
       name: 'Plum Perfect',
       colors: ['#4C1D95', '#5B21B6', '#6D28D9', '#7C3AED', '#8B5CF6'],
-      type: 'analogous'
+      type: 'monochrome'
     },
     {
       id: '20',
@@ -220,7 +220,7 @@ const ColorPalettes = () => {
     const generatedPalettes: ColorPalette[] = [];
     
     // Generate 4 unique palettes with different variations
-    const variationTypes: ColorPalette['type'][] = ['analogous', 'complementary', 'monochrome', 'shades'];
+    const variationTypes: ColorPalette['type'][] = ['complementary', 'monochrome', 'shades', 'triad'];
     
     for (let i = 0; i < 4; i++) {
       const baseColorIndex = i % baseColors.length;
@@ -243,7 +243,7 @@ const ColorPalettes = () => {
   // Generate random palettes
   const generateRandomPalettes = async (): Promise<ColorPalette[]> => {
     const palettes: ColorPalette[] = [];
-    const types: ColorPalette['type'][] = ['analogous', 'monochrome', 'triad', 'complementary', 'shades'];
+    const types: ColorPalette['type'][] = ['monochrome', 'triad', 'complementary', 'shades'];
     const themes = ['Cosmic', 'Ocean', 'Forest', 'Desert', 'Arctic', 'Tropical'];
     
     // Try to fetch from Colormind API first
@@ -323,7 +323,7 @@ const ColorPalettes = () => {
         id: '1',
         name: 'Cosmic Purple',
         colors: ['#6B46C1', '#8B5CF6', '#A78BFA', '#C4B5FD', '#E0E7FF'],
-        type: 'analogous'
+        type: 'shades'
       },
       {
         id: '2',
@@ -393,11 +393,6 @@ const ColorPalettes = () => {
     const colors: string[] = [];
     
     switch (type) {
-      case 'analogous':
-        for (let i = 0; i < 5; i++) {
-          colors.push(hslToHex(hsl.h + i * 30, hsl.s, Math.max(20, Math.min(80, hsl.l + i * 10))));
-        }
-        break;
       case 'monochrome':
         for (let i = 0; i < 5; i++) {
           colors.push(hslToHex(hsl.h, hsl.s, 20 + i * 15));
@@ -572,7 +567,6 @@ const ColorPalettes = () => {
                   <SelectValue placeholder="Palette type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="analogous">Analogous</SelectItem>
                   <SelectItem value="monochrome">Monochrome</SelectItem>
                   <SelectItem value="complementary">Complementary</SelectItem>
                   <SelectItem value="triad">Triad</SelectItem>
