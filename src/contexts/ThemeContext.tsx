@@ -25,7 +25,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   useEffect(() => {
     localStorage.setItem('designverse-theme', theme);
+    
+    // Add transition class before changing theme
+    document.documentElement.style.transition = 'background-color 0.5s ease, color 0.5s ease';
     document.documentElement.className = theme;
+    
+    // Remove transition after animation completes
+    const timeout = setTimeout(() => {
+      document.documentElement.style.transition = '';
+    }, 500);
+    
+    return () => clearTimeout(timeout);
   }, [theme]);
 
   return (

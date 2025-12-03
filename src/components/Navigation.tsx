@@ -1,12 +1,11 @@
 import { motion } from 'framer-motion';
-import { Palette, BookOpen, Search, Moon, Sun, Zap, Rocket, GraduationCap, LogOut, LogIn, Bookmark, Type } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
+import { Palette, BookOpen, Search, Rocket, GraduationCap, LogOut, LogIn, Bookmark, Type } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const Navigation = () => {
-  const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,12 +18,6 @@ const Navigation = () => {
     { icon: GraduationCap, label: 'Learning', href: '/learners', type: 'route' },
     { icon: Bookmark, label: 'Bookmarks', href: '/bookmarks', type: 'route' },
   ];
-
-  const themeIcons = {
-    dark: Moon,
-    light: Sun,
-    neon: Zap,
-  };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -140,26 +133,7 @@ const Navigation = () => {
 
           {/* Theme Switcher & Auth */}
           <div className="flex items-center gap-1 md:gap-2">
-            <div className="flex items-center gap-0.5 md:gap-1 bg-white/5 rounded-lg p-0.5 md:p-1">
-              {(['dark', 'light', 'neon'] as const).map((themeOption) => {
-                const Icon = themeIcons[themeOption];
-                return (
-                  <Button
-                    key={themeOption}
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setTheme(themeOption)}
-                    className={`p-1 md:p-1.5 rounded-md transition-all duration-300 ${
-                      theme === themeOption 
-                        ? 'bg-primary text-primary-foreground shadow-lg' 
-                        : 'hover:bg-white/10'
-                    }`}
-                  >
-                    <Icon className="w-3 h-3 md:w-4 md:h-4" />
-                  </Button>
-                );
-              })}
-            </div>
+            <ThemeToggle />
             
             <Button
               onClick={handleAuthAction}
