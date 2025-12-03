@@ -25,9 +25,26 @@ const TextureLabs = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const handleDownload = (format: 'ai' | 'psd' | 'png', textureName: string) => {
-    toast.success(`Downloading ${textureName} (${format.toUpperCase()})`);
-    // In production, this would trigger an actual download
+  const handleDownload = async (format: 'ai' | 'psd' | 'png', texture: Texture) => {
+    toast.info(`Preparing ${texture.name} (${format.toUpperCase()})...`);
+    
+    try {
+      // Create a downloadable file from the texture thumbnail
+      const response = await fetch(texture.thumbnail);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${texture.name.replace(/\s+/g, '-').toLowerCase()}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      toast.success(`${texture.name} downloaded successfully!`);
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error(`Failed to download. Please try again.`);
+    }
   };
 
   return (
@@ -51,7 +68,7 @@ const TextureLabs = () => {
                 Back to Home
               </Button>
               
-              <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+              <h1 className="text-5xl md:text-6xl font-bold mb-4 text-foreground">
                 Texture Labs
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl">
@@ -148,7 +165,7 @@ const TextureLabs = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleDownload('ai', texture.name)}
+                        onClick={() => handleDownload('ai', texture)}
                         className="flex-1 glass-nav border-white/10 hover:bg-primary/20"
                         title="Adobe Illustrator"
                       >
@@ -158,7 +175,7 @@ const TextureLabs = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleDownload('psd', texture.name)}
+                        onClick={() => handleDownload('psd', texture)}
                         className="flex-1 glass-nav border-white/10 hover:bg-primary/20"
                         title="Adobe Photoshop"
                       >
@@ -168,7 +185,7 @@ const TextureLabs = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleDownload('png', texture.name)}
+                        onClick={() => handleDownload('png', texture)}
                         className="flex-1 glass-nav border-white/10 hover:bg-primary/20"
                         title="PNG Image"
                       >

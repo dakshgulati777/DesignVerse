@@ -160,7 +160,6 @@ const ColorPalettes = () => {
     // Gemstones
     'ruby': { hex: '#E0115F', hue: 337, saturation: 88, lightness: 47 },
     'sapphire': { hex: '#0F52BA', hue: 219, saturation: 85, lightness: 39 },
-    'emerald': { hex: '#50C878', hue: 140, saturation: 52, lightness: 55 },
     'diamond': { hex: '#B9F2FF', hue: 188, saturation: 100, lightness: 84 },
     'pearl': { hex: '#EAE0C8', hue: 42, saturation: 39, lightness: 85 },
     'amethyst': { hex: '#9966CC', hue: 270, saturation: 50, lightness: 60 },
@@ -354,15 +353,17 @@ const ColorPalettes = () => {
         {/* Section Header */}
         <motion.div
           className="text-center mb-16"
-          {...stellarFadeIn}
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8 }}
         >
           <div className="inline-flex items-center gap-2 glass-nav mb-6">
             <Palette className="w-5 h-5 text-primary" />
             <span className="font-medium">Color Palettes</span>
           </div>
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Infinite Color
-            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent"> Inspiration</span>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 text-foreground">
+            Infinite Color Inspiration
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Discover beautiful color combinations with precise color theory
@@ -372,7 +373,12 @@ const ColorPalettes = () => {
         {/* Color Harmony Visualization & AI Generation */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* AI Color Generation */}
-          <motion.div {...floatingPanel}>
+          <motion.div
+            initial={{ opacity: 0, y: 60, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7 }}
+          >
             <div className="glass-card h-full">
               <div className="flex items-center gap-2 mb-6">
                 <Sparkles className="w-5 h-5 text-primary" />
@@ -436,7 +442,12 @@ const ColorPalettes = () => {
           </motion.div>
 
           {/* Color Harmony Wheel */}
-          <motion.div {...floatingPanel}>
+          <motion.div
+            initial={{ opacity: 0, y: 60, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7 }}
+          >
             <div className="glass-card h-full">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
@@ -539,7 +550,13 @@ const ColorPalettes = () => {
         </div>
 
         {/* View More Button */}
-        <motion.div className="text-center mt-8" {...orbitRise}>
+        <motion.div
+          className="text-center mt-8"
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.9 }}
+        >
           <Button 
             onClick={() => setShowMore(!showMore)}
             className="btn-glass hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 group"
@@ -554,20 +571,36 @@ const ColorPalettes = () => {
         </motion.div>
 
         {/* 3D Color Sphere and Image Palette Extractor */}
-        <motion.div className="mt-20" {...orbitRise}>
+        <motion.div
+          className="mt-20"
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.9 }}
+        >
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Color <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">Exploration Tools</span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+              Color Exploration Tools
             </h2>
             <p className="text-muted-foreground">
               Interactive tools to discover and extract perfect color harmonies
             </p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <motion.div {...floatingPanel}>
+            <motion.div
+              initial={{ opacity: 0, y: 60, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.7 }}
+            >
               <ColorSphere3D />
             </motion.div>
-            <motion.div {...floatingPanel}>
+            <motion.div
+              initial={{ opacity: 0, y: 60, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.7 }}
+            >
               <ImagePaletteExtractor />
             </motion.div>
           </div>
