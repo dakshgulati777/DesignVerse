@@ -6,13 +6,17 @@ import FontSection from '@/components/FontSection';
 import TextureLabsSection from '@/components/TextureLabsSection';
 import BlogSection from '@/components/BlogSection';
 import DesignPrinciples from '@/components/DesignPrinciples';
+import CustomCursor from '@/components/CustomCursor';
+import AnimatedBackground from '@/components/AnimatedBackground';
 
 const Index = () => {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="min-h-screen bg-background text-foreground cursor-none">
+        <CustomCursor />
+        <AnimatedBackground />
         <Navigation />
-        <main>
+        <main className="relative z-10">
           <HeroSection />
           <ColorPalettes />
           <FontSection />

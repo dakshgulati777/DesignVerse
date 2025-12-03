@@ -187,6 +187,84 @@ const FontSection = () => {
         mood: 'vintage',
         description: 'Vintage personality with clean supporting text'
       }
+    ],
+    bold: [
+      {
+        id: '19',
+        theme: 'Impact Statement',
+        heading: 'Anton',
+        body: 'Roboto',
+        mood: 'bold',
+        description: 'High-impact headlines with versatile body text'
+      },
+      {
+        id: '20',
+        theme: 'Strong Presence',
+        heading: 'Black Ops One',
+        body: 'Open Sans',
+        mood: 'bold',
+        description: 'Military-inspired boldness with friendly readability'
+      },
+      {
+        id: '21',
+        theme: 'Power Typography',
+        heading: 'Russo One',
+        body: 'Source Sans Pro',
+        mood: 'bold',
+        description: 'Geometric strength meets professional clarity'
+      }
+    ],
+    minimal: [
+      {
+        id: '22',
+        theme: 'Clean Canvas',
+        heading: 'DM Sans',
+        body: 'DM Sans',
+        mood: 'minimal',
+        description: 'Unified simplicity for minimalist designs'
+      },
+      {
+        id: '23',
+        theme: 'Swiss Style',
+        heading: 'Helvetica Neue',
+        body: 'Inter',
+        mood: 'minimal',
+        description: 'Timeless Swiss design principles'
+      },
+      {
+        id: '24',
+        theme: 'Pure Simplicity',
+        heading: 'Karla',
+        body: 'Karla',
+        mood: 'minimal',
+        description: 'Grotesque charm with consistent styling'
+      }
+    ],
+    editorial: [
+      {
+        id: '25',
+        theme: 'Magazine Style',
+        heading: 'Bodoni Moda',
+        body: 'EB Garamond',
+        mood: 'editorial',
+        description: 'Classic editorial pairing for publications'
+      },
+      {
+        id: '26',
+        theme: 'News Print',
+        heading: 'Domine',
+        body: 'Cabin',
+        mood: 'editorial',
+        description: 'Authoritative headers with modern body'
+      },
+      {
+        id: '27',
+        theme: 'Fashion Forward',
+        heading: 'Didot',
+        body: 'Raleway',
+        mood: 'editorial',
+        description: 'High fashion aesthetics with elegance'
+      }
     ]
   };
 
@@ -257,12 +335,11 @@ const FontSection = () => {
             <Type className="w-5 h-5 text-primary" />
             <span className="font-medium">Typography Library</span>
           </div>
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Perfect Font
-            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent"> Combinations</span>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 text-foreground">
+            Perfect Font Combinations
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Discover harmonious font pairings and download them instantly from Google Fonts
+            Discover harmonious font pairings and download them instantly
           </p>
         </motion.div>
 
@@ -291,6 +368,9 @@ const FontSection = () => {
                   <SelectItem value="professional">Professional & Corporate</SelectItem>
                   <SelectItem value="creative">Creative & Artistic</SelectItem>
                   <SelectItem value="vintage">Vintage & Classic</SelectItem>
+                  <SelectItem value="bold">Bold & Impact</SelectItem>
+                  <SelectItem value="minimal">Minimal & Swiss</SelectItem>
+                  <SelectItem value="editorial">Editorial & Magazine</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -388,7 +468,7 @@ const FontSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-            <h3 className="text-2xl font-bold mb-8 text-center">Popular Google Fonts</h3>
+            <h3 className="text-2xl font-bold mb-8 text-center text-foreground">Popular Fonts</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {(isMobile ? popularFonts.slice(0, 6) : popularFonts).map((font, index) => (
               <motion.div

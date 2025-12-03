@@ -42,10 +42,8 @@ const TextureLabsSection = () => {
             <span className="text-sm font-medium">Free Resources</span>
           </motion.div>
 
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-              Texture Labs
-            </span>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 text-foreground">
+            Texture Labs
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Download 1000+ high-quality textures for free. Available in Adobe Illustrator (.ai), 
