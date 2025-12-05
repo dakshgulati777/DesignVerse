@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Palette, BookOpen, Search, Rocket, GraduationCap, LogOut, LogIn, Bookmark, Type } from 'lucide-react';
+import { Palette, BookOpen, Search, ArrowUp, GraduationCap, LogOut, LogIn, Bookmark, Type } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -44,55 +44,56 @@ const Navigation = () => {
       <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-2 md:top-4 left-1/2 transform -translate-x-1/2 z-50 w-[98%] md:w-auto max-w-[95vw]"
+        className="fixed top-4 md:top-6 left-1/2 transform -translate-x-1/2 z-50 w-[98%] md:w-auto max-w-[95vw]"
       >
-        <div className="glass-nav flex items-center justify-between md:gap-3 lg:gap-4 px-2 md:px-4 lg:px-6 py-2 md:py-3">
+        <div className="flex items-center justify-between md:gap-3 lg:gap-4 px-3 md:px-5 lg:px-6 py-2 md:py-3 border border-foreground/10 bg-background/80 backdrop-blur-md">
           {/* Logo */}
           <motion.div 
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-1 md:gap-2 cursor-pointer"
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center gap-2 md:gap-3 cursor-pointer"
             onClick={scrollToTop}
             role="button"
             tabIndex={0}
           >
-            <div className="w-5 h-5 md:w-7 md:h-7 lg:w-8 lg:h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center hover-glow">
-              <Palette className="w-3 h-3 md:w-4 md:h-4 text-primary-foreground" />
+            <div 
+              className="w-6 h-6 md:w-8 md:h-8 bg-foreground flex items-center justify-center"
+              style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' }}
+            >
+              <span className="text-[8px] md:text-xs font-bold text-background">DV</span>
             </div>
-            <span className="hidden sm:block font-bold text-xs md:text-base lg:text-lg bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-              DesignVerse
+            <span className="hidden sm:block font-bold text-sm md:text-base tracking-widest">
+              DESIGNVERSE
             </span>
           </motion.div>
 
           {/* Navigation Items - Hide on smallest screens */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-3">
+          <div className="hidden lg:flex items-center gap-1 xl:gap-2">
             {navItems.map((item, index) => (
               item.type === 'hash' ? (
                 <motion.a
                   key={item.label}
                   href={item.href}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
-                  className="flex items-center gap-1.5 px-2 xl:px-3 py-1.5 rounded-lg transition-all duration-300 hover:bg-white/10"
+                  whileHover={{ backgroundColor: 'hsl(var(--foreground) / 0.05)' }}
+                  className="flex items-center gap-1.5 px-3 py-2 transition-all duration-300"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <item.icon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
-                  <span className="text-xs xl:text-sm font-medium">{item.label}</span>
+                  <item.icon className="w-3.5 h-3.5" />
+                  <span className="text-xs font-medium tracking-wider uppercase">{item.label}</span>
                 </motion.a>
               ) : (
                 <motion.button
                   key={item.label}
                   onClick={() => handleNavClick(item)}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ y: 0 }}
-                  className="flex items-center gap-1.5 px-2 xl:px-3 py-1.5 rounded-lg transition-all duration-300 hover:bg-white/10"
+                  whileHover={{ backgroundColor: 'hsl(var(--foreground) / 0.05)' }}
+                  className="flex items-center gap-1.5 px-3 py-2 transition-all duration-300"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <item.icon className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
-                  <span className="text-xs xl:text-sm font-medium">{item.label}</span>
+                  <item.icon className="w-3.5 h-3.5" />
+                  <span className="text-xs font-medium tracking-wider uppercase">{item.label}</span>
                 </motion.button>
               )
             ))}
@@ -107,7 +108,7 @@ const Navigation = () => {
                   href={item.href}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-2 rounded-lg transition-all duration-300 hover:bg-white/10"
+                  className="p-2 transition-all duration-300 hover:bg-foreground/5"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
@@ -120,7 +121,7 @@ const Navigation = () => {
                   onClick={() => handleNavClick(item)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-2 rounded-lg transition-all duration-300 hover:bg-white/10"
+                  className="p-2 transition-all duration-300 hover:bg-foreground/5"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
@@ -131,6 +132,9 @@ const Navigation = () => {
             ))}
           </div>
 
+          {/* Separator */}
+          <div className="hidden md:block w-[1px] h-6 bg-foreground/10" />
+
           {/* Theme Switcher & Auth */}
           <div className="flex items-center gap-1 md:gap-2">
             <ThemeToggle />
@@ -139,18 +143,18 @@ const Navigation = () => {
               onClick={handleAuthAction}
               variant="ghost"
               size="sm"
-              className="p-1.5 md:p-2 rounded-md transition-all duration-300 hover:bg-white/10 flex items-center gap-1"
+              className="px-2 md:px-3 py-2 transition-all duration-300 hover:bg-foreground/5 flex items-center gap-1"
               title={user ? 'Sign out' : 'Sign in'}
             >
               {user ? (
                 <>
-                  <LogOut className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="hidden sm:inline text-xs md:text-sm">Sign Out</span>
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline text-xs tracking-wider uppercase">Out</span>
                 </>
               ) : (
                 <>
-                  <LogIn className="w-4 h-4 md:w-5 md:h-5" />
-                  <span className="hidden sm:inline text-xs md:text-sm">Sign In</span>
+                  <LogIn className="w-4 h-4" />
+                  <span className="hidden sm:inline text-xs tracking-wider uppercase">In</span>
                 </>
               )}
             </Button>
@@ -158,20 +162,20 @@ const Navigation = () => {
         </div>
       </motion.nav>
 
-      {/* Spaceship Scroll to Top */}
+      {/* Geometric Scroll to Top */}
       <motion.button
         onClick={scrollToTop}
-        className="fixed bottom-8 right-8 z-50 glass-nav p-4 group"
+        className="fixed bottom-8 right-8 z-50 w-12 h-12 border border-foreground/20 bg-background/80 backdrop-blur-sm flex items-center justify-center group"
         whileHover={{ 
           scale: 1.1,
-          y: -5,
+          borderColor: 'hsl(var(--foreground) / 0.4)',
         }}
         whileTap={{ scale: 0.95 }}
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 1 }}
       >
-        <Rocket className="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" />
+        <ArrowUp className="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-1" />
       </motion.button>
     </>
   );

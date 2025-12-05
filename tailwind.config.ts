@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
+        inter: ['Space Grotesk', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
