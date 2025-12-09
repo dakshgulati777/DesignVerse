@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { memo, useMemo } from 'react';
 
 interface GeometricShape {
   id: number;
@@ -8,17 +7,16 @@ interface GeometricShape {
   size: number;
   rotation: number;
   type: 'square' | 'triangle' | 'hexagon' | 'diamond';
-  duration: number;
+  animationDelay: number;
 }
 
-const AnimatedBackground = () => {
-  const [shapes, setShapes] = useState<GeometricShape[]>([]);
-
-  useEffect(() => {
+const AnimatedBackground = memo(() => {
+  const shapes = useMemo(() => {
     const newShapes: GeometricShape[] = [];
     const types: GeometricShape['type'][] = ['square', 'triangle', 'hexagon', 'diamond'];
     
-    for (let i = 0; i < 30; i++) {
+    // Reduced from 30 to 12 shapes for better performance
+    for (let i = 0; i < 12; i++) {
       newShapes.push({
         id: i,
         x: Math.random() * 100,
@@ -26,10 +24,10 @@ const AnimatedBackground = () => {
         size: Math.random() * 40 + 20,
         rotation: Math.random() * 360,
         type: types[Math.floor(Math.random() * types.length)],
-        duration: Math.random() * 30 + 20,
+        animationDelay: Math.random() * 10,
       });
     }
-    setShapes(newShapes);
+    return newShapes;
   }, []);
 
   const getClipPath = (type: GeometricShape['type']) => {
@@ -47,7 +45,7 @@ const AnimatedBackground = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      {/* Grid Pattern */}
+      {/* Grid Pattern - CSS only, no JS animation */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div className="w-full h-full" style={{
           backgroundImage: `
@@ -58,77 +56,39 @@ const AnimatedBackground = () => {
         }} />
       </div>
 
-      {/* Diagonal Lines */}
-      <div className="absolute inset-0 opacity-[0.02]">
-        <div className="w-full h-full" style={{
-          backgroundImage: `
-            repeating-linear-gradient(
-              45deg,
-              hsl(var(--foreground)),
-              hsl(var(--foreground)) 1px,
-              transparent 1px,
-              transparent 100px
-            )
-          `,
-        }} />
-      </div>
-
-      {/* Floating Geometric Shapes */}
+      {/* Floating Geometric Shapes - CSS animations only */}
       {shapes.map((shape) => (
-        <motion.div
+        <div
           key={shape.id}
-          className="absolute border border-foreground/5"
+          className="absolute border border-foreground/5 animate-float-slow"
           style={{
             left: `${shape.x}%`,
             top: `${shape.y}%`,
             width: shape.size,
             height: shape.size,
             clipPath: getClipPath(shape.type),
-          }}
-          animate={{
-            y: [0, -50, 0],
-            rotate: [shape.rotation, shape.rotation + 180, shape.rotation + 360],
-            opacity: [0.02, 0.08, 0.02],
-          }}
-          transition={{
-            duration: shape.duration,
-            repeat: Infinity,
-            ease: "easeInOut",
+            animationDelay: `${shape.animationDelay}s`,
+            transform: `rotate(${shape.rotation}deg)`,
           }}
         />
       ))}
 
-      {/* Large Geometric Accent */}
-      <motion.div
-        className="absolute -right-[20%] top-[10%] w-[600px] h-[600px] border border-foreground/5"
+      {/* Large Geometric Accent - CSS animation only */}
+      <div
+        className="absolute -right-[20%] top-[10%] w-[600px] h-[600px] border border-foreground/5 animate-spin-slow"
         style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' }}
-        animate={{
-          rotate: [0, 360],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 60,
-          repeat: Infinity,
-          ease: "linear",
-        }}
       />
 
-      <motion.div
-        className="absolute -left-[15%] bottom-[5%] w-[500px] h-[500px] border border-foreground/5"
-        animate={{
-          rotate: [0, -360],
-        }}
-        transition={{
-          duration: 80,
-          repeat: Infinity,
-          ease: "linear",
-        }}
+      <div
+        className="absolute -left-[15%] bottom-[5%] w-[500px] h-[500px] border border-foreground/5 animate-spin-reverse"
       />
 
       {/* Subtle Radial Gradient */}
       <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-background/50" />
     </div>
   );
-};
+});
+
+AnimatedBackground.displayName = 'AnimatedBackground';
 
 export default AnimatedBackground;
