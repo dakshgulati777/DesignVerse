@@ -69,24 +69,24 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
         "float": {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-10px)" },
+        },
+        "float-slow": {
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)", opacity: "0.02" },
+          "50%": { transform: "translateY(-30px) rotate(10deg)", opacity: "0.06" },
+        },
+        "spin-reverse": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(-360deg)" },
         },
         "pulse-glow": {
           "0%, 100%": { 
@@ -99,14 +99,8 @@ export default {
           },
         },
         "slide-up": {
-          "0%": {
-            opacity: "0",
-            transform: "translateY(30px)"
-          },
-          "100%": {
-            opacity: "1",
-            transform: "translateY(0)"
-          }
+          "0%": { opacity: "0", transform: "translateY(30px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
         },
         "parallax-float": {
           "0%, 100%": { transform: "translateY(0) rotateX(0deg)" },
@@ -117,6 +111,9 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "float": "float 6s ease-in-out infinite",
+        "float-slow": "float-slow 20s ease-in-out infinite",
+        "spin-slow": "spin 60s linear infinite",
+        "spin-reverse": "spin-reverse 80s linear infinite",
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         "slide-up": "slide-up 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
         "parallax-float": "parallax-float 8s ease-in-out infinite",

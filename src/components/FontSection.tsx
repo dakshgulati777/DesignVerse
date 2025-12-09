@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Type, Download, Sparkles, RefreshCw, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ interface FontPairing {
   description: string;
 }
 
-const FontSection = () => {
+const FontSection = memo(() => {
   const navigate = useNavigate();
   const [selectedMood, setSelectedMood] = useState<string>('modern');
   const [currentPairings, setCurrentPairings] = useState<FontPairing[]>([]);
@@ -30,242 +30,104 @@ const FontSection = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Curated font pairings based on different themes and moods
+  // Extended font pairings with more options
   const fontPairings: { [key: string]: FontPairing[] } = {
     modern: [
-      {
-        id: '1',
-        theme: 'Modern Minimalist',
-        heading: 'Montserrat',
-        body: 'Open Sans',
-        mood: 'modern',
-        description: 'Clean, professional, and highly readable for tech and business'
-      },
-      {
-        id: '2',
-        theme: 'Modern Tech',
-        heading: 'Inter',
-        body: 'Roboto',
-        mood: 'modern',
-        description: 'Perfect for SaaS products and digital platforms'
-      },
-      {
-        id: '3',
-        theme: 'Modern Bold',
-        heading: 'Poppins',
-        body: 'Lato',
-        mood: 'modern',
-        description: 'Confident and contemporary with excellent legibility'
-      }
+      { id: '1', theme: 'Modern Minimalist', heading: 'Montserrat', body: 'Open Sans', mood: 'modern', description: 'Clean, professional, and highly readable for tech and business' },
+      { id: '2', theme: 'Modern Tech', heading: 'Inter', body: 'Roboto', mood: 'modern', description: 'Perfect for SaaS products and digital platforms' },
+      { id: '3', theme: 'Modern Bold', heading: 'Poppins', body: 'Lato', mood: 'modern', description: 'Confident and contemporary with excellent legibility' },
+      { id: '4', theme: 'Modern Clean', heading: 'DM Sans', body: 'Inter', mood: 'modern', description: 'Geometric precision for modern interfaces' },
+      { id: '5', theme: 'Modern Edge', heading: 'Outfit', body: 'Plus Jakarta Sans', mood: 'modern', description: 'Fresh and distinctive for startups' },
+      { id: '6', theme: 'Modern Geo', heading: 'Urbanist', body: 'Manrope', mood: 'modern', description: 'Geometric beauty with warm undertones' },
     ],
     elegant: [
-      {
-        id: '4',
-        theme: 'Classic Elegance',
-        heading: 'Playfair Display',
-        body: 'Source Sans Pro',
-        mood: 'elegant',
-        description: 'Timeless sophistication for luxury brands'
-      },
-      {
-        id: '5',
-        theme: 'Refined Luxury',
-        heading: 'Cormorant Garamond',
-        body: 'Montserrat',
-        mood: 'elegant',
-        description: 'High-end editorial and fashion-forward designs'
-      },
-      {
-        id: '6',
-        theme: 'Sophisticated Style',
-        heading: 'Merriweather',
-        body: 'Open Sans',
-        mood: 'elegant',
-        description: 'Perfect balance of tradition and readability'
-      }
+      { id: '7', theme: 'Classic Elegance', heading: 'Playfair Display', body: 'Source Sans Pro', mood: 'elegant', description: 'Timeless sophistication for luxury brands' },
+      { id: '8', theme: 'Refined Luxury', heading: 'Cormorant Garamond', body: 'Montserrat', mood: 'elegant', description: 'High-end editorial and fashion-forward designs' },
+      { id: '9', theme: 'Sophisticated Style', heading: 'Merriweather', body: 'Open Sans', mood: 'elegant', description: 'Perfect balance of tradition and readability' },
+      { id: '10', theme: 'French Chic', heading: 'Bodoni Moda', body: 'Raleway', mood: 'elegant', description: 'High fashion aesthetics with sophistication' },
+      { id: '11', theme: 'Royal Touch', heading: 'Cinzel', body: 'EB Garamond', mood: 'elegant', description: 'Regal and commanding presence' },
+      { id: '12', theme: 'Timeless Grace', heading: 'Libre Baskerville', body: 'Lora', mood: 'elegant', description: 'Classic book typography for premium content' },
     ],
     playful: [
-      {
-        id: '7',
-        theme: 'Fun & Friendly',
-        heading: 'Quicksand',
-        body: 'Nunito',
-        mood: 'playful',
-        description: 'Warm and approachable for creative brands'
-      },
-      {
-        id: '8',
-        theme: 'Cheerful Vibes',
-        heading: 'Pacifico',
-        body: 'Raleway',
-        mood: 'playful',
-        description: 'Casual and energetic for lifestyle products'
-      },
-      {
-        id: '9',
-        theme: 'Creative Energy',
-        heading: 'Righteous',
-        body: 'Lato',
-        mood: 'playful',
-        description: 'Bold personality with balanced readability'
-      }
+      { id: '13', theme: 'Fun & Friendly', heading: 'Quicksand', body: 'Nunito', mood: 'playful', description: 'Warm and approachable for creative brands' },
+      { id: '14', theme: 'Cheerful Vibes', heading: 'Pacifico', body: 'Raleway', mood: 'playful', description: 'Casual and energetic for lifestyle products' },
+      { id: '15', theme: 'Creative Energy', heading: 'Righteous', body: 'Lato', mood: 'playful', description: 'Bold personality with balanced readability' },
+      { id: '16', theme: 'Bouncy Joy', heading: 'Fredoka One', body: 'Nunito', mood: 'playful', description: 'Friendly and inviting for kids brands' },
+      { id: '17', theme: 'Whimsical Touch', heading: 'Baloo 2', body: 'Quicksand', mood: 'playful', description: 'Rounded charm for casual apps' },
+      { id: '18', theme: 'Happy Days', heading: 'Comfortaa', body: 'Varela Round', mood: 'playful', description: 'Soft curves for friendly interfaces' },
     ],
     professional: [
-      {
-        id: '10',
-        theme: 'Corporate Classic',
-        heading: 'Roboto',
-        body: 'Roboto',
-        mood: 'professional',
-        description: 'Trusted and reliable for business communications'
-      },
-      {
-        id: '11',
-        theme: 'Executive Style',
-        heading: 'Libre Baskerville',
-        body: 'Source Sans Pro',
-        mood: 'professional',
-        description: 'Authoritative presence with modern accessibility'
-      },
-      {
-        id: '12',
-        theme: 'Professional Edge',
-        heading: 'Work Sans',
-        body: 'IBM Plex Sans',
-        mood: 'professional',
-        description: 'Contemporary professionalism for forward-thinking brands'
-      }
+      { id: '19', theme: 'Corporate Classic', heading: 'Roboto', body: 'Roboto', mood: 'professional', description: 'Trusted and reliable for business communications' },
+      { id: '20', theme: 'Executive Style', heading: 'Libre Baskerville', body: 'Source Sans Pro', mood: 'professional', description: 'Authoritative presence with modern accessibility' },
+      { id: '21', theme: 'Professional Edge', heading: 'Work Sans', body: 'IBM Plex Sans', mood: 'professional', description: 'Contemporary professionalism for forward-thinking brands' },
+      { id: '22', theme: 'Legal Authority', heading: 'PT Serif', body: 'PT Sans', mood: 'professional', description: 'Traditional trust for law and finance' },
+      { id: '23', theme: 'Tech Professional', heading: 'IBM Plex Serif', body: 'IBM Plex Sans', mood: 'professional', description: 'Enterprise-ready typography system' },
+      { id: '24', theme: 'Business Modern', heading: 'Lexend', body: 'Inter', mood: 'professional', description: 'Optimized readability for business docs' },
     ],
     creative: [
-      {
-        id: '13',
-        theme: 'Artistic Expression',
-        heading: 'Bebas Neue',
-        body: 'Raleway',
-        mood: 'creative',
-        description: 'Bold statements with refined details'
-      },
-      {
-        id: '14',
-        theme: 'Design Studio',
-        heading: 'Oswald',
-        body: 'Open Sans',
-        mood: 'creative',
-        description: 'Strong hierarchy with versatile body text'
-      },
-      {
-        id: '15',
-        theme: 'Innovative Spirit',
-        heading: 'Space Grotesk',
-        body: 'Inter',
-        mood: 'creative',
-        description: 'Future-forward aesthetic with technical precision'
-      }
+      { id: '25', theme: 'Artistic Expression', heading: 'Bebas Neue', body: 'Raleway', mood: 'creative', description: 'Bold statements with refined details' },
+      { id: '26', theme: 'Design Studio', heading: 'Oswald', body: 'Open Sans', mood: 'creative', description: 'Strong hierarchy with versatile body text' },
+      { id: '27', theme: 'Innovative Spirit', heading: 'Space Grotesk', body: 'Inter', mood: 'creative', description: 'Future-forward aesthetic with technical precision' },
+      { id: '28', theme: 'Bold Vision', heading: 'Archivo Black', body: 'Archivo', mood: 'creative', description: 'Impactful headlines for creative agencies' },
+      { id: '29', theme: 'Art Deco Revival', heading: 'Poiret One', body: 'Josefin Sans', mood: 'creative', description: 'Vintage glamour meets modern design' },
+      { id: '30', theme: 'Studio Aesthetic', heading: 'Syne', body: 'Work Sans', mood: 'creative', description: 'Experimental typography for portfolios' },
     ],
     vintage: [
-      {
-        id: '16',
-        theme: 'Retro Revival',
-        heading: 'Abril Fatface',
-        body: 'Lato',
-        mood: 'vintage',
-        description: 'Classic display with contemporary readability'
-      },
-      {
-        id: '17',
-        theme: 'Nostalgic Charm',
-        heading: 'Cinzel',
-        body: 'Crimson Text',
-        mood: 'vintage',
-        description: 'Historical elegance meets modern typography'
-      },
-      {
-        id: '18',
-        theme: 'Heritage Style',
-        heading: 'Yeseva One',
-        body: 'Josefin Sans',
-        mood: 'vintage',
-        description: 'Vintage personality with clean supporting text'
-      }
+      { id: '31', theme: 'Retro Revival', heading: 'Abril Fatface', body: 'Lato', mood: 'vintage', description: 'Classic display with contemporary readability' },
+      { id: '32', theme: 'Nostalgic Charm', heading: 'Cinzel', body: 'Crimson Text', mood: 'vintage', description: 'Historical elegance meets modern typography' },
+      { id: '33', theme: 'Heritage Style', heading: 'Yeseva One', body: 'Josefin Sans', mood: 'vintage', description: 'Vintage personality with clean supporting text' },
+      { id: '34', theme: 'Old Hollywood', heading: 'Playfair Display SC', body: 'Spectral', mood: 'vintage', description: 'Golden age glamour for luxury brands' },
+      { id: '35', theme: 'Victorian Era', heading: 'Cardo', body: 'Alegreya', mood: 'vintage', description: 'Classic book typography revived' },
+      { id: '36', theme: 'Art Nouveau', heading: 'Marcellus', body: 'Gentium Plus', mood: 'vintage', description: 'Ornate elegance for artisanal brands' },
     ],
     bold: [
-      {
-        id: '19',
-        theme: 'Impact Statement',
-        heading: 'Anton',
-        body: 'Roboto',
-        mood: 'bold',
-        description: 'High-impact headlines with versatile body text'
-      },
-      {
-        id: '20',
-        theme: 'Strong Presence',
-        heading: 'Black Ops One',
-        body: 'Open Sans',
-        mood: 'bold',
-        description: 'Military-inspired boldness with friendly readability'
-      },
-      {
-        id: '21',
-        theme: 'Power Typography',
-        heading: 'Russo One',
-        body: 'Source Sans Pro',
-        mood: 'bold',
-        description: 'Geometric strength meets professional clarity'
-      }
+      { id: '37', theme: 'Impact Statement', heading: 'Anton', body: 'Roboto', mood: 'bold', description: 'High-impact headlines with versatile body text' },
+      { id: '38', theme: 'Strong Presence', heading: 'Black Ops One', body: 'Open Sans', mood: 'bold', description: 'Military-inspired boldness with friendly readability' },
+      { id: '39', theme: 'Power Typography', heading: 'Russo One', body: 'Source Sans Pro', mood: 'bold', description: 'Geometric strength meets professional clarity' },
+      { id: '40', theme: 'Maximum Impact', heading: 'Bungee', body: 'Roboto', mood: 'bold', description: 'Attention-grabbing for sports and gaming' },
+      { id: '41', theme: 'Heavy Metal', heading: 'Teko', body: 'Barlow', mood: 'bold', description: 'Industrial strength for automotive brands' },
+      { id: '42', theme: 'Street Style', heading: 'Bebas Neue', body: 'Roboto Condensed', mood: 'bold', description: 'Urban edge for streetwear and music' },
     ],
     minimal: [
-      {
-        id: '22',
-        theme: 'Clean Canvas',
-        heading: 'DM Sans',
-        body: 'DM Sans',
-        mood: 'minimal',
-        description: 'Unified simplicity for minimalist designs'
-      },
-      {
-        id: '23',
-        theme: 'Swiss Style',
-        heading: 'Helvetica Neue',
-        body: 'Inter',
-        mood: 'minimal',
-        description: 'Timeless Swiss design principles'
-      },
-      {
-        id: '24',
-        theme: 'Pure Simplicity',
-        heading: 'Karla',
-        body: 'Karla',
-        mood: 'minimal',
-        description: 'Grotesque charm with consistent styling'
-      }
+      { id: '43', theme: 'Clean Canvas', heading: 'DM Sans', body: 'DM Sans', mood: 'minimal', description: 'Unified simplicity for minimalist designs' },
+      { id: '44', theme: 'Swiss Style', heading: 'Helvetica Neue', body: 'Inter', mood: 'minimal', description: 'Timeless Swiss design principles' },
+      { id: '45', theme: 'Pure Simplicity', heading: 'Karla', body: 'Karla', mood: 'minimal', description: 'Grotesque charm with consistent styling' },
+      { id: '46', theme: 'Zen Typography', heading: 'Tenor Sans', body: 'Jost', mood: 'minimal', description: 'Calm and balanced for wellness brands' },
+      { id: '47', theme: 'Nordic Clean', heading: 'Cabin', body: 'Nunito Sans', mood: 'minimal', description: 'Scandinavian simplicity and warmth' },
+      { id: '48', theme: 'Essential Mono', heading: 'Space Mono', body: 'Space Grotesk', mood: 'minimal', description: 'Technical precision for developer tools' },
     ],
     editorial: [
-      {
-        id: '25',
-        theme: 'Magazine Style',
-        heading: 'Bodoni Moda',
-        body: 'EB Garamond',
-        mood: 'editorial',
-        description: 'Classic editorial pairing for publications'
-      },
-      {
-        id: '26',
-        theme: 'News Print',
-        heading: 'Domine',
-        body: 'Cabin',
-        mood: 'editorial',
-        description: 'Authoritative headers with modern body'
-      },
-      {
-        id: '27',
-        theme: 'Fashion Forward',
-        heading: 'Didot',
-        body: 'Raleway',
-        mood: 'editorial',
-        description: 'High fashion aesthetics with elegance'
-      }
-    ]
+      { id: '49', theme: 'Magazine Style', heading: 'Bodoni Moda', body: 'EB Garamond', mood: 'editorial', description: 'Classic editorial pairing for publications' },
+      { id: '50', theme: 'News Print', heading: 'Domine', body: 'Cabin', mood: 'editorial', description: 'Authoritative headers with modern body' },
+      { id: '51', theme: 'Fashion Forward', heading: 'Didot', body: 'Raleway', mood: 'editorial', description: 'High fashion aesthetics with elegance' },
+      { id: '52', theme: 'Literary Journal', heading: 'Spectral', body: 'Crimson Pro', mood: 'editorial', description: 'Sophisticated reading experience' },
+      { id: '53', theme: 'Broadsheet', heading: 'Noto Serif Display', body: 'Noto Sans', mood: 'editorial', description: 'Newspaper authority with clarity' },
+      { id: '54', theme: 'Lifestyle Blog', heading: 'Fraunces', body: 'Commissioner', mood: 'editorial', description: 'Warm personality for lifestyle content' },
+    ],
+    cartoon: [
+      { id: '55', theme: 'Comic Book', heading: 'Bangers', body: 'Patrick Hand', mood: 'cartoon', description: 'Bold comic style for fun projects' },
+      { id: '56', theme: 'Kids Fun', heading: 'Bubblegum Sans', body: 'Schoolbell', mood: 'cartoon', description: 'Playful and child-friendly typography' },
+      { id: '57', theme: 'Sketch Style', heading: 'Permanent Marker', body: 'Indie Flower', mood: 'cartoon', description: 'Hand-drawn feel for creative projects' },
+      { id: '58', theme: 'Retro Cartoon', heading: 'Boogaloo', body: 'Gloria Hallelujah', mood: 'cartoon', description: '60s cartoon vibes for nostalgic designs' },
+      { id: '59', theme: 'Manga Style', heading: 'Rubik Doodle Shadow', body: 'Kalam', mood: 'cartoon', description: 'Japanese comic book influence' },
+      { id: '60', theme: 'Game UI', heading: 'Press Start 2P', body: 'VT323', mood: 'cartoon', description: 'Pixel art gaming aesthetic' },
+    ],
+    handwritten: [
+      { id: '61', theme: 'Personal Touch', heading: 'Dancing Script', body: 'Caveat', mood: 'handwritten', description: 'Elegant script for personal branding' },
+      { id: '62', theme: 'Casual Notes', heading: 'Shadows Into Light', body: 'Architects Daughter', mood: 'handwritten', description: 'Relaxed and approachable style' },
+      { id: '63', theme: 'Wedding Elegance', heading: 'Great Vibes', body: 'Sacramento', mood: 'handwritten', description: 'Romantic cursive for celebrations' },
+      { id: '64', theme: 'Journal Entry', heading: 'Kaushan Script', body: 'Handlee', mood: 'handwritten', description: 'Personal diary feel for blogs' },
+      { id: '65', theme: 'Chalk Board', heading: 'Amatic SC', body: 'Covered By Your Grace', mood: 'handwritten', description: 'Rustic and handmade aesthetic' },
+      { id: '66', theme: 'Brush Script', heading: 'Alex Brush', body: 'Courgette', mood: 'handwritten', description: 'Artistic brush strokes for luxury' },
+    ],
+    tech: [
+      { id: '67', theme: 'Code Editor', heading: 'JetBrains Mono', body: 'Roboto Mono', mood: 'tech', description: 'Developer-focused monospace pairing' },
+      { id: '68', theme: 'Terminal Style', heading: 'Fira Code', body: 'Source Code Pro', mood: 'tech', description: 'Clean code presentation' },
+      { id: '69', theme: 'Cyberpunk', heading: 'Orbitron', body: 'Exo 2', mood: 'tech', description: 'Futuristic sci-fi aesthetic' },
+      { id: '70', theme: 'AI Interface', heading: 'Rajdhani', body: 'Saira', mood: 'tech', description: 'Modern tech with sharp edges' },
+      { id: '71', theme: 'Data Dashboard', heading: 'Titillium Web', body: 'Ubuntu', mood: 'tech', description: 'Clean and readable for analytics' },
+      { id: '72', theme: 'Startup Launch', heading: 'Red Hat Display', body: 'Red Hat Text', mood: 'tech', description: 'Open source professional style' },
+    ],
   };
 
   const popularFonts = [
@@ -274,17 +136,17 @@ const FontSection = () => {
     'Source Sans Pro', 'Oswald', 'PT Sans', 'Ubuntu', 'Quicksand'
   ];
 
-  const generatePairings = () => {
+  const generatePairings = useCallback(() => {
     setLoading(true);
     setTimeout(() => {
       const pairings = fontPairings[selectedMood] || fontPairings.modern;
       setCurrentPairings(pairings);
       setLoading(false);
       toast.success(`Generated ${pairings.length} font pairings for ${selectedMood} mood!`);
-    }, 500);
-  };
+    }, 300);
+  }, [selectedMood]);
 
-  const downloadFont = async (fontName: string) => {
+  const downloadFont = useCallback(async (fontName: string) => {
     try {
       const fontUrl = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@400;700&display=swap`;
       const response = await fetch(fontUrl);
@@ -311,15 +173,15 @@ const FontSection = () => {
       console.error('Download error:', error);
       toast.error(`Failed to download ${fontName}. Please try again.`);
     }
-  };
+  }, []);
 
-  const downloadPairedFonts = async (pairing: FontPairing) => {
+  const downloadPairedFonts = useCallback(async (pairing: FontPairing) => {
     toast.info('Downloading font pair...');
     await downloadFont(pairing.heading);
     setTimeout(async () => {
       await downloadFont(pairing.body);
     }, 1000);
-  };
+  }, [downloadFont]);
 
   return (
     <section id="fonts" className="py-20 px-6 bg-background/50">
@@ -330,6 +192,7 @@ const FontSection = () => {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
         >
           <div className="inline-flex items-center gap-2 glass-nav mb-6">
             <Type className="w-5 h-5 text-primary" />
@@ -349,6 +212,7 @@ const FontSection = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
         >
           <div className="glass-card">
             <div className="flex items-center gap-2 mb-6">
@@ -371,6 +235,9 @@ const FontSection = () => {
                   <SelectItem value="bold">Bold & Impact</SelectItem>
                   <SelectItem value="minimal">Minimal & Swiss</SelectItem>
                   <SelectItem value="editorial">Editorial & Magazine</SelectItem>
+                  <SelectItem value="cartoon">Cartoon & Comic</SelectItem>
+                  <SelectItem value="handwritten">Handwritten & Script</SelectItem>
+                  <SelectItem value="tech">Tech & Futuristic</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -401,17 +268,18 @@ const FontSection = () => {
             className="mb-16"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
           >
             <h3 className="text-2xl font-bold mb-8 text-center">
               Curated Pairings for <span className="text-primary capitalize">{selectedMood}</span> Mood
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
               {(isMobile ? currentPairings.slice(0, 6) : currentPairings).map((pairing, index) => (
                 <motion.div
                   key={pairing.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.05 }}
                 >
                   <Card className="glass-card group hover:shadow-[var(--shadow-glow)] hover:scale-105 transition-all duration-300 cursor-pointer">
                     <div className="space-y-4">
@@ -467,16 +335,17 @@ const FontSection = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
         >
-            <h3 className="text-2xl font-bold mb-8 text-center text-foreground">Popular Fonts</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+          <h3 className="text-2xl font-bold mb-8 text-center text-foreground">Popular Fonts</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {(isMobile ? popularFonts.slice(0, 6) : popularFonts).map((font, index) => (
               <motion.div
                 key={font}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.03 }}
               >
                 <Card className="glass-card group hover:shadow-[var(--shadow-glow)] hover:scale-105 transition-all duration-300 cursor-pointer">
                   <div className="text-center space-y-3">
@@ -494,7 +363,10 @@ const FontSection = () => {
                         Design
                       </p>
                     </div>
-                    <p className="text-sm font-medium text-foreground">{font}</p>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{font}</p>
+                      <p className="text-xs text-muted-foreground">Sans Serif</p>
+                    </div>
                     <Button 
                       onClick={() => downloadFont(font)}
                       variant="outline"
@@ -509,35 +381,37 @@ const FontSection = () => {
               </motion.div>
             ))}
           </div>
-          
-          {/* Explore More Button */}
-          <motion.div
-            className="flex justify-center mt-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Button
-              onClick={() => navigate('/font-lab')}
-              size="lg"
-              className="button-primary group"
-            >
-              EXPLORE MORE FONTS
-              <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </motion.div>
         </motion.div>
 
-        {/* Load Google Fonts for preview */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&family=Roboto:wght@400;700&family=Lato:wght@400;700&family=Poppins:wght@400;700&family=Playfair+Display:wght@400;700&family=Inter:wght@400;600&family=Raleway:wght@400;700&family=Nunito:wght@400;700&family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;600&family=Oswald:wght@400;700&family=PT+Sans:wght@400;700&family=Ubuntu:wght@400;700&family=Quicksand:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=Pacifico&family=Righteous&family=Libre+Baskerville:wght@400;700&family=Work+Sans:wght@400;700&family=IBM+Plex+Sans:wght@400;600&family=Bebas+Neue&family=Space+Grotesk:wght@400;700&family=Abril+Fatface&family=Cinzel:wght@400;700&family=Crimson+Text:wght@400;700&family=Yeseva+One&family=Josefin+Sans:wght@400;700&display=swap" 
-          rel="stylesheet" 
-        />
+        {/* Explore More Button */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <Button
+            onClick={() => navigate('/font-lab')}
+            className="button-primary group"
+          >
+            Explore More Fonts
+            <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+          </Button>
+        </motion.div>
       </div>
+
+      {/* Load Google Fonts for preview - optimized */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link 
+        href={`https://fonts.googleapis.com/css2?family=${popularFonts.map(f => f.replace(/ /g, '+')).join('&family=')}&display=swap`}
+        rel="stylesheet" 
+      />
     </section>
   );
-};
+});
+
+FontSection.displayName = 'FontSection';
 
 export default FontSection;

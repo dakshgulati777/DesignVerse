@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { motion } from 'framer-motion';
-import { Download, Search, ArrowLeft } from 'lucide-react';
+import { Download, Search, ArrowLeft, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -13,12 +13,27 @@ interface Font {
   variants: string[];
 }
 
-const FontLab = () => {
+const fontCategories = [
+  'All',
+  'Sans Serif',
+  'Serif',
+  'Display',
+  'Handwriting',
+  'Monospace',
+  'Cartoon',
+  'Decorative',
+  'Gothic',
+  'Retro',
+];
+
+const FontLab = memo(() => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // 100+ Google Fonts collection
+  // Extended font collection with categories
   const allFonts: Font[] = [
+    // Sans Serif
     { name: 'Roboto', category: 'Sans Serif', variants: ['regular', '700'] },
     { name: 'Open Sans', category: 'Sans Serif', variants: ['regular', '700'] },
     { name: 'Lato', category: 'Sans Serif', variants: ['regular', '700'] },
@@ -32,23 +47,15 @@ const FontLab = () => {
     { name: 'Rubik', category: 'Sans Serif', variants: ['regular', '700'] },
     { name: 'Quicksand', category: 'Sans Serif', variants: ['regular', '700'] },
     { name: 'Josefin Sans', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Nunito Sans', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Karla', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Fira Sans', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Manrope', category: 'Sans Serif', variants: ['regular', '700'] },
     { name: 'DM Sans', category: 'Sans Serif', variants: ['regular', '700'] },
     { name: 'Space Grotesk', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Lexend', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Plus Jakarta Sans', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Mulish', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Archivo', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'IBM Plex Sans', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Heebo', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Asap', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Barlow', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Hind', category: 'Sans Serif', variants: ['regular', '700'] },
+    { name: 'Manrope', category: 'Sans Serif', variants: ['regular', '700'] },
     { name: 'Outfit', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Maven Pro', category: 'Sans Serif', variants: ['regular', '700'] },
+    { name: 'Urbanist', category: 'Sans Serif', variants: ['regular', '700'] },
+    { name: 'Plus Jakarta Sans', category: 'Sans Serif', variants: ['regular', '700'] },
+    { name: 'Lexend', category: 'Sans Serif', variants: ['regular', '700'] },
+    
+    // Serif
     { name: 'Merriweather', category: 'Serif', variants: ['regular', '700'] },
     { name: 'Playfair Display', category: 'Serif', variants: ['regular', '700'] },
     { name: 'Lora', category: 'Serif', variants: ['regular', '700'] },
@@ -57,97 +64,108 @@ const FontLab = () => {
     { name: 'Libre Baskerville', category: 'Serif', variants: ['regular', '700'] },
     { name: 'Cormorant Garamond', category: 'Serif', variants: ['regular', '700'] },
     { name: 'EB Garamond', category: 'Serif', variants: ['regular', '700'] },
-    { name: 'Bitter', category: 'Serif', variants: ['regular', '700'] },
-    { name: 'Cardo', category: 'Serif', variants: ['regular', '700'] },
     { name: 'Spectral', category: 'Serif', variants: ['regular', '700'] },
-    { name: 'Zilla Slab', category: 'Serif', variants: ['regular', '700'] },
+    { name: 'Bodoni Moda', category: 'Serif', variants: ['regular', '700'] },
+    { name: 'Fraunces', category: 'Serif', variants: ['regular', '700'] },
     { name: 'Alegreya', category: 'Serif', variants: ['regular', '700'] },
-    { name: 'Rokkitt', category: 'Serif', variants: ['regular', '700'] },
-    { name: 'Vollkorn', category: 'Serif', variants: ['regular', '700'] },
+    
+    // Display
     { name: 'Abril Fatface', category: 'Display', variants: ['regular'] },
     { name: 'Bebas Neue', category: 'Display', variants: ['regular'] },
     { name: 'Righteous', category: 'Display', variants: ['regular'] },
-    { name: 'Pacifico', category: 'Display', variants: ['regular'] },
-    { name: 'Lobster', category: 'Display', variants: ['regular'] },
-    { name: 'Fredoka One', category: 'Display', variants: ['regular'] },
-    { name: 'Alfa Slab One', category: 'Display', variants: ['regular'] },
-    { name: 'Bungee', category: 'Display', variants: ['regular'] },
-    { name: 'Permanent Marker', category: 'Display', variants: ['regular'] },
-    { name: 'Satisfy', category: 'Display', variants: ['regular'] },
-    { name: 'Shadows Into Light', category: 'Display', variants: ['regular'] },
-    { name: 'Amatic SC', category: 'Display', variants: ['regular', '700'] },
     { name: 'Anton', category: 'Display', variants: ['regular'] },
     { name: 'Cinzel', category: 'Display', variants: ['regular', '700'] },
-    { name: 'Yeseva One', category: 'Display', variants: ['regular'] },
-    { name: 'Architects Daughter', category: 'Handwriting', variants: ['regular'] },
+    { name: 'Oswald', category: 'Display', variants: ['regular', '700'] },
+    { name: 'Alfa Slab One', category: 'Display', variants: ['regular'] },
+    { name: 'Bungee', category: 'Display', variants: ['regular'] },
+    { name: 'Teko', category: 'Display', variants: ['regular', '700'] },
+    { name: 'Russo One', category: 'Display', variants: ['regular'] },
+    
+    // Handwriting
     { name: 'Dancing Script', category: 'Handwriting', variants: ['regular', '700'] },
     { name: 'Caveat', category: 'Handwriting', variants: ['regular', '700'] },
-    { name: 'Cookie', category: 'Handwriting', variants: ['regular'] },
     { name: 'Great Vibes', category: 'Handwriting', variants: ['regular'] },
     { name: 'Kaushan Script', category: 'Handwriting', variants: ['regular'] },
     { name: 'Indie Flower', category: 'Handwriting', variants: ['regular'] },
     { name: 'Patrick Hand', category: 'Handwriting', variants: ['regular'] },
+    { name: 'Architects Daughter', category: 'Handwriting', variants: ['regular'] },
+    { name: 'Sacramento', category: 'Handwriting', variants: ['regular'] },
+    { name: 'Shadows Into Light', category: 'Handwriting', variants: ['regular'] },
+    { name: 'Alex Brush', category: 'Handwriting', variants: ['regular'] },
+    
+    // Monospace
     { name: 'Source Code Pro', category: 'Monospace', variants: ['regular', '700'] },
     { name: 'Roboto Mono', category: 'Monospace', variants: ['regular', '700'] },
     { name: 'Fira Code', category: 'Monospace', variants: ['regular', '700'] },
     { name: 'JetBrains Mono', category: 'Monospace', variants: ['regular', '700'] },
-    { name: 'Courier Prime', category: 'Monospace', variants: ['regular', '700'] },
     { name: 'Space Mono', category: 'Monospace', variants: ['regular', '700'] },
-    { name: 'PT Mono', category: 'Monospace', variants: ['regular'] },
-    { name: 'Source Sans Pro', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Oswald', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'PT Sans', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Noto Sans', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Titillium Web', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Exo 2', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Cabin', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Varela Round', category: 'Sans Serif', variants: ['regular'] },
-    { name: 'Abel', category: 'Sans Serif', variants: ['regular'] },
-    { name: 'Oxygen', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Prompt', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Catamaran', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Yanone Kaffeesatz', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Dosis', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Comfortaa', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Cairo', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Encode Sans', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Fjalla One', category: 'Sans Serif', variants: ['regular'] },
-    { name: 'Almarai', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Kanit', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Signika', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Public Sans', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Red Hat Display', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Sora', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Urbanist', category: 'Sans Serif', variants: ['regular', '700'] },
-    { name: 'Instrument Sans', category: 'Sans Serif', variants: ['regular', '700'] },
+    { name: 'IBM Plex Mono', category: 'Monospace', variants: ['regular', '700'] },
+    { name: 'Courier Prime', category: 'Monospace', variants: ['regular', '700'] },
+    { name: 'Inconsolata', category: 'Monospace', variants: ['regular', '700'] },
+    
+    // Cartoon
+    { name: 'Bangers', category: 'Cartoon', variants: ['regular'] },
+    { name: 'Permanent Marker', category: 'Cartoon', variants: ['regular'] },
+    { name: 'Fredoka One', category: 'Cartoon', variants: ['regular'] },
+    { name: 'Bubblegum Sans', category: 'Cartoon', variants: ['regular'] },
+    { name: 'Comic Neue', category: 'Cartoon', variants: ['regular', '700'] },
+    { name: 'Boogaloo', category: 'Cartoon', variants: ['regular'] },
+    { name: 'Chewy', category: 'Cartoon', variants: ['regular'] },
+    { name: 'Luckiest Guy', category: 'Cartoon', variants: ['regular'] },
+    { name: 'Titan One', category: 'Cartoon', variants: ['regular'] },
+    { name: 'Bowlby One SC', category: 'Cartoon', variants: ['regular'] },
+    
+    // Decorative
+    { name: 'Lobster', category: 'Decorative', variants: ['regular'] },
+    { name: 'Pacifico', category: 'Decorative', variants: ['regular'] },
+    { name: 'Satisfy', category: 'Decorative', variants: ['regular'] },
+    { name: 'Cookie', category: 'Decorative', variants: ['regular'] },
+    { name: 'Amatic SC', category: 'Decorative', variants: ['regular', '700'] },
+    { name: 'Yeseva One', category: 'Decorative', variants: ['regular'] },
+    { name: 'Monoton', category: 'Decorative', variants: ['regular'] },
+    { name: 'Fascinate Inline', category: 'Decorative', variants: ['regular'] },
+    { name: 'Shrikhand', category: 'Decorative', variants: ['regular'] },
+    { name: 'Rye', category: 'Decorative', variants: ['regular'] },
+    
+    // Gothic
+    { name: 'UnifrakturMaguntia', category: 'Gothic', variants: ['regular'] },
+    { name: 'IM Fell English', category: 'Gothic', variants: ['regular'] },
+    { name: 'Almendra', category: 'Gothic', variants: ['regular', '700'] },
+    { name: 'Pirata One', category: 'Gothic', variants: ['regular'] },
+    { name: 'Metal Mania', category: 'Gothic', variants: ['regular'] },
+    { name: 'Creepster', category: 'Gothic', variants: ['regular'] },
+    { name: 'Nosifer', category: 'Gothic', variants: ['regular'] },
+    
+    // Retro
+    { name: 'Orbitron', category: 'Retro', variants: ['regular', '700'] },
+    { name: 'Press Start 2P', category: 'Retro', variants: ['regular'] },
+    { name: 'VT323', category: 'Retro', variants: ['regular'] },
+    { name: 'Silkscreen', category: 'Retro', variants: ['regular', '700'] },
+    { name: 'DotGothic16', category: 'Retro', variants: ['regular'] },
+    { name: 'Major Mono Display', category: 'Retro', variants: ['regular'] },
+    { name: 'Nova Mono', category: 'Retro', variants: ['regular'] },
+    { name: 'Share Tech Mono', category: 'Retro', variants: ['regular'] },
   ];
 
-  const filteredFonts = allFonts.filter(font =>
-    font.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    font.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredFonts = allFonts.filter(font => {
+    const matchesSearch = font.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      font.category.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || font.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
-  const downloadFont = async (fontName: string) => {
+  const downloadFont = useCallback(async (fontName: string) => {
     try {
-      // Create a Google Fonts CSS URL
       const fontUrl = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@400;700&display=swap`;
-      
-      // Fetch the CSS file
       const response = await fetch(fontUrl);
       const cssText = await response.text();
-      
-      // Extract font URLs from CSS
       const urlMatches = cssText.match(/url\((https:\/\/[^)]+)\)/g);
       
       if (urlMatches && urlMatches.length > 0) {
-        // Download the first font file
         const fontFileUrl = urlMatches[0].match(/https:\/\/[^)]+/)?.[0];
-        
         if (fontFileUrl) {
           const fontResponse = await fetch(fontFileUrl);
           const fontBlob = await fontResponse.blob();
-          
-          // Create download link
           const url = window.URL.createObjectURL(fontBlob);
           const a = document.createElement('a');
           a.href = url;
@@ -156,11 +174,9 @@ const FontLab = () => {
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
-          
           toast.success(`${fontName} downloaded successfully!`);
         }
       } else {
-        // Fallback: Open Google Fonts page
         window.open(`https://fonts.google.com/specimen/${fontName.replace(/ /g, '+')}`, '_blank');
         toast.info(`Opening ${fontName} download page...`);
       }
@@ -168,7 +184,7 @@ const FontLab = () => {
       console.error('Download error:', error);
       toast.error(`Failed to download ${fontName}. Please try again.`);
     }
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -186,18 +202,19 @@ const FontLab = () => {
             </Button>
             <div>
               <h1 className="text-2xl font-bold">Font Lab</h1>
-              <p className="text-sm text-muted-foreground">100+ Professional Fonts</p>
+              <p className="text-sm text-muted-foreground">{filteredFonts.length} Professional Fonts</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Search Bar */}
+        {/* Search and Filter */}
         <motion.div
-          className="mb-12"
+          className="mb-8 space-y-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
         >
           <div className="relative max-w-2xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -209,9 +226,21 @@ const FontLab = () => {
               className="pl-12 py-6 text-lg bg-background/50 border-white/20"
             />
           </div>
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            {filteredFonts.length} fonts available
-          </p>
+          
+          {/* Category Filter */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {fontCategories.map((category) => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(category)}
+                className="transition-all duration-200"
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
         </motion.div>
 
         {/* Fonts Grid */}
@@ -221,7 +250,7 @@ const FontLab = () => {
               key={font.name}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.02 }}
+              transition={{ delay: Math.min(index * 0.01, 0.3) }}
             >
               <Card className="glass-card group hover:shadow-[var(--shadow-glow)] hover:scale-105 transition-all duration-300">
                 <div className="text-center space-y-3">
@@ -241,7 +270,7 @@ const FontLab = () => {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{font.name}</p>
-                    <p className="text-xs text-muted-foreground">{font.category}</p>
+                    <p className="text-xs text-primary">{font.category}</p>
                   </div>
                   <Button 
                     onClick={() => downloadFont(font.name)}
@@ -261,20 +290,32 @@ const FontLab = () => {
         {/* No Results */}
         {filteredFonts.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-xl text-muted-foreground">No fonts found matching "{searchQuery}"</p>
+            <p className="text-xl text-muted-foreground">No fonts found matching your criteria</p>
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCategory('All');
+              }}
+            >
+              Clear Filters
+            </Button>
           </div>
         )}
       </div>
 
-      {/* Load Google Fonts for preview */}
+      {/* Load Google Fonts for preview - optimized with subset */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link 
-        href={`https://fonts.googleapis.com/css2?${allFonts.map(f => `family=${f.name.replace(/ /g, '+')}:wght@400;700`).join('&')}&display=swap`}
+        href={`https://fonts.googleapis.com/css2?${filteredFonts.slice(0, 50).map(f => `family=${f.name.replace(/ /g, '+')}`).join('&')}&display=swap`}
         rel="stylesheet" 
       />
     </div>
   );
-};
+});
+
+FontLab.displayName = 'FontLab';
 
 export default FontLab;
