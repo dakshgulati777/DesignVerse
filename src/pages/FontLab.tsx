@@ -1,11 +1,12 @@
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Download, Search, ArrowLeft, Filter } from 'lucide-react';
+import { Download, Search, ArrowLeft, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useFavorites } from '@/hooks/useFavorites';
 
 interface Font {
   name: string;
@@ -24,12 +25,18 @@ const fontCategories = [
   'Decorative',
   'Gothic',
   'Retro',
+  'Bold',
+  'Condensed',
+  'Rounded',
+  'Elegant',
+  'Tech',
 ];
 
 const FontLab = memo(() => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   // Extended font collection with categories
   const allFonts: Font[] = [
@@ -145,6 +152,52 @@ const FontLab = memo(() => {
     { name: 'Major Mono Display', category: 'Retro', variants: ['regular'] },
     { name: 'Nova Mono', category: 'Retro', variants: ['regular'] },
     { name: 'Share Tech Mono', category: 'Retro', variants: ['regular'] },
+    
+    // Bold
+    { name: 'Black Ops One', category: 'Bold', variants: ['regular'] },
+    { name: 'Bungee Inline', category: 'Bold', variants: ['regular'] },
+    { name: 'Impact', category: 'Bold', variants: ['regular'] },
+    { name: 'Ultra', category: 'Bold', variants: ['regular'] },
+    { name: 'Passion One', category: 'Bold', variants: ['regular', '700'] },
+    { name: 'Fugaz One', category: 'Bold', variants: ['regular'] },
+    { name: 'Changa One', category: 'Bold', variants: ['regular'] },
+    { name: 'Bevan', category: 'Bold', variants: ['regular'] },
+    
+    // Condensed
+    { name: 'Roboto Condensed', category: 'Condensed', variants: ['regular', '700'] },
+    { name: 'Barlow Condensed', category: 'Condensed', variants: ['regular', '700'] },
+    { name: 'Saira Condensed', category: 'Condensed', variants: ['regular', '700'] },
+    { name: 'PT Sans Narrow', category: 'Condensed', variants: ['regular', '700'] },
+    { name: 'Encode Sans Condensed', category: 'Condensed', variants: ['regular', '700'] },
+    { name: 'Fjalla One', category: 'Condensed', variants: ['regular'] },
+    { name: 'Pathway Gothic One', category: 'Condensed', variants: ['regular'] },
+    
+    // Rounded
+    { name: 'Varela Round', category: 'Rounded', variants: ['regular'] },
+    { name: 'Nunito', category: 'Rounded', variants: ['regular', '700'] },
+    { name: 'Comfortaa', category: 'Rounded', variants: ['regular', '700'] },
+    { name: 'M PLUS Rounded 1c', category: 'Rounded', variants: ['regular', '700'] },
+    { name: 'Baloo 2', category: 'Rounded', variants: ['regular', '700'] },
+    { name: 'Andika', category: 'Rounded', variants: ['regular', '700'] },
+    
+    // Elegant
+    { name: 'Marcellus', category: 'Elegant', variants: ['regular'] },
+    { name: 'Cormorant', category: 'Elegant', variants: ['regular', '700'] },
+    { name: 'Forum', category: 'Elegant', variants: ['regular'] },
+    { name: 'Poiret One', category: 'Elegant', variants: ['regular'] },
+    { name: 'Didact Gothic', category: 'Elegant', variants: ['regular'] },
+    { name: 'Jura', category: 'Elegant', variants: ['regular', '700'] },
+    { name: 'Tenor Sans', category: 'Elegant', variants: ['regular'] },
+    
+    // Tech
+    { name: 'Rajdhani', category: 'Tech', variants: ['regular', '700'] },
+    { name: 'Exo 2', category: 'Tech', variants: ['regular', '700'] },
+    { name: 'Saira', category: 'Tech', variants: ['regular', '700'] },
+    { name: 'Titillium Web', category: 'Tech', variants: ['regular', '700'] },
+    { name: 'Oxanium', category: 'Tech', variants: ['regular', '700'] },
+    { name: 'Michroma', category: 'Tech', variants: ['regular'] },
+    { name: 'Audiowide', category: 'Tech', variants: ['regular'] },
+    { name: 'Electrolize', category: 'Tech', variants: ['regular'] },
   ];
 
   const filteredFonts = allFonts.filter(font => {
@@ -245,46 +298,59 @@ const FontLab = memo(() => {
 
         {/* Fonts Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredFonts.map((font, index) => (
-            <motion.div
-              key={font.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: Math.min(index * 0.01, 0.3) }}
-            >
-              <Card className="glass-card group hover:shadow-[var(--shadow-glow)] hover:scale-105 transition-all duration-300">
-                <div className="text-center space-y-3">
-                  <div className="bg-background/30 rounded-lg p-6 mb-2 transition-colors group-hover:bg-background/50">
-                    <p 
-                      className="text-5xl font-bold text-foreground transition-transform group-hover:scale-110"
-                      style={{ fontFamily: `'${font.name}', sans-serif` }}
-                    >
-                      Aa
-                    </p>
-                    <p 
-                      className="text-sm text-muted-foreground mt-3"
-                      style={{ fontFamily: `'${font.name}', sans-serif` }}
-                    >
-                      Design
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{font.name}</p>
-                    <p className="text-xs text-primary">{font.category}</p>
-                  </div>
-                  <Button 
-                    onClick={() => downloadFont(font.name)}
-                    variant="outline"
-                    size="sm"
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+          {filteredFonts.map((font, index) => {
+            const fontIsFavorite = isFavorite('font', font.name);
+            return (
+              <motion.div
+                key={font.name}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: Math.min(index * 0.01, 0.3) }}
+              >
+                <Card className="glass-card group hover:shadow-[var(--shadow-glow)] hover:scale-105 transition-all duration-300 relative">
+                  <button
+                    onClick={() => fontIsFavorite 
+                      ? removeFavorite('font', font.name)
+                      : addFavorite('font', font.name, font)
+                    }
+                    className="absolute top-3 right-3 p-2 rounded-full bg-background/50 hover:bg-background/80 transition-colors z-10"
+                    aria-label={fontIsFavorite ? 'Remove from favorites' : 'Add to favorites'}
                   >
-                    <Download className="w-3 h-3 mr-1" />
-                    Download
-                  </Button>
-                </div>
-              </Card>
-            </motion.div>
-          ))}
+                    <Heart className={`w-4 h-4 ${fontIsFavorite ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+                  </button>
+                  <div className="text-center space-y-3">
+                    <div className="bg-background/30 rounded-lg p-6 mb-2 transition-colors group-hover:bg-background/50">
+                      <p 
+                        className="text-5xl font-bold text-foreground transition-transform group-hover:scale-110"
+                        style={{ fontFamily: `'${font.name}', sans-serif` }}
+                      >
+                        Aa
+                      </p>
+                      <p 
+                        className="text-sm text-muted-foreground mt-3"
+                        style={{ fontFamily: `'${font.name}', sans-serif` }}
+                      >
+                        Design
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{font.name}</p>
+                      <p className="text-xs text-primary">{font.category}</p>
+                    </div>
+                    <Button 
+                      onClick={() => downloadFont(font.name)}
+                      variant="outline"
+                      size="sm"
+                      className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    >
+                      <Download className="w-3 h-3 mr-1" />
+                      Download
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* No Results */}
