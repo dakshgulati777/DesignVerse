@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { Sparkles } from 'lucide-react';
 
 const HeroSection = () => {
@@ -13,15 +13,27 @@ const HeroSection = () => {
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
+  // Memoize static shapes to prevent recalculation
+  const floatingShapes = useMemo(() => 
+    [...Array(6)].map((_, i) => ({
+      id: i,
+      width: 60 + i * 30,
+      height: 60 + i * 30,
+      left: `${10 + i * 15}%`,
+      top: `${15 + (i % 3) * 25}%`,
+      delay: i * 2,
+    })), 
+  []);
+
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Geometric Background Pattern */}
+      {/* Geometric Background Pattern - CSS only */}
       <motion.div 
         className="absolute inset-0 z-0"
         style={{ y: backgroundY }}
       >
         {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: `
               linear-gradient(to right, hsl(var(--foreground) / 0.05) 1px, transparent 1px),
@@ -31,111 +43,62 @@ const HeroSection = () => {
           }} />
         </div>
 
-        {/* Floating Geometric Shapes */}
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute border border-foreground/10"
+        {/* Floating Geometric Shapes - CSS animations only */}
+        {floatingShapes.map((shape) => (
+          <div
+            key={shape.id}
+            className="absolute border border-foreground/10 animate-spin-slow"
             style={{
-              width: `${60 + i * 20}px`,
-              height: `${60 + i * 20}px`,
-              left: `${5 + i * 6}%`,
-              top: `${10 + (i % 5) * 18}%`,
-            }}
-            animate={{
-              rotate: [0, 360],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 20 + i * 3,
-              repeat: Infinity,
-              ease: "linear",
+              width: shape.width,
+              height: shape.height,
+              left: shape.left,
+              top: shape.top,
+              animationDelay: `${shape.delay}s`,
+              animationDuration: `${20 + shape.id * 5}s`,
             }}
           />
         ))}
 
-        {/* Triangles */}
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={`tri-${i}`}
-            className="absolute"
-            style={{
-              left: `${15 + i * 12}%`,
-              top: `${25 + (i % 3) * 25}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              rotate: [0, 180, 360],
-              opacity: [0.1, 0.3, 0.1],
-            }}
-            transition={{
-              duration: 8 + i * 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <div 
-              className="w-8 h-8 bg-foreground/5"
-              style={{ clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)' }}
-            />
-          </motion.div>
-        ))}
+        {/* Static Triangles with CSS animation */}
+        <div 
+          className="absolute left-[20%] top-[30%] w-8 h-8 bg-foreground/5 animate-float-slow"
+          style={{ clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)', animationDelay: '0s' }}
+        />
+        <div 
+          className="absolute left-[70%] top-[20%] w-10 h-10 bg-foreground/5 animate-float-slow"
+          style={{ clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)', animationDelay: '2s' }}
+        />
+        <div 
+          className="absolute left-[50%] bottom-[25%] w-6 h-6 bg-foreground/5 animate-float-slow"
+          style={{ clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)', animationDelay: '4s' }}
+        />
 
-        {/* Hexagons */}
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={`hex-${i}`}
-            className="absolute"
-            style={{
-              right: `${10 + i * 15}%`,
-              bottom: `${15 + (i % 2) * 30}%`,
-            }}
-            animate={{
-              rotate: [0, -360],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 15 + i * 4,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            <div 
-              className="w-12 h-12 border border-foreground/10"
-              style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)' }}
-            />
-          </motion.div>
-        ))}
+        {/* Static Hexagons with CSS animation */}
+        <div 
+          className="absolute right-[15%] bottom-[30%] w-12 h-12 border border-foreground/10 animate-spin-reverse"
+          style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)', animationDuration: '25s' }}
+        />
+        <div 
+          className="absolute right-[40%] top-[15%] w-10 h-10 border border-foreground/10 animate-spin-reverse"
+          style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)', animationDuration: '30s' }}
+        />
 
         <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/60 to-background" />
       </motion.div>
 
-      {/* 3D Floating Elements */}
+      {/* Minimal Floating Particles - CSS only */}
       <div className="absolute inset-0 z-10 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
+        {[...Array(8)].map((_, i) => (
+          <div
             key={i}
-            className="absolute"
+            className="absolute w-1.5 h-1.5 bg-foreground/20 animate-float-slow"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${12 + i * 11}%`,
+              top: `${20 + (i % 4) * 18}%`,
+              animationDelay: `${i * 0.5}s`,
+              clipPath: i % 2 === 0 ? 'polygon(50% 0%, 100% 100%, 0% 100%)' : 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)'
             }}
-            animate={{
-              y: [0, -40, 0],
-              x: [0, Math.random() * 20 - 10, 0],
-              opacity: [0.2, 0.6, 0.2],
-            }}
-            transition={{
-              duration: 4 + Math.random() * 3,
-              repeat: Infinity,
-              delay: Math.random() * 3,
-            }}
-          >
-            <div 
-              className="w-2 h-2 bg-foreground"
-              style={{ clipPath: i % 2 === 0 ? 'polygon(50% 0%, 100% 100%, 0% 100%)' : 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
-            />
-          </motion.div>
+          />
         ))}
       </div>
 
@@ -147,66 +110,47 @@ const HeroSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
         >
-          <motion.div 
-            className="inline-flex items-center gap-3 border border-foreground/20 px-6 py-3 mb-8"
-            whileHover={{ scale: 1.02, borderColor: 'hsl(var(--foreground) / 0.4)' }}
-            transition={{ duration: 0.2 }}
-          >
+          <div className="inline-flex items-center gap-3 border border-foreground/20 px-6 py-3 mb-8 hover:border-foreground/40 transition-colors">
             <Sparkles className="w-4 h-4" />
             <span className="text-sm font-medium tracking-widest uppercase">Welcome to the Future of Design</span>
-          </motion.div>
+          </div>
 
           <motion.h1 
             className="text-7xl md:text-9xl font-bold mb-8 tracking-tighter"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
           >
             <span className="text-foreground">Design</span>
             <br />
-            <motion.span 
-              className="text-foreground/80"
-              animate={{ opacity: [0.8, 1, 0.8] }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
-              Verse
-            </motion.span>
+            <span className="text-foreground/80">Verse</span>
           </motion.h1>
 
           <motion.p 
             className="text-lg md:text-xl text-muted-foreground mb-16 max-w-2xl mx-auto leading-relaxed font-light"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
             Explore infinite color palettes, discover design principles, and immerse yourself in a premium creative experience.
           </motion.p>
-
         </motion.div>
 
-        {/* Geometric Scroll Indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 12, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
+        {/* Geometric Scroll Indicator - CSS animation */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           <div className="flex flex-col items-center gap-2">
-            <motion.div 
+            <div 
               className="w-4 h-4 border border-foreground/40"
               style={{ clipPath: 'polygon(50% 100%, 100% 0%, 0% 0%)' }}
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 2, repeat: Infinity }}
             />
-            <motion.div 
+            <div 
               className="w-3 h-3 border border-foreground/30"
               style={{ clipPath: 'polygon(50% 100%, 100% 0%, 0% 0%)' }}
-              animate={{ opacity: [0.3, 0.8, 0.3] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
             />
           </div>
-        </motion.div>
+        </div>
       </motion.div>
 
       {/* Corner Decorations */}

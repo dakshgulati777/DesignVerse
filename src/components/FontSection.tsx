@@ -1,11 +1,12 @@
 import { useState, useEffect, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Type, Download, Sparkles, RefreshCw, ArrowRight } from 'lucide-react';
+import { Type, Download, Sparkles, RefreshCw, ArrowRight, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
+import { useFavorites } from '@/hooks/useFavorites';
 
 interface FontPairing {
   id: string;
@@ -22,6 +23,7 @@ const FontSection = memo(() => {
   const [currentPairings, setCurrentPairings] = useState<FontPairing[]>([]);
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
   
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
@@ -274,58 +276,71 @@ const FontSection = memo(() => {
               Curated Pairings for <span className="text-primary capitalize">{selectedMood}</span> Mood
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
-              {(isMobile ? currentPairings.slice(0, 6) : currentPairings).map((pairing, index) => (
-                <motion.div
-                  key={pairing.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Card className="glass-card group hover:shadow-[var(--shadow-glow)] hover:scale-105 transition-all duration-300 cursor-pointer">
-                    <div className="space-y-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-bold text-lg mb-1">{pairing.theme}</h4>
-                          <p className="text-sm text-muted-foreground">{pairing.description}</p>
-                        </div>
-                      </div>
-                      
-                      {/* Font Preview */}
-                      <div className="space-y-4 py-4 border-t border-white/10 bg-background/30 rounded-lg p-4 transition-colors group-hover:bg-background/50">
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-2">Heading Font</p>
-                          <p className="text-xs font-medium text-primary mb-1">{pairing.heading}</p>
-                          <p 
-                            className="text-3xl font-bold text-foreground leading-tight"
-                            style={{ fontFamily: `'${pairing.heading}', sans-serif` }}
-                          >
-                            Design Matters
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-2">Body Font</p>
-                          <p className="text-xs font-medium text-primary mb-1">{pairing.body}</p>
-                          <p 
-                            className="text-sm text-foreground leading-relaxed"
-                            style={{ fontFamily: `'${pairing.body}', sans-serif` }}
-                          >
-                            The quick brown fox jumps over the lazy dog. Typography is the art of arranging letters.
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <Button 
-                        onClick={() => downloadPairedFonts(pairing)}
-                        className="w-full button-primary"
-                        size="sm"
+              {currentPairings.map((pairing, index) => {
+                const pairingIsFavorite = isFavorite('pairing', pairing.id);
+                return (
+                  <motion.div
+                    key={pairing.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: Math.min(index * 0.03, 0.2) }}
+                  >
+                    <Card className="glass-card group hover:shadow-[var(--shadow-glow)] hover:scale-[1.02] transition-all duration-200 cursor-pointer relative">
+                      <button
+                        onClick={() => pairingIsFavorite 
+                          ? removeFavorite('pairing', pairing.id)
+                          : addFavorite('pairing', pairing.id, pairing)
+                        }
+                        className="absolute top-3 right-3 p-1.5 rounded-full bg-background/50 hover:bg-background/80 transition-colors z-10"
+                        aria-label={pairingIsFavorite ? 'Remove from favorites' : 'Add to favorites'}
                       >
-                        <Download className="w-4 h-4 mr-2" />
-                        Download Pair
-                      </Button>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
+                        <Heart className={`w-3.5 h-3.5 ${pairingIsFavorite ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+                      </button>
+                      <div className="space-y-4">
+                        <div className="flex items-start justify-between pr-8">
+                          <div>
+                            <h4 className="font-bold text-lg mb-1">{pairing.theme}</h4>
+                            <p className="text-sm text-muted-foreground">{pairing.description}</p>
+                          </div>
+                        </div>
+                        
+                        {/* Font Preview */}
+                        <div className="space-y-4 py-4 border-t border-white/10 bg-background/30 rounded-lg p-4 transition-colors group-hover:bg-background/50">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-2">Heading Font</p>
+                            <p className="text-xs font-medium text-primary mb-1">{pairing.heading}</p>
+                            <p 
+                              className="text-3xl font-bold text-foreground leading-tight"
+                              style={{ fontFamily: `'${pairing.heading}', sans-serif` }}
+                            >
+                              Design Matters
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-2">Body Font</p>
+                            <p className="text-xs font-medium text-primary mb-1">{pairing.body}</p>
+                            <p 
+                              className="text-sm text-foreground leading-relaxed"
+                              style={{ fontFamily: `'${pairing.body}', sans-serif` }}
+                            >
+                              The quick brown fox jumps over the lazy dog. Typography is the art of arranging letters.
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <Button 
+                          onClick={() => downloadPairedFonts(pairing)}
+                          className="w-full button-primary"
+                          size="sm"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download Pair
+                        </Button>
+                      </div>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         )}

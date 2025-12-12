@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Download, ArrowLeft, FileImage, FileCode } from 'lucide-react';
+import { Search, Download, ArrowLeft, FileImage, FileCode, Heart } from 'lucide-react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -8,11 +8,13 @@ import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { textures, textureCategories, type Texture } from '@/data/textureData';
-
+import LazyImage from '@/components/LazyImage';
+import { useFavorites } from '@/hooks/useFavorites';
 const TextureLabs = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   const filteredTextures = textures.filter((texture) => {
     const matchesSearch = 
@@ -121,23 +123,35 @@ const TextureLabs = () => {
 
             {/* Textures Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredTextures.map((texture, index) => (
-                <motion.div
-                  key={texture.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="group glass-card rounded-2xl overflow-hidden hover-lift"
-                >
-                  {/* Thumbnail */}
-                  <div className="relative aspect-square overflow-hidden bg-secondary/20">
-                    <img
-                      src={texture.thumbnail}
-                      alt={texture.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
+              {filteredTextures.map((texture, index) => {
+                const textureIsFavorite = isFavorite('texture', texture.id);
+                return (
+                  <motion.div
+                    key={texture.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: Math.min(index * 0.02, 0.4) }}
+                    className="group glass-card rounded-2xl overflow-hidden hover-lift relative"
+                  >
+                    <button
+                      onClick={() => textureIsFavorite 
+                        ? removeFavorite('texture', texture.id)
+                        : addFavorite('texture', texture.id, texture)
+                      }
+                      className="absolute top-3 right-3 p-2 rounded-full bg-background/50 hover:bg-background/80 transition-colors z-10"
+                      aria-label={textureIsFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                    >
+                      <Heart className={`w-4 h-4 ${textureIsFavorite ? 'fill-primary text-primary' : 'text-muted-foreground'}`} />
+                    </button>
+                    {/* Thumbnail with Lazy Loading */}
+                    <div className="relative aspect-square overflow-hidden bg-secondary/20">
+                      <LazyImage
+                        src={texture.thumbnail}
+                        alt={texture.name}
+                        className="w-full h-full"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
 
                   {/* Content */}
                   <div className="p-5 space-y-3">
@@ -195,7 +209,8 @@ const TextureLabs = () => {
                     </div>
                   </div>
                 </motion.div>
-              ))}
+              );
+            })}
             </div>
 
             {/* No Results */}
