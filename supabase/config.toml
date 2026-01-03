@@ -1,1 +1,4 @@
 project_id = "icxyjggutewmfeqyvhvj"
+
+[functions.analyze-typography]
+verify_jwt = false

@@ -9,8 +9,8 @@ import Index from "./pages/Index";
 import Learners from "./pages/Learners";
 import Auth from "./pages/Auth";
 import FontLab from "./pages/FontLab";
+import FontPlayground from "./pages/FontPlayground";
 import Bookmarks from "./pages/Bookmarks";
-import TextureLabs from "./pages/TextureLabs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,8 +58,8 @@ const AnimatedRoutes = () => {
           <Route path="/learners" element={<Learners />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/font-lab" element={<FontLab />} />
+          <Route path="/font-playground" element={<FontPlayground />} />
           <Route path="/bookmarks" element={<Bookmarks />} />
-          <Route path="/texture-labs" element={<TextureLabs />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
