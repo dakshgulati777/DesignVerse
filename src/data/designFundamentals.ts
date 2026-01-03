@@ -594,6 +594,156 @@ export const designFundamentals: DesignFundamental[] = [
     icon: Code,
     image: errorStatesImg
   },
+  {
+    id: '51',
+    title: 'Error State Design',
+    category: 'UI Design',
+    description: 'Design helpful and user-friendly error states.',
+    detailedContent: `Error state design focuses on creating clear and helpful messages when something goes wrong in an interface. Effective error states should explain what happened, why it happened, and how users can fix it. Use friendly language, avoid technical jargon, and provide actionable solutions. Good error states reduce user frustration and maintain trust in the product. Designers should also consider the visual design of error states, using appropriate colors and icons to convey the severity of the issue.`,
+    example: 'Showing a friendly message with retry option when a form submission fails.',
+    icon: Zap,
+    image: errorStatesImg
+  },
+  {
+    id: '52',
+    title: 'Empty State Design',
+    category: 'UI Design',
+    description: 'Create engaging empty states that guide users to action.',
+    detailedContent: `Empty states occur when there is no content to display in an interface, such as a new user's empty inbox or an empty shopping cart. Effective empty state design should explain the purpose of the area, provide guidance on how to populate it, and encourage action. Use illustrations, helpful copy, and clear call-to-action buttons to make empty states engaging rather than confusing. Well-designed empty states can significantly improve user onboarding and engagement.`,
+    example: 'Using an illustration and "Add your first project" button in an empty dashboard.',
+    icon: FileText,
+    image: emptyStatesImg
+  },
+  {
+    id: '53',
+    title: 'Loading State Design',
+    category: 'UI Design',
+    description: 'Design engaging loading states that keep users informed.',
+    detailedContent: `Loading states communicate that the system is working and the user should wait. Effective loading designs include progress indicators, skeleton screens, and animated placeholders. They reduce perceived waiting time and prevent users from thinking the app has frozen. Consider using skeleton screens for content loading, spinners for brief actions, and progress bars for longer processes. The key is matching the loading indicator to the expected wait time and providing context when possible.`,
+    example: 'Using skeleton screens while loading a feed of content cards.',
+    icon: Cpu,
+    image: loadingStatesImg
+  },
+  {
+    id: '54',
+    title: 'Timing & Easing in Animation',
+    category: 'Motion & Animation',
+    description: 'Master timing and easing curves for natural-feeling animations.',
+    detailedContent: `Timing and easing are fundamental to creating animations that feel natural and intentional. Timing refers to the duration of an animation, while easing controls the acceleration and deceleration. Common easing functions include ease-in (slow start), ease-out (slow end), and ease-in-out (slow start and end). Natural motion typically follows ease-out curves for elements entering the screen and ease-in curves for elements exiting. Understanding timing and easing helps create interfaces that feel responsive and polished.`,
+    example: 'Using ease-out timing for a dropdown menu appearing on screen.',
+    icon: Activity,
+    image: timingEasingImg
+  },
+  {
+    id: '55',
+    title: 'Keyframe Animation',
+    category: 'Motion & Animation',
+    description: 'Create complex animations using keyframe techniques.',
+    detailedContent: `Keyframe animation allows designers to create complex, multi-step animations by defining specific points (keyframes) along the animation timeline. Between keyframes, the browser interpolates the intermediate states. This technique enables sophisticated animations like bouncing effects, complex transitions, and animated illustrations. Keyframes give precise control over every aspect of an animation, from position and scale to color and opacity. When used thoughtfully, keyframe animations can create memorable and engaging user experiences.`,
+    example: 'Creating a bouncing notification badge using keyframe animation.',
+    icon: Sparkles,
+    image: keyframesImg
+  },
+  {
+    id: '56',
+    title: 'Motion Hierarchy',
+    category: 'Motion & Animation',
+    description: 'Use motion to establish visual hierarchy and guide attention.',
+    detailedContent: `Motion hierarchy uses animation to guide users' attention and establish importance in a design. Elements that move attract more attention than static ones, so designers can use motion strategically to highlight key content or actions. Staggered animations can show relationships between elements, while subtle background motion can create depth without distracting from main content. The key is using motion purposefully to enhance understanding and engagement rather than adding animation for its own sake.`,
+    example: 'Staggering the entrance animation of list items to show their relationship.',
+    icon: TrendingUp,
+    image: motionHierarchyImg
+  },
+  {
+    id: '57',
+    title: 'Scroll & Parallax Effects',
+    category: 'Motion & Animation',
+    description: 'Create immersive scroll-based animations and parallax effects.',
+    detailedContent: `Scroll-based animations trigger or progress based on the user's scroll position, creating dynamic and engaging experiences. Parallax effects create depth by moving background and foreground elements at different speeds as users scroll. These techniques can make storytelling more immersive and guide users through content in interesting ways. However, they should be used judiciously as excessive scroll effects can be disorienting or negatively impact performance. Always provide fallbacks for users who prefer reduced motion.`,
+    example: 'Creating a parallax hero section where background moves slower than text.',
+    icon: Layers,
+    image: scrollParallaxImg
+  },
+  {
+    id: '58',
+    title: 'Logo Design Principles',
+    category: 'Branding',
+    description: 'Create memorable and versatile logos that represent brands effectively.',
+    detailedContent: `Logo design is one of the most critical aspects of brand identity. Effective logos are simple, memorable, versatile, and appropriate for the brand. They should work across different sizes and contexts, from favicons to billboards. Consider how the logo will appear in black and white, as well as in color. The best logos have a timeless quality while still feeling relevant. The design process should start with understanding the brand's values, personality, and target audience before exploring visual concepts.`,
+    example: 'Designing a simple, geometric logo that works at any size.',
+    icon: Star,
+    image: logoDesignImg
+  },
+  {
+    id: '59',
+    title: 'Brand Color Strategy',
+    category: 'Branding',
+    description: 'Develop strategic color palettes that reinforce brand identity.',
+    detailedContent: `Brand color strategy involves selecting colors that represent and reinforce a brand's identity. Colors evoke emotions and associations, so choosing the right palette is crucial. Consider primary colors for main brand elements, secondary colors for supporting elements, and neutral colors for backgrounds and text. The palette should be versatile enough for various applications while remaining consistent and recognizable. Document color usage guidelines to ensure consistency across all brand touchpoints.`,
+    example: 'Creating a brand palette with a bold primary color and complementary secondaries.',
+    icon: Palette,
+    image: brandPaletteImg
+  },
+  {
+    id: '60',
+    title: 'Brand Typography',
+    category: 'Branding',
+    description: 'Select and apply typography that reflects brand personality.',
+    detailedContent: `Typography is a powerful tool for expressing brand personality. Font choices communicate values and emotions—a tech startup might use a clean, modern sans-serif, while a luxury brand might opt for an elegant serif. Consider readability across different contexts and ensure accessibility. Establish a type hierarchy with specific fonts, sizes, and weights for different content types. Some brands develop custom typefaces for maximum differentiation, while others carefully curate existing fonts that align with their identity.`,
+    example: 'Pairing a distinctive display font with a readable body font for brand communications.',
+    icon: Type,
+    image: brandTypographyImg
+  },
+  {
+    id: '61',
+    title: 'Icon Systems',
+    category: 'Branding',
+    description: 'Create cohesive icon sets that enhance brand communication.',
+    detailedContent: `Icon systems are collections of icons designed with consistent visual rules that support a brand's identity. A well-designed icon system uses consistent stroke weights, corner radiuses, sizing, and style across all icons. Icons should be immediately recognizable and work at various sizes. Consider creating guidelines for icon usage, including minimum sizes, spacing, and context. A cohesive icon system enhances usability while reinforcing brand recognition and professional polish.`,
+    example: 'Designing a set of outlined icons with consistent 2px stroke weight.',
+    icon: Shapes,
+    image: iconographySymbolsImg
+  },
+  {
+    id: '62',
+    title: 'Imagery & Photography Style',
+    category: 'Branding',
+    description: 'Define consistent imagery style that aligns with brand identity.',
+    detailedContent: `Brand imagery encompasses the visual style of photographs, illustrations, and graphics used across brand communications. Consistent imagery style helps create a recognizable and cohesive brand experience. Define guidelines for color treatment, composition, subject matter, and emotional tone. Consider whether the brand uses photography, illustration, or both, and establish rules for each. Imagery should support the brand story and connect emotionally with the target audience while remaining versatile for different applications.`,
+    example: 'Using warm, natural photography with soft lighting for a wellness brand.',
+    icon: Camera,
+    image: imageryConsistencyImg
+  },
+  {
+    id: '63',
+    title: 'Tone of Voice',
+    category: 'Branding',
+    description: 'Develop consistent brand voice across all communications.',
+    detailedContent: `Tone of voice defines how a brand communicates with its audience. It encompasses word choice, sentence structure, personality, and emotional register. A consistent tone of voice helps create recognizable brand communications and builds trust with audiences. Define key characteristics of the brand voice (e.g., friendly, professional, playful, authoritative) and provide examples of dos and don'ts. Consider how tone might vary across different contexts while maintaining the core brand personality.`,
+    example: 'Using conversational, encouraging language for a fitness app interface.',
+    icon: Briefcase,
+    image: toneVoiceImg
+  },
+  {
+    id: '64',
+    title: 'Design Systems',
+    category: 'Modern Trends',
+    description: 'Build comprehensive design systems for scalable, consistent products.',
+    detailedContent: `Design systems are collections of reusable components, patterns, and guidelines that help teams build consistent products at scale. They include UI components, design tokens, documentation, and usage guidelines. A well-maintained design system improves efficiency, ensures consistency, and facilitates collaboration between designers and developers. Key elements include component libraries, style guides, pattern libraries, and accessibility guidelines. Design systems evolve over time and require ongoing maintenance and governance.`,
+    example: 'Creating a component library with buttons, forms, and cards using design tokens.',
+    icon: Code,
+    image: glassmorphismImg
+  },
+  {
+    id: '65',
+    title: 'Design Tokens',
+    category: 'Modern Trends',
+    description: 'Implement design tokens for consistent, scalable design decisions.',
+    detailedContent: `Design tokens are named entities that store visual design decisions such as colors, spacing, typography, and shadows. They create a shared language between design and development, ensuring consistency across platforms and products. Tokens can be organized into tiers: global tokens define base values, semantic tokens add meaning, and component tokens apply to specific elements. Using tokens makes it easier to maintain themes, support dark mode, and make global design changes efficiently.`,
+    example: 'Using --color-primary and --spacing-md tokens instead of hardcoded values.',
+    icon: Cpu,
+    image: neumorphismImg
+  },
 ];
 
 export default designFundamentals;
