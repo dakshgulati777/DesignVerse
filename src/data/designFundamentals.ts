@@ -744,6 +744,156 @@ export const designFundamentals: DesignFundamental[] = [
     icon: Cpu,
     image: neumorphismImg
   },
+  {
+    id: '66',
+    title: 'Responsive Typography',
+    category: 'Typography',
+    description: 'Scale typography fluidly across different screen sizes for optimal readability.',
+    detailedContent: `Responsive typography ensures text remains readable and aesthetically pleasing across all device sizes. This involves using relative units (rem, em, vw) instead of fixed pixels, implementing fluid type scales that smoothly transition between breakpoints, and adjusting line heights and letter spacing for different contexts. Modern CSS features like clamp() enable truly fluid typography that scales proportionally. Consider how type hierarchy translates to mobile—headings may need different ratios on smaller screens. Responsive typography enhances accessibility and user experience across the entire device spectrum.`,
+    example: 'Using clamp(1rem, 2.5vw, 2rem) for headings that scale smoothly from mobile to desktop.',
+    icon: Smartphone,
+    image: webTypographyImg
+  },
+  {
+    id: '67',
+    title: 'Line Height & Rhythm',
+    category: 'Typography',
+    description: 'Create vertical rhythm through consistent line height and spacing relationships.',
+    detailedContent: `Line height (leading) and vertical rhythm are crucial for comfortable reading. A baseline grid ensures consistent vertical spacing throughout a design, creating harmony between text blocks, images, and other elements. For body text, line heights between 1.4-1.6 typically work well, while headings may use tighter spacing (1.1-1.3). Establishing a base unit and building all spacing as multiples of that unit creates mathematical relationships that feel natural and organized. Good vertical rhythm reduces cognitive load and makes content easier to scan and read.`,
+    example: 'Setting body text to line-height: 1.5 with paragraph margins based on 8px grid.',
+    icon: AlignCenter,
+    image: leadingImg
+  },
+  {
+    id: '68',
+    title: 'Variable Fonts',
+    category: 'Typography',
+    description: 'Leverage variable font technology for flexible, performant typography.',
+    detailedContent: `Variable fonts contain multiple variations (weight, width, slant) in a single file, offering unprecedented typographic flexibility with reduced file sizes. Instead of loading separate files for regular, bold, and italic, one variable font can interpolate between any values. This enables smooth animations, responsive weight adjustments, and precise control over optical sizing. Variable fonts support custom axes beyond standard properties, allowing unique typographic expressions. They're particularly valuable for responsive design, where type weight can be tied to viewport width for optimal readability at any size.`,
+    example: 'Animating font-weight from 300 to 700 on hover using a single variable font file.',
+    icon: Sliders,
+    image: fontTypesImg
+  },
+  {
+    id: '69',
+    title: 'Negative Space Design',
+    category: 'Layout & Composition',
+    description: 'Use empty space strategically to create focus, balance, and visual breathing room.',
+    detailedContent: `Negative space (white space) is a powerful design element that provides visual rest, emphasizes important content, and creates sophisticated compositions. It's not merely "empty" space—it actively shapes how viewers perceive and navigate a design. Strategic use of negative space can convey luxury, simplicity, or creativity. Macro white space (between major elements) affects overall layout feel, while micro white space (within text and buttons) affects readability and usability. Embrace emptiness as a design decision, not wasted space. Sometimes what you leave out defines the design more than what you include.`,
+    example: 'A hero section with generous margins that draws attention to a centered headline.',
+    icon: Minimize2,
+    image: whitespaceImg
+  },
+  {
+    id: '70',
+    title: 'Visual Grouping & Proximity',
+    category: 'Design Principles',
+    description: 'Group related elements together using spatial relationships to show connections.',
+    detailedContent: `The Gestalt principle of proximity states that elements placed close together are perceived as related. This fundamental principle guides effective information architecture and visual organization. Related items should be grouped with consistent, tight spacing, while unrelated groups should be separated by larger gaps. This creates clear visual relationships without needing explicit containers or dividers. Effective proximity reduces cognitive load by helping users quickly understand content structure. Consider proximity in navigation menus, form fields, card layouts, and any interface where relationships between elements matter.`,
+    example: 'Form labels positioned close to their inputs, with larger spacing between field groups.',
+    icon: Layers,
+    image: marginsPaddingImg
+  },
+  {
+    id: '71',
+    title: 'Gestalt Principles',
+    category: 'Design Principles',
+    description: 'Apply psychological principles of visual perception to create cohesive designs.',
+    detailedContent: `Gestalt principles describe how humans naturally organize visual elements into groups and patterns. Key principles include: Proximity (close elements seem related), Similarity (similar elements seem related), Closure (minds complete incomplete shapes), Continuity (elements following a line seem related), Figure-Ground (distinguishing objects from backgrounds), and Common Fate (elements moving together seem related). Understanding these principles helps designers create intuitive interfaces that align with natural human perception. Gestalt thinking explains why certain layouts "work" and helps predict how users will interpret visual relationships.`,
+    example: 'Using consistent icons and colors to group related navigation items together.',
+    icon: Eye,
+    image: visualHierarchyImg
+  },
+  {
+    id: '72',
+    title: 'Affordance & Signifiers',
+    category: 'UI Design',
+    description: 'Design interactive elements that clearly communicate how they can be used.',
+    detailedContent: `Affordances are the possible actions an object allows, while signifiers are the clues that communicate those affordances. A button affords clicking—its raised appearance, shadow, and cursor change are signifiers. Good interface design makes affordances obvious through visual signifiers: clickable elements look clickable, draggable elements suggest movement, and input fields invite typing. Consistency in signifiers builds user confidence. When affordances aren't obvious, users struggle and make errors. Test designs with users to verify signifiers successfully communicate intended interactions.`,
+    example: 'A raised button with shadow and hover state that clearly invites clicking.',
+    icon: Target,
+    image: feedbackAffordanceImg
+  },
+  {
+    id: '73',
+    title: 'Skeleton Screens',
+    category: 'UI Design',
+    description: 'Show content placeholders during loading to improve perceived performance.',
+    detailedContent: `Skeleton screens display a simplified wireframe version of the UI while content loads, providing immediate visual feedback and reducing perceived wait time. Unlike spinners, skeletons show where content will appear, preparing users mentally for the incoming layout. This technique feels faster than traditional loading indicators because it suggests progress rather than waiting. Implement skeletons that match your actual content structure—rectangular shapes for images, lines for text blocks. Add subtle shimmer animations to indicate activity. Skeleton screens are particularly effective for content-heavy applications and feed-based interfaces.`,
+    example: 'Showing gray rectangles and lines while a user profile loads, matching final layout.',
+    icon: Activity,
+    image: loadingStatesImg
+  },
+  {
+    id: '74',
+    title: 'Progressive Disclosure',
+    category: 'UX Process',
+    description: 'Reveal information and options progressively to reduce cognitive overload.',
+    detailedContent: `Progressive disclosure presents only essential information initially, revealing details and advanced options as users need them. This technique simplifies complex interfaces by reducing visible options while maintaining access to full functionality. Common implementations include expandable sections, "show more" buttons, stepped forms, and contextual menus. Progressive disclosure respects user attention, helping beginners focus on core tasks while allowing experts to access advanced features. The key is identifying what users need immediately versus what can be deferred, based on user research and task analysis.`,
+    example: 'A settings page showing basic options with "Advanced Settings" expandable section.',
+    icon: Lightbulb,
+    image: cognitiveFlowImg
+  },
+  {
+    id: '75',
+    title: 'Content Choreography',
+    category: 'Layout & Composition',
+    description: 'Orchestrate content reflow and priority across responsive breakpoints.',
+    detailedContent: `Content choreography describes how content elements rearrange, resize, and reprioritize across different screen sizes. Unlike simple responsive reflow, choreography considers the narrative and priority of each element. Important content should remain prominent, secondary elements may reposition or collapse, and the reading order should make sense at every breakpoint. Plan mobile-first to establish core content priorities, then enhance for larger screens. Consider how images, text, and interactive elements will dance together as viewport changes. Good choreography maintains user experience integrity across all devices.`,
+    example: 'Hero image becoming background on mobile while CTA moves above the fold.',
+    icon: Layout,
+    image: responsiveAdaptiveImg
+  },
+  {
+    id: '76',
+    title: 'Optical Alignment',
+    category: 'Design Principles',
+    description: 'Adjust element positions for visual balance rather than strict mathematical alignment.',
+    detailedContent: `Optical alignment accounts for how humans perceive shapes differently than machines calculate them. Mathematically centered elements often look off-center because visual weight varies with shape, size, and color. Triangles need to sit slightly lower, circles need more space on sides, and heavy elements need more surrounding space. Icons in buttons may need horizontal adjustment to appear centered. Text with descenders may need vertical adjustment. The goal is perceived alignment, not pixel perfection. Trust your eyes over your rulers—if it looks wrong, adjust it until it looks right.`,
+    example: 'Shifting a play icon right by 2px within a circular button to appear centered.',
+    icon: Ruler,
+    image: textAlignmentImg
+  },
+  {
+    id: '77',
+    title: 'Semantic Color Usage',
+    category: 'Color Fundamentals',
+    description: 'Use color consistently to convey meaning and system states across interfaces.',
+    detailedContent: `Semantic colors communicate meaning beyond aesthetics: red for errors/danger, green for success, yellow for warnings, blue for information. Consistent semantic color usage helps users quickly understand system states and required actions. Define a semantic color palette separate from brand colors, ensuring sufficient contrast for accessibility. Consider color-blind users by pairing color with icons, text, or patterns. Semantic colors should be applied systematically—every error should look like an error, every success like success. This consistency builds user confidence and reduces cognitive load when interpreting interface feedback.`,
+    example: 'Using red backgrounds with error icons for form validation, consistent throughout the app.',
+    icon: Palette,
+    image: colorPsychologyImg
+  },
+  {
+    id: '78',
+    title: 'Touch Target Sizing',
+    category: 'UI Design',
+    description: 'Size interactive elements appropriately for reliable touch and click interactions.',
+    detailedContent: `Touch targets must be large enough for comfortable, accurate interaction. Apple recommends 44x44pt minimum, Google Material suggests 48x48dp for primary actions. Small targets cause frustration, errors, and accessibility issues. Consider spacing between targets to prevent accidental taps. The visual element can be smaller than the touch target—padding extends the interactive area. On desktop, smaller targets may work with precise mouse input, but design mobile-first. Test on actual devices to verify targets feel comfortable for users with various finger sizes and motor abilities.`,
+    example: 'A navigation icon visually 24px but with 48px touch area including padding.',
+    icon: Smartphone,
+    image: responsiveAdaptiveImg
+  },
+  {
+    id: '79',
+    title: 'Micro-animations',
+    category: 'Motion & Animation',
+    description: 'Use subtle animations to provide feedback and enhance interface personality.',
+    detailedContent: `Micro-animations are small, purposeful animations that enhance user experience without demanding attention. They provide feedback (button press acknowledgment), indicate state changes (toggle switching), guide attention (subtle pulse on new notification), and add personality (playful hover effects). Keep micro-animations quick (150-300ms typically), subtle, and purposeful—every animation should serve a function. Too many or too slow animations become annoying. Micro-animations should feel natural and almost subconscious, improving experience without users consciously noticing them.`,
+    example: 'A checkbox that animates with a quick bounce when checked, confirming the action.',
+    icon: Zap,
+    image: microinteractionsImg
+  },
+  {
+    id: '80',
+    title: 'Data Visualization Basics',
+    category: 'Modern Trends',
+    description: 'Present complex data clearly through appropriate chart types and visual encoding.',
+    detailedContent: `Effective data visualization makes complex information understandable at a glance. Choose chart types based on what you're communicating: bar charts for comparison, line charts for trends, pie charts for parts of whole (use sparingly), scatter plots for relationships. Use visual encoding—position, length, color, size—to represent data values. Prioritize clarity over decoration; avoid 3D effects that distort perception. Label directly when possible instead of relying on legends. Consider accessibility: don't rely solely on color, ensure sufficient contrast, and provide alternative text descriptions for screen readers.`,
+    example: 'A line chart showing monthly revenue with clear axis labels and direct value annotations.',
+    icon: BarChart3,
+    image: dataVisualizationImg
+  }
 ];
 
 export default designFundamentals;
