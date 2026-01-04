@@ -45,9 +45,9 @@ const Navigation = () => {
       <motion.nav 
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-4 md:top-6 left-1/2 transform -translate-x-1/2 z-50 w-[98%] md:w-auto max-w-[95vw]"
+        className="fixed top-4 md:top-6 left-0 right-0 z-50 flex justify-center px-4"
       >
-        <div className="flex items-center justify-between md:gap-3 lg:gap-4 px-3 md:px-5 lg:px-6 py-2 md:py-3 border border-foreground/10 bg-background/80 backdrop-blur-md">
+        <div className="flex items-center justify-center gap-2 md:gap-3 lg:gap-4 px-3 md:px-5 lg:px-6 py-2 md:py-3 border border-foreground/10 bg-background/80 backdrop-blur-md max-w-fit">
           {/* Logo */}
           <motion.div 
             whileHover={{ scale: 1.02 }}

@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Plus, Trash2, Type, Sparkles, RotateCcw, Move, Loader2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Type, Sparkles, RotateCcw, Move, Loader2, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -480,8 +480,31 @@ const FontPlayground = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs text-muted-foreground">
-                      Rotation: {selectedEl.rotation}°
+                    <label className="text-xs text-muted-foreground flex items-center justify-between">
+                      <span>Rotation: {selectedEl.rotation}°</span>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => updateElement(selectedEl.id, { rotation: selectedEl.rotation - 15 })}
+                          className="p-1 hover:bg-white/10 rounded transition-colors"
+                          title="Rotate -15°"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={() => updateElement(selectedEl.id, { rotation: 0 })}
+                          className="px-2 py-0.5 text-[10px] hover:bg-white/10 rounded transition-colors"
+                          title="Reset rotation"
+                        >
+                          0°
+                        </button>
+                        <button
+                          onClick={() => updateElement(selectedEl.id, { rotation: selectedEl.rotation + 15 })}
+                          className="p-1 hover:bg-white/10 rounded transition-colors"
+                          title="Rotate +15°"
+                        >
+                          <RotateCw className="w-3 h-3" />
+                        </button>
+                      </div>
                     </label>
                     <Slider
                       value={[selectedEl.rotation]}
@@ -490,6 +513,10 @@ const FontPlayground = () => {
                       max={180}
                       step={1}
                     />
+                    <div className="flex justify-between text-[10px] text-muted-foreground/60">
+                      <span>-180°</span>
+                      <span>180°</span>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -516,6 +543,7 @@ const FontPlayground = () => {
               <h3 className="font-medium mb-3">Quick Tips</h3>
               <ul className="text-xs text-muted-foreground space-y-2">
                 <li>• Drag elements to position them</li>
+                <li>• Use rotation for dynamic layouts</li>
                 <li>• Use 2-3 fonts maximum for harmony</li>
                 <li>• Vary sizes to create hierarchy</li>
                 <li>• AI analysis works best with 2+ elements</li>
