@@ -37,23 +37,69 @@ serve(async (req) => {
       `Element ${i + 1}: Font "${el.font}", Size ${el.fontSize}px, Position (${Math.round(el.position.x)}, ${Math.round(el.position.y)}), Rotation ${el.rotation}°, Text "${el.text}"`
     ).join('\n');
 
-    const prompt = `You are an expert typography and design critic. Analyze this layout of text elements and provide constructive feedback.
+    // Calculate layout metrics for better analysis
+    const fontCategories = new Map<string, string>();
+    const serifFonts = ['Merriweather', 'Playfair Display', 'Lora', 'PT Serif', 'Crimson Text', 'Libre Baskerville', 'Cormorant Garamond', 'EB Garamond', 'Spectral', 'Bodoni Moda', 'Fraunces', 'Alegreya'];
+    const sansSerifFonts = ['Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins', 'Inter', 'Raleway', 'Ubuntu', 'Nunito', 'Work Sans', 'Rubik', 'Quicksand'];
+    const displayFonts = ['Abril Fatface', 'Bebas Neue', 'Righteous', 'Anton', 'Cinzel', 'Oswald', 'Alfa Slab One', 'Bungee', 'Teko', 'Russo One'];
+    const scriptFonts = ['Dancing Script', 'Caveat', 'Great Vibes', 'Kaushan Script', 'Sacramento', 'Pacifico', 'Lobster', 'Satisfy'];
+    
+    layout.forEach(el => {
+      if (serifFonts.some(f => el.font.includes(f))) fontCategories.set(el.font, 'serif');
+      else if (sansSerifFonts.some(f => el.font.includes(f))) fontCategories.set(el.font, 'sans-serif');
+      else if (displayFonts.some(f => el.font.includes(f))) fontCategories.set(el.font, 'display');
+      else if (scriptFonts.some(f => el.font.includes(f))) fontCategories.set(el.font, 'script');
+      else fontCategories.set(el.font, 'other');
+    });
 
-Layout:
+    const fontCategoryInfo = layout.map(el => `${el.font} (${fontCategories.get(el.font) || 'unknown'})`).join(', ');
+    const sizeRange = layout.map(el => el.fontSize);
+    const sizeVariation = Math.max(...sizeRange) - Math.min(...sizeRange);
+
+    const prompt = `You are an expert typography and design critic with deep knowledge of font pairing, visual hierarchy, and layout composition. Analyze this layout comprehensively.
+
+Layout Details:
 ${layoutDescription}
 
-Analyze the typography choices considering:
-1. Font pairing harmony - do the fonts complement each other?
-2. Visual hierarchy - is there clear size/weight differentiation?
-3. Spacing and positioning - is the layout balanced?
-4. Readability - are the font choices appropriate?
-5. Overall aesthetic coherence
+Font Categories Used: ${fontCategoryInfo}
+Size Variation: ${sizeVariation}px (min: ${Math.min(...sizeRange)}px, max: ${Math.max(...sizeRange)}px)
+
+Analyze the typography choices considering these key criteria:
+
+1. **Font Pairing Harmony** (0-25 points)
+   - Do the fonts complement each other in style, weight, and mood?
+   - Is there appropriate contrast (e.g., serif + sans-serif)?
+   - Are there too many different fonts (ideally 2-3 max)?
+
+2. **Visual Hierarchy** (0-25 points)
+   - Is there clear size differentiation for headings vs body?
+   - Does the layout guide the eye naturally?
+   - Are important elements emphasized appropriately?
+
+3. **Spacing & Composition** (0-25 points)
+   - Is the layout balanced (symmetrical or asymmetrical)?
+   - Is there appropriate breathing room between elements?
+   - Are elements aligned or intentionally offset?
+
+4. **Readability & Accessibility** (0-25 points)
+   - Are the font choices legible at their sizes?
+   - Would this work on various backgrounds?
+   - Are decorative fonts used sparingly?
+
+Provide detailed, actionable analysis. Be specific about what works and what doesn't.
 
 Respond with a JSON object (no markdown, just pure JSON):
 {
   "score": <number from 0-100>,
-  "feedback": [<3-4 specific observations about what works or doesn't>],
-  "suggestions": [<3-4 actionable improvements they could make>]
+  "breakdown": {
+    "fontPairing": <0-25>,
+    "hierarchy": <0-25>,
+    "spacing": <0-25>,
+    "readability": <0-25>
+  },
+  "feedback": [<4-5 specific observations about what works well or needs improvement>],
+  "suggestions": [<4-5 actionable improvements with specific font or layout recommendations>],
+  "pairingTips": [<2-3 specific font pairing suggestions based on their current choices>]
 }`;
 
     console.log('Sending request to Lovable AI Gateway...');
@@ -126,6 +172,21 @@ Respond with a JSON object (no markdown, just pure JSON):
 
     // Ensure score is within bounds
     analysis.score = Math.max(0, Math.min(100, Math.round(analysis.score)));
+    
+    // Add pairing tips if not present
+    if (!analysis.pairingTips) {
+      analysis.pairingTips = [];
+    }
+    
+    // Add breakdown if not present
+    if (!analysis.breakdown) {
+      analysis.breakdown = {
+        fontPairing: Math.round(analysis.score * 0.25),
+        hierarchy: Math.round(analysis.score * 0.25),
+        spacing: Math.round(analysis.score * 0.25),
+        readability: Math.round(analysis.score * 0.25)
+      };
+    }
 
     return new Response(JSON.stringify(analysis), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

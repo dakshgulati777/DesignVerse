@@ -21,11 +21,33 @@ interface TextElement {
 }
 
 const availableFonts = [
-  'Roboto', 'Playfair Display', 'Montserrat', 'Lora', 'Oswald', 'Raleway',
-  'Poppins', 'Merriweather', 'Open Sans', 'Lato', 'Ubuntu', 'Dancing Script',
-  'Bebas Neue', 'Abril Fatface', 'Cinzel', 'Cormorant Garamond', 'Space Grotesk',
-  'Inter', 'DM Sans', 'Caveat', 'Pacifico', 'Lobster', 'Quicksand', 'Nunito',
-  'Work Sans', 'Rubik', 'Josefin Sans', 'Outfit', 'Urbanist', 'Manrope'
+  // Sans Serif
+  'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins', 'Inter', 'Raleway', 'Ubuntu', 
+  'Nunito', 'Work Sans', 'Rubik', 'Quicksand', 'Josefin Sans', 'DM Sans', 'Space Grotesk',
+  'Manrope', 'Outfit', 'Urbanist', 'Plus Jakarta Sans', 'Lexend', 'Figtree', 'Sora',
+  // Serif
+  'Merriweather', 'Playfair Display', 'Lora', 'PT Serif', 'Crimson Text', 'Libre Baskerville',
+  'Cormorant Garamond', 'EB Garamond', 'Spectral', 'Bodoni Moda', 'Fraunces', 'Alegreya',
+  // Display
+  'Abril Fatface', 'Bebas Neue', 'Righteous', 'Anton', 'Cinzel', 'Oswald', 'Alfa Slab One',
+  'Bungee', 'Teko', 'Russo One', 'Staatliches', 'Archivo Black', 'Big Shoulders Display',
+  // Handwriting & Script
+  'Dancing Script', 'Caveat', 'Great Vibes', 'Kaushan Script', 'Indie Flower', 'Patrick Hand',
+  'Sacramento', 'Shadows Into Light', 'Alex Brush', 'Pacifico', 'Lobster', 'Satisfy',
+  // Cartoon & Decorative
+  'Bangers', 'Permanent Marker', 'Fredoka One', 'Bubblegum Sans', 'Comic Neue', 'Chewy',
+  'Luckiest Guy', 'Titan One', 'Cherry Bomb One', 'Amatic SC', 'Shrikhand',
+  // Tech & Retro
+  'Orbitron', 'Press Start 2P', 'VT323', 'Rajdhani', 'Exo 2', 'Saira', 'Titillium Web',
+  'Oxanium', 'Audiowide', 'Electrolize', 'Chakra Petch', 'Syncopate',
+  // Elegant & Gothic
+  'Marcellus', 'Cormorant', 'Forum', 'Poiret One', 'Jura', 'Gilda Display',
+  'UnifrakturMaguntia', 'IM Fell English', 'Pirata One', 'Creepster',
+  // Bold & Condensed
+  'Black Ops One', 'Ultra', 'Passion One', 'Bevan', 'Lilita One',
+  'Roboto Condensed', 'Barlow Condensed', 'Fjalla One', 'Pathway Gothic One',
+  // Monospace
+  'Source Code Pro', 'Roboto Mono', 'Fira Code', 'JetBrains Mono', 'Space Mono', 'IBM Plex Mono'
 ];
 
 const FontPlayground = () => {
@@ -38,8 +60,15 @@ const FontPlayground = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState<{
     score: number;
+    breakdown?: {
+      fontPairing: number;
+      hierarchy: number;
+      spacing: number;
+      readability: number;
+    };
     feedback: string[];
     suggestions: string[];
+    pairingTips?: string[];
   } | null>(null);
 
   // Load Google Fonts
@@ -282,14 +311,14 @@ const FontPlayground = () => {
                   exit={{ opacity: 0, y: -20 }}
                 >
                   <Card className="glass-card mt-6 p-6">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between mb-6">
                       <h3 className="text-lg font-bold flex items-center gap-2">
                         <Sparkles className="w-5 h-5 text-primary" />
                         AI Typography Analysis
                       </h3>
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-muted-foreground">Score:</span>
-                        <div className={`text-2xl font-bold ${
+                        <div className={`text-3xl font-bold ${
                           aiAnalysis.score >= 80 ? 'text-green-500' :
                           aiAnalysis.score >= 60 ? 'text-yellow-500' : 'text-red-500'
                         }`}>
@@ -297,6 +326,28 @@ const FontPlayground = () => {
                         </div>
                       </div>
                     </div>
+
+                    {/* Score Breakdown */}
+                    {aiAnalysis.breakdown && (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                        {[
+                          { label: 'Font Pairing', value: aiAnalysis.breakdown.fontPairing, max: 25 },
+                          { label: 'Hierarchy', value: aiAnalysis.breakdown.hierarchy, max: 25 },
+                          { label: 'Spacing', value: aiAnalysis.breakdown.spacing, max: 25 },
+                          { label: 'Readability', value: aiAnalysis.breakdown.readability, max: 25 },
+                        ].map((item) => (
+                          <div key={item.label} className="bg-background/50 p-3 rounded-lg text-center">
+                            <div className="text-xs text-muted-foreground mb-1">{item.label}</div>
+                            <div className={`text-lg font-bold ${
+                              item.value >= 20 ? 'text-green-500' :
+                              item.value >= 15 ? 'text-yellow-500' : 'text-red-500'
+                            }`}>
+                              {item.value}/{item.max}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
@@ -322,6 +373,24 @@ const FontPlayground = () => {
                         </ul>
                       </div>
                     </div>
+
+                    {/* Pairing Tips */}
+                    {aiAnalysis.pairingTips && aiAnalysis.pairingTips.length > 0 && (
+                      <div className="mt-6 pt-6 border-t border-white/10">
+                        <h4 className="font-medium mb-3 text-primary flex items-center gap-2">
+                          <Type className="w-4 h-4" />
+                          Font Pairing Recommendations
+                        </h4>
+                        <ul className="space-y-2">
+                          {aiAnalysis.pairingTips.map((tip, i) => (
+                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-2 bg-primary/5 p-3 rounded-lg">
+                              <span className="text-primary font-bold">{i + 1}.</span>
+                              {tip}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </Card>
                 </motion.div>
               )}
