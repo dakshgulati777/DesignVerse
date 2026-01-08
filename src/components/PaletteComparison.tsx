@@ -8,7 +8,7 @@ interface ColorPalette {
   id: string;
   name: string;
   colors: string[];
-  type: 'monochrome' | 'triad' | 'complementary' | 'shades';
+  type: 'monochrome' | 'triad' | 'complementary' | 'shades' | 'split-complementary' | 'analogous';
   isAI?: boolean;
 }
 

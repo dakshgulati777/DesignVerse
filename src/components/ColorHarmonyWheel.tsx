@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 interface ColorHarmonyWheelProps {
-  selectedType: 'monochrome' | 'triad' | 'complementary' | 'shades';
+  selectedType: 'monochrome' | 'triad' | 'complementary' | 'shades' | 'split-complementary' | 'analogous';
   baseHue?: number;
 }
 
@@ -31,6 +31,10 @@ const ColorHarmonyWheel = ({ selectedType, baseHue = 0 }: ColorHarmonyWheelProps
         return [baseIndex];
       case 'shades':
         return [baseIndex];
+      case 'split-complementary':
+        return [baseIndex, (baseIndex + 5) % 12, (baseIndex + 7) % 12];
+      case 'analogous':
+        return [(baseIndex - 1 + 12) % 12, baseIndex, (baseIndex + 1) % 12];
       default:
         return [];
     }
@@ -48,6 +52,10 @@ const ColorHarmonyWheel = ({ selectedType, baseHue = 0 }: ColorHarmonyWheelProps
         return 'Monochromatic uses one hue with varying saturation and lightness for cohesive designs.';
       case 'shades':
         return 'Shades vary the lightness of one color from dark to light, creating depth.';
+      case 'split-complementary':
+        return 'Split-complementary uses colors adjacent to the complement for high contrast with less tension.';
+      case 'analogous':
+        return 'Analogous colors are neighbors on the wheel, creating harmonious and serene combinations.';
       default:
         return '';
     }
