@@ -71,7 +71,7 @@ const FontPlayground = () => {
     pairingTips?: string[];
   } | null>(null);
 
-  // Load Google Fonts
+  // Load web fonts
   useEffect(() => {
     const link = document.createElement('link');
     link.href = `https://fonts.googleapis.com/css2?family=${availableFonts.map(f => f.replace(/ /g, '+')).join('&family=')}&display=swap`;

@@ -248,7 +248,7 @@ const ColorPalettes = () => {
     return generatedPalettes;
   };
 
-  // Generate accurate palette from base color
+  // Generate accurate palette from base color with improved color theory
   const generateAccuratePalette = (
     baseColor: { hex: string; hue: number; saturation: number; lightness: number },
     type: ColorPalette['type']
@@ -258,27 +258,36 @@ const ColorPalettes = () => {
     
     switch (type) {
       case 'monochrome':
-        for (let i = 0; i < 5; i++) {
-          colors.push(hslToHex(hue, saturation, Math.max(15, Math.min(90, 20 + i * 17))));
-        }
+        // More refined monochromatic scale with better distribution
+        colors.push(hslToHex(hue, Math.min(100, saturation + 10), Math.max(10, lightness - 30)));
+        colors.push(hslToHex(hue, saturation, Math.max(20, lightness - 15)));
+        colors.push(hslToHex(hue, saturation, lightness));
+        colors.push(hslToHex(hue, Math.max(20, saturation - 10), Math.min(85, lightness + 15)));
+        colors.push(hslToHex(hue, Math.max(10, saturation - 20), Math.min(95, lightness + 30)));
         break;
       case 'complementary':
+        // True complementary with accent colors
+        const compHue = (hue + 180) % 360;
         colors.push(hslToHex(hue, saturation, lightness));
-        colors.push(hslToHex((hue + 180) % 360, saturation, lightness));
-        colors.push(hslToHex(hue, Math.max(20, saturation - 20), Math.min(85, lightness + 20)));
-        colors.push(hslToHex((hue + 180) % 360, Math.max(20, saturation - 20), Math.min(85, lightness + 20)));
-        colors.push(hslToHex(hue, Math.max(10, saturation / 2), Math.min(90, lightness + 30)));
+        colors.push(hslToHex(compHue, saturation, lightness));
+        colors.push(hslToHex(hue, Math.max(30, saturation - 15), Math.min(80, lightness + 15)));
+        colors.push(hslToHex(compHue, Math.max(30, saturation - 15), Math.min(80, lightness + 15)));
+        colors.push(hslToHex((hue + 90) % 360, Math.max(20, saturation - 30), Math.min(90, lightness + 20)));
         break;
       case 'triad':
+        // Triadic harmony with balanced distribution
         colors.push(hslToHex(hue, saturation, lightness));
         colors.push(hslToHex((hue + 120) % 360, saturation, lightness));
         colors.push(hslToHex((hue + 240) % 360, saturation, lightness));
-        colors.push(hslToHex(hue, Math.max(20, saturation - 30), Math.min(85, lightness + 20)));
-        colors.push(hslToHex((hue + 60) % 360, Math.max(20, saturation - 20), Math.min(85, lightness + 10)));
+        colors.push(hslToHex(hue, Math.max(25, saturation - 20), Math.min(85, lightness + 15)));
+        colors.push(hslToHex((hue + 180) % 360, Math.max(25, saturation - 25), Math.min(90, lightness + 20)));
         break;
       case 'shades':
+        // Shades from dark to light with consistent saturation
         for (let i = 0; i < 5; i++) {
-          colors.push(hslToHex(hue, saturation, Math.max(10, Math.min(85, 15 + i * 17))));
+          const l = Math.max(10, Math.min(90, 15 + i * 18));
+          const s = Math.max(40, saturation - (i * 5));
+          colors.push(hslToHex(hue, s, l));
         }
         break;
     }

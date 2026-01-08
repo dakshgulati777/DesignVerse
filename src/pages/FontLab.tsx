@@ -324,8 +324,7 @@ const FontLab = memo(() => {
           toast.success(`${fontName} downloaded successfully!`);
         }
       } else {
-        window.open(`https://fonts.google.com/specimen/${fontName.replace(/ /g, '+')}`, '_blank');
-        toast.info(`Opening ${fontName} download page...`);
+        toast.info(`Font "${fontName}" - search for this font online to download.`);
       }
     } catch (error) {
       console.error('Download error:', error);

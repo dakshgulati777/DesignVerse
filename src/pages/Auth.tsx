@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Chrome, Palette, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Palette, Mail, Lock, ArrowLeft } from 'lucide-react';
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -100,18 +100,18 @@ const Auth = () => {
       });
 
       if (error) {
-        console.error('Google OAuth error:', error);
+        console.error('OAuth error:', error);
         toast({
-          title: 'Google Sign-In Not Available',
-          description: 'Google authentication is not configured. Please use email and password to continue.',
+          title: 'Social Sign-In Not Available',
+          description: 'Social authentication is not configured. Please use email and password to continue.',
           variant: 'destructive',
         });
         setLoading(false);
       }
     } catch (error: any) {
-      console.error('Google OAuth error:', error);
+      console.error('OAuth error:', error);
       toast({
-        title: 'Google Sign-In Not Available',
+        title: 'Social Sign-In Not Available',
         description: 'Please use email and password to sign in.',
         variant: 'destructive',
       });
@@ -198,25 +198,6 @@ const Auth = () => {
             {loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
           </Button>
         </form>
-
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-background text-muted-foreground">Or continue with</span>
-          </div>
-        </div>
-
-        <Button
-          onClick={handleGoogleSignIn}
-          disabled={loading}
-          variant="outline"
-          className="w-full btn-glass flex items-center justify-center gap-2"
-        >
-          <Chrome className="w-5 h-5" />
-          Google
-        </Button>
 
         <div className="mt-6 text-center">
           <button

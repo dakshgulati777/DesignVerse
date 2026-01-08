@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 function ColorWheel({ selectedHue, selectedSaturation, selectedLightness }: { selectedHue: number; selectedSaturation: number; selectedLightness: number }) {
   const meshRef = useRef<THREE.Mesh>(null);
   
-  // Create a color wheel texture similar to Adobe Color
+  // Create a color wheel texture
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 512;
@@ -163,7 +163,7 @@ export default function ColorSphere3D() {
       <div className="mb-4">
         <h3 className="text-xl font-bold mb-2">Color Wheel</h3>
         <p className="text-sm text-muted-foreground">
-          Interactive color wheel inspired by Adobe Color. Click on points to select colors.
+          Interactive color wheel for exploring harmonious color combinations. Click on points to select colors.
         </p>
       </div>
 
