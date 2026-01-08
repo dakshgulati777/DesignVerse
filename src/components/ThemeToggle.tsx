@@ -1,72 +1,47 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { Moon, Sun, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
+  const isDark = theme === 'dark';
 
-  const themes = [
-    { key: 'dark', icon: Moon, label: 'Dark', color: 'hsl(263, 70%, 50%)' },
-    { key: 'light', icon: Sun, label: 'Light', color: 'hsl(25, 95%, 53%)' },
-    { key: 'neon', icon: Zap, label: 'Neon', color: 'hsl(180, 100%, 50%)' },
-  ] as const;
-
-  const currentIndex = themes.findIndex(t => t.key === theme);
+  const toggleTheme = () => {
+    setTheme(isDark ? 'light' : 'dark');
+  };
 
   return (
-    <div className="relative flex items-center gap-0.5 md:gap-1 bg-white/5 rounded-xl p-1 overflow-hidden">
-      {/* Animated background pill */}
+    <motion.button
+      onClick={toggleTheme}
+      className="relative p-2 rounded-xl bg-white/5 border border-foreground/10 hover:bg-white/10 transition-colors"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+    >
       <motion.div
-        className="absolute h-[calc(100%-8px)] rounded-lg bg-primary/80 backdrop-blur-sm"
-        style={{ width: `calc(${100 / 3}% - 4px)` }}
         initial={false}
-        animate={{
-          x: `calc(${currentIndex * 100}% + ${currentIndex * 4}px)`,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 30,
+        animate={{ rotate: isDark ? 0 : 180 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+      >
+        {isDark ? (
+          <Moon className="w-4 h-4 text-foreground" />
+        ) : (
+          <Sun className="w-4 h-4 text-foreground" />
+        )}
+      </motion.div>
+      
+      {/* Glow effect */}
+      <motion.div
+        className="absolute inset-0 rounded-xl pointer-events-none"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={{
+          boxShadow: isDark 
+            ? '0 0 15px hsl(var(--primary) / 0.3)' 
+            : '0 0 15px hsl(25, 95%, 53%, 0.3)',
         }}
       />
-
-      {themes.map(({ key, icon: Icon, label }) => (
-        <motion.button
-          key={key}
-          onClick={() => setTheme(key)}
-          className={`relative z-10 p-1.5 md:p-2 rounded-lg transition-colors duration-300 ${
-            theme === key ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
-          }`}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          title={label}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${key}-${theme === key}`}
-              initial={{ rotate: -180, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 180, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Icon className="w-4 h-4" />
-            </motion.div>
-          </AnimatePresence>
-          
-          {/* Glow effect when active */}
-          {theme === key && (
-            <motion.div
-              className="absolute inset-0 rounded-lg"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              style={{
-                boxShadow: `0 0 20px var(--shadow-glow)`,
-              }}
-            />
-          )}
-        </motion.button>
-      ))}
-    </div>
+    </motion.button>
   );
 };
 

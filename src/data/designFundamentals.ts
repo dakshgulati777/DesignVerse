@@ -869,7 +869,7 @@ export const designFundamentals: DesignFundamental[] = [
     title: 'Touch Target Sizing',
     category: 'UI Design',
     description: 'Size interactive elements appropriately for reliable touch and click interactions.',
-    detailedContent: `Touch targets must be large enough for comfortable, accurate interaction. Apple recommends 44x44pt minimum, Google Material suggests 48x48dp for primary actions. Small targets cause frustration, errors, and accessibility issues. Consider spacing between targets to prevent accidental taps. The visual element can be smaller than the touch target—padding extends the interactive area. On desktop, smaller targets may work with precise mouse input, but design mobile-first. Test on actual devices to verify targets feel comfortable for users with various finger sizes and motor abilities.`,
+    detailedContent: `Touch targets must be large enough for comfortable, accurate interaction. Major platform guidelines recommend 44-48pt minimum for primary actions. Small targets cause frustration, errors, and accessibility issues. Consider spacing between targets to prevent accidental taps. The visual element can be smaller than the touch target—padding extends the interactive area. On desktop, smaller targets may work with precise mouse input, but design mobile-first. Test on actual devices to verify targets feel comfortable for users with various finger sizes and motor abilities.`,
     example: 'A navigation icon visually 24px but with 48px touch area including padding.',
     icon: Smartphone,
     image: responsiveAdaptiveImg

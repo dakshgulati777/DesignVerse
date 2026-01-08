@@ -249,7 +249,7 @@ const BlogSection = () => {
         >
           <Button 
             className="btn-primary"
-            onClick={() => window.open('https://dakshgulati23.blogspot.com/', '_blank')}
+            onClick={() => window.open('/learners', '_self')}
           >
             View All Posts
           </Button>

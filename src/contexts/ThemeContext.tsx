@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-type Theme = 'dark' | 'light' | 'neon';
+type Theme = 'dark' | 'light';
 
 interface ThemeContextType {
   theme: Theme;
@@ -18,7 +18,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   useEffect(() => {
     const stored = localStorage.getItem('designverse-theme') as Theme;
-    if (stored && ['dark', 'light', 'neon'].includes(stored)) {
+    if (stored && ['dark', 'light'].includes(stored)) {
       setTheme(stored);
     }
   }, []);
