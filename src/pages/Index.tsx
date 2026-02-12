@@ -37,7 +37,7 @@ const Index = () => {
       {isLoading && <Preloader onComplete={handlePreloaderComplete} />}
       {!isLoading && showOnboarding && <OnboardingTutorial onComplete={handleOnboardingComplete} />}
       
-      <div className={`min-h-screen bg-background text-foreground cursor-none ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}>
+      <div className={`min-h-screen bg-background text-foreground ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}>
         <CustomCursor />
         <AnimatedBackground />
         <Navigation />

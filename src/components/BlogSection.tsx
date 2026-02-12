@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Navigation, Pagination } from 'swiper/modules';
 import { ExternalLink, Calendar, User, Bookmark, BookmarkCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useBookmarks } from '@/hooks/useBookmarks';
@@ -75,15 +75,8 @@ const BlogSection = () => {
   ];
 
   useEffect(() => {
-    // Simulate API call
-    const fetchPosts = async () => {
-      setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setPosts(samplePosts);
-      setLoading(false);
-    };
-
-    fetchPosts();
+    setPosts(samplePosts);
+    setLoading(false);
   }, []);
 
   return (
@@ -99,9 +92,8 @@ const BlogSection = () => {
             <ExternalLink className="w-5 h-5 text-primary" />
             <span className="font-medium">Latest Insights</span>
           </div>
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Design
-            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent"> Blog</span>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 text-foreground">
+            Design Blog
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Stay updated with the latest trends, tips, and insights from the design world
