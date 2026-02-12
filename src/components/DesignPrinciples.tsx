@@ -142,9 +142,8 @@ const DesignPrinciples = () => {
             <Lightbulb className="w-5 h-5 text-primary" />
             <span className="font-medium">Learn & Master</span>
           </div>
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Design
-            <span className="bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent"> Fundamentals</span>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 text-foreground">
+            Design Fundamentals
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Master the essential principles that form the foundation of exceptional design

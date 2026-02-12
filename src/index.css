@@ -102,18 +102,6 @@
     --shadow-strong: 0 8px 40px rgba(0, 0, 0, 0.15);
   }
 
-  /* Neon Mode - High contrast geometric */
-  .neon {
-    --background: 0 0% 2%;
-    --foreground: 0 0% 100%;
-    --primary: 0 0% 100%;
-    --primary-glow: 0 0% 100%;
-    --accent: 0 0% 80%;
-    --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 80%));
-    --shadow-glow: 0 0 40px rgba(255, 255, 255, 0.3);
-    --glass-background: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.2);
-  }
 }
 
 @layer base {
@@ -221,16 +209,10 @@
     transform: translateY(-2px) scale(1.02);
   }
 
-  /* Section Hover Effects */
-  section:hover .glass-nav {
-    background: rgba(255, 127, 0, 0.1);
-    border-color: rgba(255, 127, 0, 0.2);
-  }
-
   /* Enhanced Card Hover for Fundamentals */
   .fundamental-card:hover {
     transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 15px 40px rgba(255, 127, 0, 0.2);
+    box-shadow: var(--shadow-medium);
   }
 
   /* Responsive Adjustments */
@@ -375,10 +357,6 @@
   /* Theme Transition */
   html {
     transition: background-color 0.5s ease, color 0.5s ease;
-  }
-
-  html * {
-    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   /* Magnetic Button Effect */

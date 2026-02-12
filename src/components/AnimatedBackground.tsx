@@ -16,7 +16,7 @@ const AnimatedBackground = memo(() => {
     const types: GeometricShape['type'][] = ['square', 'triangle', 'hexagon', 'diamond'];
     
     // Reduced from 30 to 12 shapes for better performance
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 6; i++) {
       newShapes.push({
         id: i,
         x: Math.random() * 100,
