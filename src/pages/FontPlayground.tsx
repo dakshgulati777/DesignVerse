@@ -184,6 +184,51 @@ const FontPlayground = () => {
     toast.success('Canvas cleared');
   }, []);
 
+  // Duplicate element
+  const duplicateElement = useCallback((id: string) => {
+    const el = elements.find(e => e.id === id);
+    if (!el) return;
+    const newEl: TextElement = {
+      ...el,
+      id: `elem-${Date.now()}`,
+      x: el.x + 20,
+      y: el.y + 20,
+    };
+    setElements(prev => [...prev, newEl]);
+    setSelectedElement(newEl.id);
+    toast.success('Element duplicated');
+  }, [elements]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (!selectedElement) return;
+      // Ignore if user is typing in an input
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        removeElement(selectedElement);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        duplicateElement(selectedElement);
+      }
+      if (e.key === 'Escape') {
+        setSelectedElement(null);
+      }
+      // Arrow keys to nudge
+      const nudge = e.shiftKey ? 10 : 1;
+      if (e.key === 'ArrowUp') { e.preventDefault(); updateElement(selectedElement, { y: (elements.find(el => el.id === selectedElement)?.y ?? 0) - nudge }); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); updateElement(selectedElement, { y: (elements.find(el => el.id === selectedElement)?.y ?? 0) + nudge }); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); updateElement(selectedElement, { x: (elements.find(el => el.id === selectedElement)?.x ?? 0) - nudge }); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); updateElement(selectedElement, { x: (elements.find(el => el.id === selectedElement)?.x ?? 0) + nudge }); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [selectedElement, elements, removeElement, duplicateElement, updateElement]);
+
   const selectedEl = elements.find(el => el.id === selectedElement);
 
   return (
@@ -540,13 +585,13 @@ const FontPlayground = () => {
             )}
 
             <Card className="glass-card p-4">
-              <h3 className="font-medium mb-3">Quick Tips</h3>
+              <h3 className="font-medium mb-3">Keyboard Shortcuts</h3>
               <ul className="text-xs text-muted-foreground space-y-2">
-                <li>• Drag elements to position them</li>
-                <li>• Use rotation for dynamic layouts</li>
-                <li>• Use 2-3 fonts maximum for harmony</li>
-                <li>• Vary sizes to create hierarchy</li>
-                <li>• AI analysis works best with 2+ elements</li>
+                <li><kbd className="px-1.5 py-0.5 bg-background/50 rounded text-[10px] font-mono">Ctrl+D</kbd> Duplicate selected</li>
+                <li><kbd className="px-1.5 py-0.5 bg-background/50 rounded text-[10px] font-mono">Delete</kbd> Remove selected</li>
+                <li><kbd className="px-1.5 py-0.5 bg-background/50 rounded text-[10px] font-mono">Esc</kbd> Deselect</li>
+                <li><kbd className="px-1.5 py-0.5 bg-background/50 rounded text-[10px] font-mono">↑↓←→</kbd> Nudge position</li>
+                <li><kbd className="px-1.5 py-0.5 bg-background/50 rounded text-[10px] font-mono">Shift+↑↓←→</kbd> Nudge ×10</li>
               </ul>
             </Card>
           </div>

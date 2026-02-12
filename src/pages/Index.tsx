@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
 import ColorPalettes from '@/components/ColorPalettes';
+import ColorContrastChecker from '@/components/ColorContrastChecker';
 import FontSection from '@/components/FontSection';
 import BlogSection from '@/components/BlogSection';
 import DesignPrinciples from '@/components/DesignPrinciples';
@@ -43,6 +44,9 @@ const Index = () => {
         <main className="relative z-10">
           <HeroSection />
           <ColorPalettes />
+          <div className="max-w-7xl mx-auto px-6 py-12">
+            <ColorContrastChecker />
+          </div>
           <FontSection />
           <BlogSection />
           <DesignPrinciples />
