@@ -7,11 +7,12 @@ import { Button } from '@/components/ui/button';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-// Import Swiper styles
+// @ts-ignore - Swiper CSS imports
 import 'swiper/css';
+// @ts-ignore
 import 'swiper/css/navigation';
+// @ts-ignore
 import 'swiper/css/pagination';
-import 'swiper/css/autoplay';
 
 interface BlogPost {
   id: string;
