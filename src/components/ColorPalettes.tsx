@@ -12,6 +12,7 @@ import ParallaxCard from './ParallaxCard';
 import Interactive3DCard from './Interactive3DCard';
 import ColorHarmonyWheel from './ColorHarmonyWheel';
 import PaletteComparison from './PaletteComparison';
+import ColorFormatDisplay from './ColorFormatDisplay';
 import { useBookmarks } from '@/hooks/useBookmarks';
 import { useAnimations, hoverAnimations } from '@/hooks/useAnimations';
 
@@ -738,9 +739,7 @@ const ColorPalettes = () => {
                         ))}
                       </div>
 
-                      <div className="text-xs font-mono text-muted-foreground truncate">
-                        {palette.colors[0]}
-                      </div>
+                      <ColorFormatDisplay hex={palette.colors[0]} />
                     </div>
                   </div>
                 </Interactive3DCard>

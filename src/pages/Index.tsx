@@ -7,6 +7,7 @@ import ColorContrastChecker from '@/components/ColorContrastChecker';
 import FontSection from '@/components/FontSection';
 import BlogSection from '@/components/BlogSection';
 import DesignPrinciples from '@/components/DesignPrinciples';
+import ThemePreview from '@/components/ThemePreview';
 import CustomCursor from '@/components/CustomCursor';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Preloader from '@/components/Preloader';
@@ -47,6 +48,7 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-6 py-12">
             <ColorContrastChecker />
           </div>
+          <ThemePreview />
           <FontSection />
           <BlogSection />
           <DesignPrinciples />
