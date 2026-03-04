@@ -1,163 +1,139 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef, useMemo } from 'react';
-import { Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Sparkles, Swords } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import pixuHappy from '@/assets/pixu-happy.png';
 
 const HeroSection = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"]
-  });
-
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
-  // Memoize static shapes to prevent recalculation
-  const floatingShapes = useMemo(() => 
-    [...Array(6)].map((_, i) => ({
-      id: i,
-      width: 60 + i * 30,
-      height: 60 + i * 30,
-      left: `${10 + i * 15}%`,
-      top: `${15 + (i % 3) * 25}%`,
-      delay: i * 2,
-    })), 
-  []);
+  const navigate = useNavigate();
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Geometric Background Pattern - CSS only */}
-      <motion.div 
-        className="absolute inset-0 z-0"
-        style={{ y: backgroundY }}
-      >
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
-              linear-gradient(to right, hsl(var(--foreground) / 0.05) 1px, transparent 1px),
-              linear-gradient(to bottom, hsl(var(--foreground) / 0.05) 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px'
-          }} />
-        </div>
-
-        {/* Floating Geometric Shapes - CSS animations only */}
-        {floatingShapes.map((shape) => (
-          <div
-            key={shape.id}
-            className="absolute border border-foreground/10 animate-spin-slow"
-            style={{
-              width: shape.width,
-              height: shape.height,
-              left: shape.left,
-              top: shape.top,
-              animationDelay: `${shape.delay}s`,
-              animationDuration: `${20 + shape.id * 5}s`,
-            }}
-          />
-        ))}
-
-        {/* Static Triangles with CSS animation */}
-        <div 
-          className="absolute left-[20%] top-[30%] w-8 h-8 bg-foreground/5 animate-float-slow"
-          style={{ clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)', animationDelay: '0s' }}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-16">
+      {/* Background blobs */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div
+          className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-primary/20 rounded-full blur-3xl animate-blob"
         />
-        <div 
-          className="absolute left-[70%] top-[20%] w-10 h-10 bg-foreground/5 animate-float-slow"
-          style={{ clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)', animationDelay: '2s' }}
+        <div
+          className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-accent/20 rounded-full blur-3xl animate-blob"
+          style={{ animationDelay: '4s' }}
         />
-        <div 
-          className="absolute left-[50%] bottom-[25%] w-6 h-6 bg-foreground/5 animate-float-slow"
-          style={{ clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)', animationDelay: '4s' }}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl animate-blob"
+          style={{ animationDelay: '2s' }}
         />
+      </div>
 
-        {/* Static Hexagons with CSS animation */}
-        <div 
-          className="absolute right-[15%] bottom-[30%] w-12 h-12 border border-foreground/10 animate-spin-reverse"
-          style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)', animationDuration: '25s' }}
-        />
-        <div 
-          className="absolute right-[40%] top-[15%] w-10 h-10 border border-foreground/10 animate-spin-reverse"
-          style={{ clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)', animationDuration: '30s' }}
-        />
-
-        <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/60 to-background" />
-      </motion.div>
-
-      {/* Minimal Floating Particles - CSS only */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        {[...Array(8)].map((_, i) => (
+      {/* Floating shapes */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[
+          { size: 'w-16 h-16', pos: 'top-[15%] left-[10%]', delay: '0s', bg: 'bg-primary/10' },
+          { size: 'w-12 h-12', pos: 'top-[25%] right-[15%]', delay: '1s', bg: 'bg-accent/15' },
+          { size: 'w-20 h-20', pos: 'bottom-[20%] left-[20%]', delay: '2s', bg: 'bg-primary/8' },
+          { size: 'w-10 h-10', pos: 'bottom-[30%] right-[10%]', delay: '3s', bg: 'bg-accent/10' },
+        ].map((shape, i) => (
           <div
             key={i}
-            className="absolute w-1.5 h-1.5 bg-foreground/20 animate-float-slow"
-            style={{
-              left: `${12 + i * 11}%`,
-              top: `${20 + (i % 4) * 18}%`,
-              animationDelay: `${i * 0.5}s`,
-              clipPath: i % 2 === 0 ? 'polygon(50% 0%, 100% 100%, 0% 100%)' : 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)'
-            }}
+            className={`absolute ${shape.size} ${shape.pos} ${shape.bg} rounded-2xl animate-float-slow`}
+            style={{ animationDelay: shape.delay }}
           />
         ))}
       </div>
 
-      {/* Hero Content with Parallax */}
-      <motion.div 
-        className="relative z-20 text-center max-w-5xl mx-auto px-6"
-        style={{ y: textY, opacity }}
-      >
+      <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        {/* Text content */}
+        <div className="flex-1 text-center lg:text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-8">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium font-inter text-primary">Welcome to DesignVerse</span>
+            </div>
+
+            <h1 className="font-clash font-bold text-5xl sm:text-6xl md:text-7xl lg:text-[82px] leading-[0.95] tracking-tight text-foreground mb-6">
+              Create.
+              <br />
+              <span className="text-primary">Compete.</span>
+              <br />
+              Get Hired.
+            </h1>
+
+            <p className="text-lg md:text-xl text-muted-foreground font-inter font-normal max-w-lg mx-auto lg:mx-0 mb-10 leading-relaxed">
+              A creative playground for designers to showcase work, battle creativity, and get discovered.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/upload')}
+                className="btn-primary flex items-center justify-center gap-2"
+              >
+                Upload Work
+                <ArrowRight className="w-5 h-5" />
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-glass flex items-center justify-center gap-2 border border-border"
+              >
+                Explore Designs
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/battles')}
+                className="btn-glass flex items-center justify-center gap-2 border border-accent/30 text-accent-foreground"
+              >
+                <Swords className="w-4 h-4" />
+                Enter Battle Arena
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Pixu Mascot */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0, scale: 0.8, y: 40 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.3, type: 'spring', stiffness: 100 }}
+          className="flex-shrink-0"
         >
-          <div className="inline-flex items-center gap-3 border border-foreground/20 px-6 py-3 mb-8 hover:border-foreground/40 transition-colors">
-            <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-medium tracking-widest uppercase">Welcome to the Future of Design</span>
+          <div className="relative">
+            {/* Glow behind Pixu */}
+            <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl scale-110" />
+            <img
+              src={pixuHappy}
+              alt="Pixu - DesignVerse mascot waving hello"
+              className="relative w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 object-contain pixu-bounce drop-shadow-2xl"
+            />
+            {/* Speech bubble */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1, type: 'spring', stiffness: 200 }}
+              className="absolute -top-4 -right-4 bg-card border border-border rounded-2xl rounded-bl-sm px-4 py-2 shadow-lg"
+            >
+              <span className="text-sm font-satoshi font-bold text-foreground">Hey there! 👋</span>
+            </motion.div>
           </div>
-
-          <motion.h1 
-            className="text-7xl md:text-9xl font-bold mb-8 tracking-tighter"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-          >
-            <span className="text-foreground">Design</span>
-            <br />
-            <span className="text-foreground/80">Verse</span>
-          </motion.h1>
-
-          <motion.p 
-            className="text-lg md:text-xl text-muted-foreground mb-16 max-w-2xl mx-auto leading-relaxed font-light"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            Explore infinite color palettes, discover design principles, and immerse yourself in a premium creative experience.
-          </motion.p>
         </motion.div>
+      </div>
 
-        {/* Geometric Scroll Indicator - CSS animation */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="flex flex-col items-center gap-2">
-            <div 
-              className="w-4 h-4 border border-foreground/40"
-              style={{ clipPath: 'polygon(50% 100%, 100% 0%, 0% 0%)' }}
-            />
-            <div 
-              className="w-3 h-3 border border-foreground/30"
-              style={{ clipPath: 'polygon(50% 100%, 100% 0%, 0% 0%)' }}
-            />
-          </div>
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        animate={{ y: [0, 8, 0] }}
+        transition={{ repeat: Infinity, duration: 2 }}
+      >
+        <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex justify-center pt-2">
+          <div className="w-1.5 h-1.5 bg-muted-foreground/50 rounded-full" />
         </div>
       </motion.div>
-
-      {/* Corner Decorations */}
-      <div className="absolute top-8 left-8 w-24 h-24 border-l border-t border-foreground/20" />
-      <div className="absolute top-8 right-8 w-24 h-24 border-r border-t border-foreground/20" />
-      <div className="absolute bottom-8 left-8 w-24 h-24 border-l border-b border-foreground/20" />
-      <div className="absolute bottom-8 right-8 w-24 h-24 border-r border-b border-foreground/20" />
     </section>
   );
 };
