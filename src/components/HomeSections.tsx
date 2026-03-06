@@ -184,7 +184,7 @@ const CtaSection = () => {
 /* ─── Why DesignVerse ─── */
 const whyFeatures = [
   { icon: Zap, title: 'Fast Growth', desc: 'Gain visibility and followers through our featured system and battle wins.' },
-  { icon: Shield, title: 'Quality Community', desc: 'Post with confidence knowing you're getting constructive feedback from real designers.' },
+  { icon: Shield, title: 'Quality Community', desc: 'Post with confidence knowing you are getting constructive feedback from real designers.' },
   { icon: CheckCircle, title: '100% Free', desc: 'Our tools and community features are completely free to use, forever.' },
 ];
 
