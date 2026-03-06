@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
-import { Search, Bell, MessageSquare, Upload, User, Compass, Swords, Briefcase, Users, Wrench } from 'lucide-react';
+import { Search, Upload, User, Compass, Swords, Briefcase, Users, Wrench } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import ThemeToggle from '@/components/ThemeToggle';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
@@ -71,25 +70,6 @@ const Navigation = () => {
           >
             <Search className="w-4.5 h-4.5" />
           </motion.button>
-
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="hidden sm:flex p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors relative"
-          >
-            <Bell className="w-4.5 h-4.5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full" />
-          </motion.button>
-
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="hidden sm:flex p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-          >
-            <MessageSquare className="w-4.5 h-4.5" />
-          </motion.button>
-
-          <ThemeToggle />
 
           <Button
             onClick={() => navigate('/upload')}

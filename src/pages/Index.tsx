@@ -1,6 +1,6 @@
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
-import { TrendingDesigns, TopDesigners, LatestBattles, ToolsPreview, Footer } from '@/components/HomeSections';
+import { HowItWorks, TrendingDesigns, CtaSection, WhyDesignVerse, TopDesigners, LatestBattles, ToolsPreview, FinalCta, Footer } from '@/components/HomeSections';
 
 const Index = () => {
   return (
@@ -8,10 +8,14 @@ const Index = () => {
       <Navigation />
       <main>
         <HeroSection />
+        <HowItWorks />
         <TrendingDesigns />
+        <CtaSection />
+        <WhyDesignVerse />
         <TopDesigners />
         <LatestBattles />
         <ToolsPreview />
+        <FinalCta />
       </main>
       <Footer />
     </div>

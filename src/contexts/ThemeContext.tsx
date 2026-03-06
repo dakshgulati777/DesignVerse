@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 
-type Theme = 'dark' | 'light';
+type Theme = 'light';
 
 interface ThemeContextType {
   theme: Theme;
@@ -14,32 +14,8 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>('dark');
-
-  useEffect(() => {
-    const stored = localStorage.getItem('designverse-theme') as Theme;
-    if (stored && ['dark', 'light'].includes(stored)) {
-      setTheme(stored);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('designverse-theme', theme);
-    
-    // Add transition class before changing theme
-    document.documentElement.style.transition = 'background-color 0.5s ease, color 0.5s ease';
-    document.documentElement.className = theme;
-    
-    // Remove transition after animation completes
-    const timeout = setTimeout(() => {
-      document.documentElement.style.transition = '';
-    }, 500);
-    
-    return () => clearTimeout(timeout);
-  }, [theme]);
-
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme: 'light', setTheme: () => {} }}>
       {children}
     </ThemeContext.Provider>
   );
