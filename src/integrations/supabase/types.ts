@@ -41,6 +41,89 @@ export type Database = {
         }
         Relationships: []
       }
+      brand_kits: {
+        Row: {
+          brand_colors: Json
+          brand_name: string
+          created_at: string
+          id: string
+          logo_url: string | null
+          tagline: string | null
+          tone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          brand_colors?: Json
+          brand_name: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          tagline?: string | null
+          tone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          brand_colors?: Json
+          brand_name?: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          tagline?: string | null
+          tone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      generated_content: {
+        Row: {
+          brand_kit_id: string
+          caption: string | null
+          content_type: string
+          created_at: string
+          hashtags: string[] | null
+          id: string
+          image_url: string | null
+          product_image_url: string
+          schedule_day: string | null
+          user_id: string
+        }
+        Insert: {
+          brand_kit_id: string
+          caption?: string | null
+          content_type: string
+          created_at?: string
+          hashtags?: string[] | null
+          id?: string
+          image_url?: string | null
+          product_image_url: string
+          schedule_day?: string | null
+          user_id: string
+        }
+        Update: {
+          brand_kit_id?: string
+          caption?: string | null
+          content_type?: string
+          created_at?: string
+          hashtags?: string[] | null
+          id?: string
+          image_url?: string | null
+          product_image_url?: string
+          schedule_day?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_content_brand_kit_id_fkey"
+            columns: ["brand_kit_id"]
+            isOneToOne: false
+            referencedRelation: "brand_kits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
