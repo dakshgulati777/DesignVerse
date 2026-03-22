@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import FontLab from "./pages/FontLab";
 import FontPlayground from "./pages/FontPlayground";
 import Bookmarks from "./pages/Bookmarks";
+import BrandKit from "./pages/BrandKit";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -59,7 +60,8 @@ const AnimatedRoutes = () => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/font-lab" element={<FontLab />} />
           <Route path="/font-playground" element={<FontPlayground />} />
-          <Route path="/bookmarks" element={<Bookmarks />} />
+           <Route path="/bookmarks" element={<Bookmarks />} />
+          <Route path="/brand-kit" element={<BrandKit />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>

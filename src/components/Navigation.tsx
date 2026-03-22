@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Palette, BookOpen, Search, ArrowUp, GraduationCap, LogOut, LogIn, Bookmark, Type, Sparkles } from 'lucide-react';
+import { Palette, BookOpen, Search, ArrowUp, GraduationCap, LogOut, LogIn, Bookmark, Type, Sparkles, Wand2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -14,6 +14,7 @@ const Navigation = () => {
     { icon: Palette, label: 'Palettes', href: '#palettes', type: 'hash' },
     { icon: Type, label: 'Fonts', href: '/font-lab', type: 'route' },
     { icon: Sparkles, label: 'Playground', href: '/font-playground', type: 'route' },
+    { icon: Wand2, label: 'Brand Kit', href: '/brand-kit', type: 'route' },
     { icon: BookOpen, label: 'Blog', href: '#blog', type: 'hash' },
     { icon: Search, label: 'Principles', href: '#principles', type: 'hash' },
     { icon: GraduationCap, label: 'Learning', href: '/learners', type: 'route' },
