@@ -14,6 +14,7 @@ const Navigation = () => {
     { icon: Palette, label: 'Palettes', href: '#palettes', type: 'hash' },
     { icon: Type, label: 'Fonts', href: '/font-lab', type: 'route' },
     { icon: Sparkles, label: 'Playground', href: '/font-playground', type: 'route' },
+    { icon: Wand2, label: 'Brand Kit', href: '/brand-kit', type: 'route' },
     { icon: BookOpen, label: 'Blog', href: '#blog', type: 'hash' },
     { icon: Search, label: 'Principles', href: '#principles', type: 'hash' },
     { icon: GraduationCap, label: 'Learning', href: '/learners', type: 'route' },

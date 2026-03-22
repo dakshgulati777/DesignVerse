@@ -60,7 +60,8 @@ const AnimatedRoutes = () => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/font-lab" element={<FontLab />} />
           <Route path="/font-playground" element={<FontPlayground />} />
-          <Route path="/bookmarks" element={<Bookmarks />} />
+           <Route path="/bookmarks" element={<Bookmarks />} />
+          <Route path="/brand-kit" element={<BrandKit />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
