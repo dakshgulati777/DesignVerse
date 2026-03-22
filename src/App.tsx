@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import FontLab from "./pages/FontLab";
 import FontPlayground from "./pages/FontPlayground";
 import Bookmarks from "./pages/Bookmarks";
+import BrandKit from "./pages/BrandKit";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
