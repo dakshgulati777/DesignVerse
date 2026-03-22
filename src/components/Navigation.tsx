@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Palette, BookOpen, Search, ArrowUp, GraduationCap, LogOut, LogIn, Bookmark, Type, Sparkles } from 'lucide-react';
+import { Palette, BookOpen, Search, ArrowUp, GraduationCap, LogOut, LogIn, Bookmark, Type, Sparkles, Wand2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
