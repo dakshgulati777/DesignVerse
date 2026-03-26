@@ -36,155 +36,86 @@ const ContentGenerator = ({ brandProfile, onGenerated, onBack }: ContentGenerato
     }
   };
 
-  const fileToGenerativePart = async (file: File) => {
-    const base64Promise = new Promise<string>((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
-      reader.readAsDataURL(file);
-    });
-    return {
-      inlineData: { data: await base64Promise, mimeType: file.type },
-    };
-  };
-
   const handleGenerate = async () => {
     if (!productImage || !user) return;
 
     setIsGenerating(true);
-    setProgress('AI is analyzing your product photo... 🔍');
+    setProgress('Uploading your product photo... 📸');
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      if (!apiKey) {
-        throw new Error('Gemini API Key not found. Please set VITE_GEMINI_API_KEY in .env');
+      // Upload product image to storage
+      const fileExt = productImage.name.split('.').pop();
+      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('brand-assets')
+        .upload(filePath, productImage);
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from('brand-assets')
+        .getPublicUrl(filePath);
+
+      const productImageUrl = urlData.publicUrl;
+
+      setProgress('AI is crafting your content plan... 🤖');
+
+      // Call edge function with brand profile data
+      const { data, error } = await supabase.functions.invoke('generate-brand-content', {
+        body: {
+          brandName: brandProfile.brandName,
+          brandColors: brandProfile.brandColors,
+          tagline: brandProfile.tagline,
+          tone: brandProfile.tone,
+          productImageUrl,
+        },
+      });
+
+      if (error) throw error;
+
+      let content: GeneratedContent[] = [];
+
+      if (data?.content && Array.isArray(data.content)) {
+        content = data.content.map((item: any) => ({
+          content_type: item.content_type,
+          schedule_day: item.schedule_day,
+          caption: item.caption,
+          hashtags: item.hashtags || [],
+          visual_description: item.visual_description,
+          hook: item.hook,
+          imageUrl: productImageUrl,
+        }));
       }
 
-      const imagePart = await fileToGenerativePart(productImage);
-      const prompt = `
-        You are an expert Social Media Strategist and Creative Director. 
-        Analyze the provided product photo and the brand details below to create a high-converting 7-day Instagram content plan.
-
-        BRAND DETAILS:
-        - Brand Name: "${brandProfile.brandName}"
-        - Tagline: "${brandProfile.tagline}"
-        - Brand Tone: "${brandProfile.tone}"
-        
-        INSTRUCTIONS:
-        1. Identify the product in the photo.
-        2. Create 7 unique content pieces (Reels, Posts, Stories) that strictly follow the brand's tone.
-        3. The "hook" must be a scroll-stopping headline that mentions the product or brand value.
-        4. The "caption" should be engaging, professional, and include relevant emojis.
-        5. For "reel" types, provide a "videoPrompt" describing a 9:16 vertical video scene involving the product.
-        6. Provide a "visual_description" for the creative team to design the post/story.
-
-        Return ONLY a JSON array of 7 objects with this exact structure:
-        [
-          {
-            "content_type": "reel" | "post" | "story",
-            "schedule_day": "Day 1",
-            "hook": "string",
-            "caption": "string",
-            "hashtags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
-            "visual_description": "string",
-            "videoPrompt": "string (only for reels)"
-          }
-        ]
-      `;
-
-      setProgress('AI is matching with a model... 🤖');
-
-      let content: GeneratedContent[] | null = null;
-      let lastError = null;
-
-      // Try list of model names and endpoints
-      const endpoints = [
-        { version: 'v1beta', model: 'gemini-1.5-flash' },
-        { version: 'v1', model: 'gemini-1.5-flash' },
-        { version: 'v1beta', model: 'gemini-1.5-pro' }
-      ];
-
-      for (const ep of endpoints) {
-        try {
-          console.log(`Trying Gemini ${ep.version} with model ${ep.model}...`);
-          const response = await fetch(
-            `https://generativelanguage.googleapis.com/${ep.version}/models/${ep.model}:generateContent?key=${apiKey}`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{
-                  parts: [
-                    { text: prompt },
-                    { inline_data: { mime_type: productImage.type, data: imagePart.inlineData.data } }
-                  ]
-                }],
-                generationConfig: {
-                  temperature: 0.7,
-                  topP: 0.8,
-                  topK: 40
-                }
-              })
-            }
-          );
-
-          if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error?.message || `HTTP ${response.status}`);
-          }
-
-          const data = await response.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          
-          if (text) {
-            const jsonMatch = text.match(/\[[\s\S]*\]/);
-            const cleanJson = jsonMatch ? jsonMatch[0] : text.replace(/```json\n?|\n?```/g, '').trim();
-            content = JSON.parse(cleanJson);
-            
-            toast({
-              title: `AI Generation Success! 🎉`,
-              description: `Generated custom content for ${brandProfile.brandName}`,
-            });
-            break; 
-          }
-        } catch (e: any) {
-          console.warn(`Endpoint ${ep.version}/${ep.model} failed:`, e.message);
-          lastError = e;
-        }
-      }
-
-      // Final fallback if all API calls fail (to show the feature working, but customized)
-      if (!content) {
-        console.warn('API calls failed, using customized fallback.');
+      if (content.length === 0) {
+        // Fallback content customized with brand details
         content = [
-          { content_type: 'reel', schedule_day: 'Day 1', hook: `${brandProfile.brandName}: The Future of Design`, caption: `Transforming visions into reality. ${brandProfile.tagline}`, hashtags: [brandProfile.brandName.toLowerCase(), 'design', 'style'], visual_description: 'Cinematic product showcase', videoPrompt: 'Slow zoom into the product with soft focus background' },
-          { content_type: 'post', schedule_day: 'Day 2', hook: 'Elegance Redefined', caption: `A new standard for ${brandProfile.brandName}.`, hashtags: ['luxury', 'design'], visual_description: 'High contrast studio shot' },
-          { content_type: 'story', schedule_day: 'Day 3', hook: 'Behind the Brand', caption: `How we bring "${brandProfile.tagline}" to life.`, hashtags: ['inside', 'brand'], visual_description: 'Workshop view' },
-          { content_type: 'post', schedule_day: 'Day 4', hook: 'Perfect Precision', caption: `Every detail matters at ${brandProfile.brandName}.`, hashtags: ['details', 'pro'], visual_description: 'Macro detail shot' },
-          { content_type: 'reel', schedule_day: 'Day 5', hook: 'Unboxing Excellence', caption: 'The reveal you\'ve been waiting for.', hashtags: ['unboxing', 'new'], visual_description: 'Hands unboxing the product', videoPrompt: 'Quick cuts of the product being revealed from a premium box' },
-          { content_type: 'post', schedule_day: 'Day 6', hook: 'Global Impact', caption: `${brandProfile.brandName} is reaching new heights.`, hashtags: ['global', 'growth'], visual_description: 'Lifestyle product shot' },
-          { content_type: 'story', schedule_day: 'Day 7', hook: 'Join the Community', caption: `Welcome to the ${brandProfile.brandName} family.`, hashtags: ['community', 'love'], visual_description: 'User-generated content style' },
+          { content_type: 'reel', schedule_day: 'Monday', hook: `${brandProfile.brandName} ka Asli Magic! ✨`, caption: `Yeh hai asli quality! ${brandProfile.tagline || 'Check it out'} 🔥 #${brandProfile.brandName.replace(/\s/g, '')}`, hashtags: [brandProfile.brandName.toLowerCase().replace(/\s/g, ''), 'indianbrand', 'madeinindia', 'shoplocal', 'd2c', 'trending'], visual_description: 'Cinematic product reveal with brand colors' },
+          { content_type: 'reel', schedule_day: 'Wednesday', hook: 'Packing Order No. 1000! 🎉', caption: `Aapke pyaar se ho raha hai yeh possible 🥰 ${brandProfile.tagline || ''} #SmallBusiness`, hashtags: ['packingorders', 'smallbusinessindia', 'supportlocal', 'behindthescenes', 'd2cbrand'], visual_description: 'Behind-the-scenes packing montage' },
+          { content_type: 'post', schedule_day: 'Tuesday', hook: 'Quality jo dikhe 👀', caption: `Close-up dekho aur batao — Quality kaisi lagi? 💯 ${brandProfile.brandName} sirf best deta hai!`, hashtags: ['qualitycheck', 'productshot', 'premiumquality', 'indiand2c'], visual_description: 'High-quality macro product shot with brand color background' },
+          { content_type: 'reel', schedule_day: 'Thursday', hook: 'Customer Review Time! ⭐', caption: `Real customers, real love! ❤️ Dekho kya keh rahe hain ${brandProfile.brandName} ke baare mein`, hashtags: ['customerreview', 'testimonial', 'happycustomer', 'trustworthy'], visual_description: 'Customer testimonial compilation with text overlays' },
+          { content_type: 'post', schedule_day: 'Friday', hook: 'Weekend Mood with ' + brandProfile.brandName, caption: `Weekend ho aur ${brandProfile.brandName} na ho? That's not done! 😎 Grab yours now 🛒`, hashtags: ['weekendvibes', 'shopnow', 'treatyourself', 'weekendmood'], visual_description: 'Lifestyle flat-lay with product and props' },
+          { content_type: 'story', schedule_day: 'Saturday', hook: 'Quick Poll! 📊', caption: `Konsa color zyada pasand hai? Vote karo! 👆 ${brandProfile.brandName} wants to know YOUR choice`, hashtags: ['poll', 'youropinion', 'brandlove', 'engagement'], visual_description: 'Interactive poll story with two product variants' },
         ];
-        
+
         toast({
-          title: 'Brand-Customized Content Generated! ✨',
-          description: 'Used our smart fallback system due to API constraints.',
+          title: 'Content Plan Generated! ✨',
+          description: `Created custom Hinglish content for ${brandProfile.brandName} using smart templates.`,
+        });
+      } else {
+        toast({
+          title: 'AI Content Ready! 🎉',
+          description: `Generated a full week's content plan for ${brandProfile.brandName}`,
         });
       }
 
-      onGenerated(content.map((item, index) => ({
-        ...item,
-        imageUrl: `/ai-content/post${(index % 3) + 1}.png`,
-        videoUrl: item.content_type === 'reel' 
-          ? 'https://assets.mixkit.co/videos/preview/mixkit-fashion-model-posing-in-neon-lights-34208-large.mp4' 
-          : undefined,
-        videoPrompt: item.content_type === 'reel' ? 'Cinematic vertical shot, high-end fashion lighting, 9:16 aspect ratio...' : undefined
-      })));
-
+      onGenerated(content);
     } catch (err: any) {
       console.error('Generation error:', err);
       toast({
-        title: 'Generation Issues',
-        description: err.message || 'Something went wrong. Please check your API key.',
+        title: 'Generation Error',
+        description: err.message || 'Something went wrong. Please try again.',
         variant: 'destructive',
       });
     } finally {

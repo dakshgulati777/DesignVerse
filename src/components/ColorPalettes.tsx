@@ -637,7 +637,7 @@ const ColorPalettes = () => {
                   Compare
                 </Button>
               </div>
-              <ColorHarmonyWheel selectedType={selectedType} baseHue={baseHue} />
+              <ColorHarmonyWheel selectedType={selectedType} baseHue={baseHue} onHueChange={setBaseHue} />
             </div>
           </motion.div>
         </div>

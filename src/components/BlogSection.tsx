@@ -40,7 +40,7 @@ const BlogSection = () => {
     
     try {
       // 1. Fetch blogs from Supabase
-      const { data, error } = await (supabase.from('blogs') as any)
+      const { data, error } = await supabase.from('blogs')
         .select(`
           id,
           title,

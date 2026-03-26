@@ -32,7 +32,7 @@ const MarketplaceSell = () => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await (supabase.from('marketplace_assets') as any).insert([
+      const { error } = await supabase.from('marketplace_assets').insert([
         {
           name: formData.name,
           description: formData.description,

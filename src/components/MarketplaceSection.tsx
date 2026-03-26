@@ -29,7 +29,7 @@ const MarketplaceSection = () => {
   const fetchFeaturedAssets = async () => {
     setLoading(true);
     try {
-      const { data, error } = await (supabase.from('marketplace_assets') as any)
+      const { data, error } = await supabase.from('marketplace_assets')
         .select('id, name, description, price, preview_url')
         .limit(3);
 

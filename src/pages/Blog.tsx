@@ -40,7 +40,7 @@ const Blog = () => {
     let blogPosts: BlogPost[] = [];
 
     try {
-      const { data, error } = await (supabase.from('blogs') as any)
+      const { data, error } = await supabase.from('blogs')
         .select(`
           id,
           title,

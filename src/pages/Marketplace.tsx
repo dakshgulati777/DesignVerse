@@ -22,10 +22,12 @@ interface MarketplaceAsset {
   name: string;
   description: string;
   price: number;
-  preview_url: string;
-  download_url: string;
+  preview_url: string | null;
+  download_url: string | null;
   seller_id: string;
-  category?: string;
+  category: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const Marketplace = () => {
@@ -39,13 +41,13 @@ const Marketplace = () => {
   const fetchAssets = async () => {
     setLoading(true);
     try {
-      const { data, error } = await (supabase.from('marketplace_assets') as any)
+      const { data, error } = await supabase.from('marketplace_assets')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      let fetchedAssets = data || [];
+      let fetchedAssets: MarketplaceAsset[] = (data as MarketplaceAsset[]) || [];
       
       // FALLBACK DUMMY DATA
       if (fetchedAssets.length === 0) {
