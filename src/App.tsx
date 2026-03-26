@@ -8,11 +8,19 @@ import { AnimatePresence, motion } from "framer-motion";
 import Index from "./pages/Index";
 import Learners from "./pages/Learners";
 import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
+import ProfileSetup from "./pages/ProfileSetup";
 import FontLab from "./pages/FontLab";
 import FontPlayground from "./pages/FontPlayground";
 import Bookmarks from "./pages/Bookmarks";
 import BrandKit from "./pages/BrandKit";
+import Marketplace from "./pages/Marketplace";
+import MarketplaceSell from "./pages/MarketplaceSell";
+import BlogCreate from "./pages/BlogCreate";
+import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
+import { useAuth } from "@/contexts/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +52,12 @@ const pageVariants = {
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const { user, profile, loading } = useAuth();
+
+  // Redirect to setup if logged in but no profile nickname
+  if (!loading && user && !profile?.nickname && location.pathname !== '/profile-setup' && location.pathname !== '/auth') {
+    return <Navigate to="/profile-setup" replace />;
+  }
   
   return (
     <AnimatePresence mode="wait">
@@ -58,10 +72,16 @@ const AnimatedRoutes = () => {
           <Route path="/" element={<Index />} />
           <Route path="/learners" element={<Learners />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile-setup" element={<ProfileSetup />} />
           <Route path="/font-lab" element={<FontLab />} />
           <Route path="/font-playground" element={<FontPlayground />} />
-           <Route path="/bookmarks" element={<Bookmarks />} />
+          <Route path="/bookmarks" element={<Bookmarks />} />
           <Route path="/brand-kit" element={<BrandKit />} />
+          <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/marketplace/sell" element={<MarketplaceSell />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/create-blog" element={<BlogCreate />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
