@@ -22,10 +22,12 @@ interface MarketplaceAsset {
   name: string;
   description: string;
   price: number;
-  preview_url: string;
-  download_url: string;
+  preview_url: string | null;
+  download_url: string | null;
   seller_id: string;
-  category?: string;
+  category: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const Marketplace = () => {
