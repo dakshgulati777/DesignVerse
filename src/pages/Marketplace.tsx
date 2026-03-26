@@ -39,7 +39,7 @@ const Marketplace = () => {
   const fetchAssets = async () => {
     setLoading(true);
     try {
-      const { data, error } = await (supabase.from('marketplace_assets') as any)
+      const { data, error } = await supabase.from('marketplace_assets')
         .select('*')
         .order('created_at', { ascending: false });
 

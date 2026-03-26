@@ -32,7 +32,8 @@ const BlogCreate = () => {
           title: formData.title,
           cover_image: formData.coverImage,
           content: formData.content,
-          author_id: user.id
+          author_id: user.id,
+          category: 'Community'
         }
       ]);
 
