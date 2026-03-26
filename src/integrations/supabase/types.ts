@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      blogs: {
+        Row: {
+          author_id: string
+          category: string | null
+          content: string
+          cover_image: string | null
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          category?: string | null
+          content: string
+          cover_image?: string | null
+          created_at?: string
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          category?: string | null
+          content?: string
+          cover_image?: string | null
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bookmarks: {
         Row: {
           created_at: string
@@ -123,6 +156,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      marketplace_assets: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string
+          download_url: string | null
+          id: string
+          name: string
+          preview_url: string | null
+          price: number
+          seller_id: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description: string
+          download_url?: string | null
+          id?: string
+          name: string
+          preview_url?: string | null
+          price?: number
+          seller_id: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string
+          download_url?: string | null
+          id?: string
+          name?: string
+          preview_url?: string | null
+          price?: number
+          seller_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
