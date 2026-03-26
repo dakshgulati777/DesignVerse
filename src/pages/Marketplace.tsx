@@ -47,7 +47,7 @@ const Marketplace = () => {
 
       if (error) throw error;
       
-      let fetchedAssets = data || [];
+      let fetchedAssets: MarketplaceAsset[] = (data as MarketplaceAsset[]) || [];
       
       // FALLBACK DUMMY DATA
       if (fetchedAssets.length === 0) {
