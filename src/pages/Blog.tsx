@@ -200,10 +200,10 @@ const Blog = () => {
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none mb-2">
                 <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">DesignVerse Blog</span>
               </div>
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-8 underline-offset-8">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 sm:decoration-8 underline-offset-8">
                 Latest Stories
               </h1>
-              <p className="text-muted-foreground text-xl max-w-2xl italic font-medium">
+              <p className="text-muted-foreground text-base sm:text-xl max-w-2xl italic font-medium">
                 Insights, tutorials, and thoughts from the design community.
               </p>
             </div>
