@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,18 +8,64 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
-import { Image as ImageIcon, Send, ArrowLeft } from 'lucide-react';
+import { Image as ImageIcon, Send, ArrowLeft, Upload, X } from 'lucide-react';
 
 const BlogCreate = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     coverImage: '',
     content: ''
   });
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Please select an image file', variant: 'destructive' });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'Image must be under 5MB', variant: 'destructive' });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const path = `${user.id}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from('blog-images')
+        .upload(path, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('blog-images')
+        .getPublicUrl(path);
+
+      setFormData(prev => ({ ...prev, coverImage: publicUrl }));
+      setCoverPreview(publicUrl);
+      toast({ title: 'Image uploaded!' });
+    } catch (error: any) {
+      toast({ title: 'Upload failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const removeCoverImage = () => {
+    setFormData(prev => ({ ...prev, coverImage: '' }));
+    setCoverPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +105,7 @@ const BlogCreate = () => {
     <div className="min-h-screen bg-background text-foreground pb-20">
       <Navigation />
       
-      <div className="max-w-4xl mx-auto px-6 pt-32">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -73,18 +119,18 @@ const BlogCreate = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-12"
+          className="space-y-8 sm:space-y-12"
         >
           <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 underline-offset-8">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 underline-offset-8">
               Write a Story
             </h1>
-            <p className="text-muted-foreground text-lg italic">
+            <p className="text-muted-foreground text-base sm:text-lg italic">
               Share your insights, design tips, and creative journey.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">
                 Story Title
@@ -92,7 +138,7 @@ const BlogCreate = () => {
               <Input
                 required
                 placeholder="The Future of Minimalist Design..."
-                className="text-xl h-14 bg-foreground/5 border-none focus-visible:ring-1 focus-visible:ring-primary rounded-none"
+                className="text-lg sm:text-xl h-12 sm:h-14 bg-foreground/5 border-none focus-visible:ring-1 focus-visible:ring-primary rounded-none"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               />
@@ -100,28 +146,47 @@ const BlogCreate = () => {
 
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">
-                Cover Image URL
+                Cover Image
               </label>
-              <div className="flex gap-4">
-                <div className="relative flex-1">
-                  <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    placeholder="https://images.unsplash.com/..."
-                    className="pl-12 h-14 bg-foreground/5 border-none focus-visible:ring-1 focus-visible:ring-primary rounded-none"
-                    value={formData.coverImage}
-                    onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                  />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+              
+              {coverPreview ? (
+                <div className="relative aspect-video w-full overflow-hidden border border-foreground/10 bg-foreground/5">
+                  <img src={coverPreview} alt="Cover Preview" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={removeCoverImage}
+                    className="absolute top-3 right-3 w-8 h-8 bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
-              </div>
-              {formData.coverImage && (
-                <div className="mt-4 aspect-video w-full overflow-hidden border border-foreground/10 bg-foreground/5">
-                  <img 
-                    src={formData.coverImage} 
-                    alt="Cover Preview" 
-                    className="w-full h-full object-cover opacity-80"
-                    onError={(e) => (e.currentTarget.src = 'https://images.unsplash.com/photo-1487058715912-ca02820ee39d')}
-                  />
-                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="w-full aspect-video border-2 border-dashed border-foreground/10 hover:border-primary/40 bg-foreground/5 flex flex-col items-center justify-center gap-3 transition-colors"
+                >
+                  {isUploading ? (
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 border-2 border-foreground/30 border-t-foreground animate-spin rounded-full" />
+                      <span className="text-sm text-muted-foreground font-medium">Uploading...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="w-8 h-8 text-muted-foreground/50" />
+                      <span className="text-sm text-muted-foreground font-medium">Click to upload cover image</span>
+                      <span className="text-[10px] text-muted-foreground/50 uppercase tracking-widest">Max 5MB · JPG, PNG, WebP</span>
+                    </>
+                  )}
+                </button>
               )}
             </div>
 
@@ -132,7 +197,7 @@ const BlogCreate = () => {
               <Textarea
                 required
                 placeholder="Start writing your story here..."
-                className="min-h-[400px] bg-foreground/5 border-none focus-visible:ring-1 focus-visible:ring-primary rounded-none text-lg leading-relaxed p-6"
+                className="min-h-[300px] sm:min-h-[400px] bg-foreground/5 border-none focus-visible:ring-1 focus-visible:ring-primary rounded-none text-base sm:text-lg leading-relaxed p-4 sm:p-6"
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               />
@@ -142,11 +207,11 @@ const BlogCreate = () => {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="h-16 px-12 bg-foreground text-background hover:bg-foreground/90 font-black tracking-widest text-sm rounded-none group"
+                className="h-14 sm:h-16 px-8 sm:px-12 bg-foreground text-background hover:bg-foreground/90 font-black tracking-widest text-sm rounded-none group"
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 border-2 border-background/30 border-t-background animate-spin" />
+                    <div className="w-4 h-4 border-2 border-background/30 border-t-background animate-spin rounded-full" />
                     PUBLISHING...
                   </div>
                 ) : (
