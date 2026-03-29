@@ -182,7 +182,7 @@ const Blog = () => {
     <div className="min-h-screen bg-background text-foreground pb-20">
       <Navigation />
 
-      <div className="max-w-7xl mx-auto px-6 pt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
         {/* Header Section */}
         <div className="mb-16">
           <motion.button
@@ -200,20 +200,20 @@ const Blog = () => {
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none mb-2">
                 <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">DesignVerse Blog</span>
               </div>
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-8 underline-offset-8">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 sm:decoration-8 underline-offset-8">
                 Latest Stories
               </h1>
-              <p className="text-muted-foreground text-xl max-w-2xl italic font-medium">
+              <p className="text-muted-foreground text-base sm:text-xl max-w-2xl italic font-medium">
                 Insights, tutorials, and thoughts from the design community.
               </p>
             </div>
 
             <Button
-              className="h-16 px-8 bg-foreground text-background hover:bg-foreground/90 font-black tracking-widest text-sm rounded-none group"
+              className="h-12 sm:h-16 px-6 sm:px-8 bg-foreground text-background hover:bg-foreground/90 font-black tracking-widest text-xs sm:text-sm rounded-none group"
               onClick={() => navigate('/create-blog')}
             >
               WRITE A STORY
-              <ArrowRight className="w-5 h-5 ml-3 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 ml-2 sm:ml-3 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
         </div>
