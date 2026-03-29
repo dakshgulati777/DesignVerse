@@ -209,11 +209,11 @@ const Blog = () => {
             </div>
 
             <Button
-              className="h-16 px-8 bg-foreground text-background hover:bg-foreground/90 font-black tracking-widest text-sm rounded-none group"
+              className="h-12 sm:h-16 px-6 sm:px-8 bg-foreground text-background hover:bg-foreground/90 font-black tracking-widest text-xs sm:text-sm rounded-none group"
               onClick={() => navigate('/create-blog')}
             >
               WRITE A STORY
-              <ArrowRight className="w-5 h-5 ml-3 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 ml-2 sm:ml-3 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
         </div>
