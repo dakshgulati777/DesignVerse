@@ -182,7 +182,7 @@ const Blog = () => {
     <div className="min-h-screen bg-background text-foreground pb-20">
       <Navigation />
 
-      <div className="max-w-7xl mx-auto px-6 pt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
         {/* Header Section */}
         <div className="mb-16">
           <motion.button

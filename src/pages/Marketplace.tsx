@@ -136,17 +136,17 @@ const Marketplace = () => {
     <div className="min-h-screen bg-background text-foreground pb-20">
       <Navigation />
       
-      <div className="max-w-7xl mx-auto px-6 pt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-12 sm:mb-16">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none mb-2">
               <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">Elite Assets</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-8 underline-offset-8">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 sm:decoration-8 underline-offset-8">
               Design Marketplace
             </h1>
-            <p className="text-muted-foreground text-xl max-w-2xl italic font-medium">
+            <p className="text-muted-foreground text-base sm:text-xl max-w-2xl italic font-medium">
               Premium UI kits, icons, and templates crafted by the community.
             </p>
           </div>
