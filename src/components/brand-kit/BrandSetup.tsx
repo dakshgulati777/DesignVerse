@@ -26,6 +26,8 @@ const PRESET_PALETTES = [
 
 const BrandSetup = ({ onComplete }: BrandSetupProps) => {
   const [brandName, setBrandName] = useState('');
+  const [productName, setProductName] = useState('');
+  const [productCategory, setProductCategory] = useState('');
   const [tagline, setTagline] = useState('');
   const [tone, setTone] = useState('casual-hinglish');
   const [colors, setColors] = useState<string[]>(['#000000', '#ffffff']);
@@ -46,9 +48,11 @@ const BrandSetup = ({ onComplete }: BrandSetupProps) => {
   };
 
   const handleSubmit = () => {
-    if (!brandName.trim()) return;
+    if (!brandName.trim() || !productName.trim() || !productCategory.trim()) return;
     onComplete({
       brandName: brandName.trim(),
+      productName: productName.trim(),
+      productCategory: productCategory.trim(),
       brandColors: colors,
       tagline: tagline.trim(),
       tone,
@@ -71,6 +75,27 @@ const BrandSetup = ({ onComplete }: BrandSetupProps) => {
           placeholder="e.g., Honey Hills, Desi Candles"
           className="h-14 text-lg border-foreground/20 bg-transparent"
         />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-3">
+          <label className="text-sm font-semibold tracking-wider uppercase">Product Name *</label>
+          <Input
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            placeholder="e.g., Rose Glow Serum"
+            className="h-14 text-lg border-foreground/20 bg-transparent"
+          />
+        </div>
+        <div className="space-y-3">
+          <label className="text-sm font-semibold tracking-wider uppercase">Product Category *</label>
+          <Input
+            value={productCategory}
+            onChange={(e) => setProductCategory(e.target.value)}
+            placeholder="e.g., Skincare, Candles, Snacks"
+            className="h-14 text-lg border-foreground/20 bg-transparent"
+          />
+        </div>
       </div>
 
       {/* Tagline */}
@@ -171,7 +196,7 @@ const BrandSetup = ({ onComplete }: BrandSetupProps) => {
       {/* Submit */}
       <motion.button
         onClick={handleSubmit}
-        disabled={!brandName.trim()}
+        disabled={!brandName.trim() || !productName.trim() || !productCategory.trim()}
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
         className="w-full py-4 bg-foreground text-background font-bold tracking-widest text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"

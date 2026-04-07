@@ -11,6 +11,8 @@ import { toast } from '@/hooks/use-toast';
 
 export interface BrandProfile {
   brandName: string;
+  productName: string;
+  productCategory: string;
   brandColors: string[];
   logoUrl?: string;
   tagline: string;

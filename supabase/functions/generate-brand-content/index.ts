@@ -17,12 +17,14 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const { brandName, brandColors, tagline, tone, productImageUrl } = await req.json();
+    const { brandName, productName, productCategory, brandColors, tagline, tone, productImageUrl } = await req.json();
 
     const systemPrompt = `You are a social media content strategist for Indian D2C brands. You create engaging, scroll-stopping content plans with Hinglish captions (mix of Hindi and English) that resonate with young Indian audiences on Instagram.
 
 Brand Details:
 - Brand Name: ${brandName}
+- Product Name: ${productName || "N/A"}
+- Product Category: ${productCategory || "N/A"}
 - Brand Colors: ${JSON.stringify(brandColors)}
 - Tagline: ${tagline || "N/A"}
 - Brand Tone: ${tone || "professional"}
@@ -38,7 +40,8 @@ Each piece must include:
 3. caption: Engaging Hinglish caption with emojis
 4. hashtags: Array of 8-12 relevant hashtags
 5. visual_description: Detailed description of the visual/image to create
-6. hook: The first line that grabs attention`;
+6. hook: The first line that grabs attention
+7. videoPrompt: For reels only, a short AI-video-generation prompt; for posts and stories use an empty string`;
 
     const userPrompt = `Generate a complete week's Instagram content plan for this D2C brand. The product image is available at: ${productImageUrl}
 
@@ -46,6 +49,7 @@ Create content that:
 - Uses trendy Hinglish captions (Hindi + English mix)
 - Includes trending audio/format references for Reels
 - Has scroll-stopping hooks
+- Clearly reflects the product name "${productName}" and category "${productCategory}"
 - Incorporates the brand colors: ${JSON.stringify(brandColors)}
 - Matches the brand tone: ${tone}
 
@@ -85,8 +89,9 @@ Return the response as a JSON object with a "content" array containing exactly 6
                           hashtags: { type: "array", items: { type: "string" } },
                           visual_description: { type: "string" },
                           hook: { type: "string" },
+                          videoPrompt: { type: "string" },
                         },
-                        required: ["content_type", "schedule_day", "caption", "hashtags", "visual_description", "hook"],
+                        required: ["content_type", "schedule_day", "caption", "hashtags", "visual_description", "hook", "videoPrompt"],
                         additionalProperties: false,
                       },
                     },

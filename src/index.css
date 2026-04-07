@@ -118,6 +118,20 @@
     background: var(--gradient-hero);
     min-height: 100vh;
   }
+
+  .marketplace-page,
+  .marketplace-page :is(h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label),
+  .marketplace-dialog-content,
+  .marketplace-dialog-content :is(h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label) {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .blog-page,
+  .blog-page :is(h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label),
+  .blog-dialog-content,
+  .blog-dialog-content :is(h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label) {
+    font-family: 'Space Grotesk', sans-serif;
+  }
   
   /* Responsive typography */
   @media (max-width: 640px) {

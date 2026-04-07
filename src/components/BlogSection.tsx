@@ -180,7 +180,7 @@ const BlogSection = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none mb-2">
               <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">From the Blog</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 underline-offset-8">
+            <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase underline decoration-primary decoration-4 underline-offset-8">
               Latest Stories
             </h2>
           </div>
@@ -229,7 +229,7 @@ const BlogSection = () => {
                     <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" /> {new Date(post.date).toLocaleDateString()}</span>
                   </div>
 
-                  <h3 className="text-xl font-black leading-tight group-hover:text-primary transition-colors line-clamp-2 italic">
+                  <h3 className="text-xl font-black leading-tight group-hover:text-primary transition-colors line-clamp-2">
                     {post.title}
                   </h3>
                   
@@ -266,7 +266,7 @@ const BlogSection = () => {
                               <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest mb-4">
                                 {post.category}
                               </div>
-                              <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-foreground decoration-primary decoration-4 underline underline-offset-8">
+                              <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-foreground decoration-primary decoration-4 underline underline-offset-8">
                                 {post.title}
                               </h2>
                             </div>
@@ -280,7 +280,7 @@ const BlogSection = () => {
                             </div>
                             
                             <div className="prose prose-invert max-w-none">
-                              <p className="text-xl md:text-2xl font-medium leading-relaxed italic text-foreground/90 mb-8 border-l-4 border-primary pl-6">
+                              <p className="text-xl md:text-2xl font-medium leading-relaxed text-foreground/90 mb-8 border-l-4 border-primary pl-6">
                                 {post.excerpt}
                               </p>
                               <div className="text-lg leading-loose text-muted-foreground space-y-6 font-medium">
@@ -349,4 +349,4 @@ const BlogSection = () => {
   );
 };
 
-export default BlogSection;
+export default BlogSection;

@@ -17,6 +17,45 @@ const typeConfig = {
   story: { icon: Smartphone, label: 'Story', color: 'hsl(var(--secondary))' },
 };
 
+const createPreviewImage = (item: GeneratedContent, brandProfile: BrandProfile) => {
+  const colors = [...brandProfile.brandColors, '#111111', '#f5f5f5'].slice(0, 4);
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${colors[0]}"/>
+          <stop offset="50%" stop-color="${colors[1]}"/>
+          <stop offset="100%" stop-color="${colors[2]}"/>
+        </linearGradient>
+      </defs>
+      <rect width="1080" height="1080" fill="url(#bg)"/>
+      <circle cx="880" cy="180" r="180" fill="${colors[3]}" fill-opacity="0.18"/>
+      <circle cx="190" cy="900" r="220" fill="#ffffff" fill-opacity="0.08"/>
+      <rect x="72" y="72" width="936" height="936" rx="28" fill="#0a0a0a" fill-opacity="0.28" stroke="#ffffff" stroke-opacity="0.18"/>
+      <text x="110" y="170" fill="#ffffff" font-family="Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="8">${item.content_type.toUpperCase()}</text>
+      <text x="110" y="260" fill="#ffffff" font-family="Arial, sans-serif" font-size="82" font-weight="700">${brandProfile.productName.slice(0, 24)}</text>
+      <text x="110" y="330" fill="#ffffff" fill-opacity="0.86" font-family="Arial, sans-serif" font-size="34">${brandProfile.productCategory.slice(0, 28)}</text>
+      <foreignObject x="110" y="420" width="860" height="270">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="color:white;font-family:Arial,sans-serif;font-size:52px;font-weight:700;line-height:1.15;">
+          ${item.hook}
+        </div>
+      </foreignObject>
+      <foreignObject x="110" y="730" width="860" height="150">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;font-size:30px;line-height:1.35;">
+          ${item.visual_description}
+        </div>
+      </foreignObject>
+      <text x="110" y="965" fill="#ffffff" fill-opacity="0.88" font-family="Arial, sans-serif" font-size="28" letter-spacing="3">${brandProfile.brandName.toUpperCase()}</text>
+    </svg>
+  `;
+
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+};
+
+const getDisplayImage = (item: GeneratedContent, brandProfile: BrandProfile) => {
+  return item.imageUrl || createPreviewImage(item, brandProfile);
+};
+
 const ContentCalendar = ({ content, brandProfile, onBack }: ContentCalendarProps) => {
   const [selectedItem, setSelectedItem] = useState<GeneratedContent | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -63,7 +102,7 @@ const ContentCalendar = ({ content, brandProfile, onBack }: ContentCalendarProps
           Your Week's Content 🗓️
         </h2>
         <p className="text-muted-foreground">
-          {content.length} pieces ready for <span className="text-foreground font-semibold">{brandProfile.brandName}</span>
+          {content.length} pieces ready for <span className="text-foreground font-semibold">{brandProfile.brandName}</span> and tailored for {brandProfile.productName} in {brandProfile.productCategory}
         </p>
         <div className="flex justify-center gap-4 text-sm">
           <span className="flex items-center gap-1"><Film className="w-4 h-4" /> {reels.length} Reels</span>
@@ -95,7 +134,7 @@ const ContentCalendar = ({ content, brandProfile, onBack }: ContentCalendarProps
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDownload(item.videoUrl || item.imageUrl || '', `${item.content_type}-${index}.${item.videoUrl ? 'mp4' : 'png'}`);
+                      handleDownload(item.videoUrl || getDisplayImage(item, brandProfile), `${item.content_type}-${index}.${item.videoUrl ? 'mp4' : 'png'}`);
                     }}
                     className="p-1 hover:bg-foreground/10 rounded transition-colors"
                     title="Download Asset"
@@ -110,11 +149,10 @@ const ContentCalendar = ({ content, brandProfile, onBack }: ContentCalendarProps
               </div>
 
               {/* Preview Image/Video */}
-              {item.imageUrl && (
-                <div className={`${item.content_type === 'reel' ? 'aspect-[9/16]' : 'aspect-square'} mb-4 overflow-hidden border border-foreground/5 relative group-hover:border-foreground/20 transition-colors`}>
+              <div className={`${item.content_type === 'reel' ? 'aspect-[9/16]' : 'aspect-square'} mb-4 overflow-hidden border border-foreground/5 relative group-hover:border-foreground/20 transition-colors`}>
                   {item.content_type === 'reel' ? (
                     <div className="w-full h-full bg-muted/20 relative">
-                       <img src={item.imageUrl} alt="Reel Preview" className="w-full h-full object-cover blur-[2px] opacity-50" />
+                       <img src={getDisplayImage(item, brandProfile)} alt="Reel Preview" className="w-full h-full object-cover blur-[2px] opacity-50" />
                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
                          <div className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center border border-primary/30">
                            <Play className="w-6 h-6 text-primary fill-primary" />
@@ -123,13 +161,15 @@ const ContentCalendar = ({ content, brandProfile, onBack }: ContentCalendarProps
                        </div>
                     </div>
                   ) : (
-                    <img src={item.imageUrl} alt="AI Generated Content" className="w-full h-full object-cover grayscale active-grayscale-0 transition-all hover:grayscale-0" />
+                    <img src={getDisplayImage(item, brandProfile)} alt="AI Generated Content" className="w-full h-full object-cover grayscale-0 transition-all" />
                   )}
                 </div>
-              )}
 
               {/* Hook */}
               <p className="font-semibold text-sm mb-2 line-clamp-2">{item.hook}</p>
+              <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2">
+                {brandProfile.productName} · {brandProfile.productCategory}
+              </p>
 
               {/* Caption preview */}
               <p className="text-sm text-muted-foreground line-clamp-3 mb-3">{item.caption}</p>
@@ -172,7 +212,7 @@ const ContentCalendar = ({ content, brandProfile, onBack }: ContentCalendarProps
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleDownload(selectedItem.imageUrl || '', `${selectedItem.content_type}.png`)}
+                    onClick={() => handleDownload(selectedItem.videoUrl || getDisplayImage(selectedItem, brandProfile), `${selectedItem.content_type}.${selectedItem.videoUrl ? 'mp4' : 'png'}`)}
                     className="h-8 gap-2 border-foreground/10 hover:bg-foreground/5"
                   >
                     <Download className="w-3 h-3" />
@@ -183,8 +223,7 @@ const ContentCalendar = ({ content, brandProfile, onBack }: ContentCalendarProps
               </div>
 
               {/* Modal Image/Video */}
-              {selectedItem.imageUrl && (
-                <div className={`${selectedItem.content_type === 'reel' ? 'aspect-[9/16] max-h-[50vh]' : 'aspect-square'} w-full overflow-hidden border border-foreground/10 bg-muted/20 relative`}>
+              <div className={`${selectedItem.content_type === 'reel' ? 'aspect-[9/16] max-h-[50vh]' : 'aspect-square'} w-full overflow-hidden border border-foreground/10 bg-muted/20 relative`}>
                   {selectedItem.content_type === 'reel' ? (
                     <video 
                       src="https://assets.mixkit.co/videos/preview/mixkit-fashion-model-posing-in-neon-lights-34208-large.mp4" 
@@ -192,13 +231,12 @@ const ContentCalendar = ({ content, brandProfile, onBack }: ContentCalendarProps
                       autoPlay 
                       loop 
                       className="w-full h-full object-cover"
-                      poster={selectedItem.imageUrl}
+                      poster={getDisplayImage(selectedItem, brandProfile)}
                     />
                   ) : (
-                    <img src={selectedItem.imageUrl} alt="AI Preview" className="w-full h-full object-cover transition-transform hover:scale-105 duration-700" />
+                    <img src={getDisplayImage(selectedItem, brandProfile)} alt="AI Preview" className="w-full h-full object-cover transition-transform hover:scale-105 duration-700" />
                   )}
                 </div>
-              )}
 
               {/* Hook */}
               <div className="space-y-2">
@@ -213,6 +251,13 @@ const ContentCalendar = ({ content, brandProfile, onBack }: ContentCalendarProps
               <div className="space-y-2">
                 <span className="text-xs font-semibold tracking-wider uppercase text-muted-foreground">Visual Concept</span>
                 <p className="text-sm text-muted-foreground">{selectedItem.visual_description}</p>
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-xs font-semibold tracking-wider uppercase text-muted-foreground">Product Context</span>
+                <p className="text-sm text-muted-foreground">
+                  {brandProfile.productName} in {brandProfile.productCategory} for {brandProfile.brandName}
+                </p>
               </div>
 
               {/* Reel Video Prompt */}

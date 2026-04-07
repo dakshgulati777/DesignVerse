@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Plus, Search, Filter, Download, Tag, ArrowUpRight, ChevronDown } from 'lucide-react';
+import { ShoppingBag, Plus, Search, Filter, Download, ArrowUpRight, Sparkles, Layers3, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,13 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 interface MarketplaceAsset {
   id: string;
@@ -31,12 +29,12 @@ interface MarketplaceAsset {
 }
 
 const Marketplace = () => {
+  const STORAGE_KEY = 'designverse-marketplace-state';
   const [assets, setAssets] = useState<MarketplaceAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const { toast } = useToast();
-  const { user } = useAuth();
   const navigate = useNavigate();
+  const hasRestoredScroll = useRef(false);
 
   const fetchAssets = async () => {
     setLoading(true);
@@ -124,8 +122,80 @@ const Marketplace = () => {
   };
 
   useEffect(() => {
+    const savedState = sessionStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState) as { searchQuery?: string };
+        if (parsed.searchQuery) {
+          setSearchQuery(parsed.searchQuery);
+        }
+      } catch (error) {
+        console.error('Failed to restore marketplace state:', error);
+      }
+    }
+
     fetchAssets();
   }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ searchQuery }));
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handleScrollSave = () => {
+      const savedState = sessionStorage.getItem(STORAGE_KEY);
+      const parsedState = savedState ? JSON.parse(savedState) : {};
+      sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          ...parsedState,
+          searchQuery,
+          scrollY: window.scrollY,
+        })
+      );
+    };
+
+    window.addEventListener('scroll', handleScrollSave, { passive: true });
+    return () => window.removeEventListener('scroll', handleScrollSave);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (loading || hasRestoredScroll.current) return;
+
+    const savedState = sessionStorage.getItem(STORAGE_KEY);
+    if (!savedState) return;
+
+    try {
+      const parsed = JSON.parse(savedState) as { scrollY?: number };
+      if (typeof parsed.scrollY === 'number') {
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: parsed.scrollY, behavior: 'auto' });
+          hasRestoredScroll.current = true;
+        });
+      }
+    } catch (error) {
+      console.error('Failed to restore marketplace scroll:', error);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    const refreshPageData = () => {
+      fetchAssets();
+    };
+
+    window.addEventListener('focus', refreshPageData);
+    window.addEventListener('pageshow', refreshPageData);
+
+    return () => {
+      window.removeEventListener('focus', refreshPageData);
+      window.removeEventListener('pageshow', refreshPageData);
+    };
+  }, []);
+
+  const categories = useMemo(
+    () => ['All', ...Array.from(new Set(assets.map((asset) => asset.category).filter(Boolean) as string[]))],
+    [assets]
+  );
 
   const filteredAssets = assets.filter(asset => 
     asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -133,40 +203,89 @@ const Marketplace = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20">
-      <Navigation />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-12 sm:mb-16">
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none mb-2">
-              <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">Elite Assets</span>
+    <ThemeProvider>
+      <div className="marketplace-page min-h-screen bg-background text-foreground pb-20 font-inter">
+        <Navigation />
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 z-10">
+        <section className="relative overflow-hidden border border-foreground/10 bg-gradient-to-br from-foreground/[0.04] via-transparent to-primary/10 px-6 py-10 sm:px-10 sm:py-14 mb-12 sm:mb-16">
+          <div className="absolute inset-y-0 right-0 hidden lg:block w-1/3 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.14),transparent_60%)]" />
+          <div className="relative flex flex-col xl:flex-row xl:items-end justify-between gap-8">
+            <div className="max-w-3xl space-y-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none">
+                <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">Marketplace</span>
+              </div>
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-[-0.06em] uppercase leading-none">
+                Design assets in one dedicated place.
+              </h1>
+              <p className="text-muted-foreground text-base sm:text-lg max-w-2xl leading-relaxed font-medium">
+                Browse premium UI kits, icon packs, templates, and creative resources from the DesignVerse community on a separate marketplace page built for discovery.
+              </p>
             </div>
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 sm:decoration-8 underline-offset-8">
-              Design Marketplace
-            </h1>
-            <p className="text-muted-foreground text-base sm:text-xl max-w-2xl italic font-medium">
-              Premium UI kits, icons, and templates crafted by the community.
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 xl:w-[34rem]">
+              <div className="border border-foreground/10 bg-background/70 px-4 py-4">
+                <div className="flex items-center gap-3 mb-3 text-primary">
+                  <Sparkles className="w-4 h-4" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.24em]">Curated</span>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">Handpicked digital products for branding, UI, and motion work.</p>
+              </div>
+              <div className="border border-foreground/10 bg-background/70 px-4 py-4">
+                <div className="flex items-center gap-3 mb-3 text-primary">
+                  <Layers3 className="w-4 h-4" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.24em]">Categories</span>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">{Math.max(categories.length - 1, 0)} live collections to explore.</p>
+              </div>
+              <div className="border border-foreground/10 bg-background/70 px-4 py-4">
+                <div className="flex items-center gap-3 mb-3 text-primary">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span className="text-[11px] font-black uppercase tracking-[0.24em]">Verified</span>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">Every listing is presented with clear previews and pricing.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8 mb-10">
+          <div className="space-y-3">
+            <h2 className="text-2xl sm:text-4xl font-black tracking-[-0.05em] uppercase">
+              Explore the marketplace
+            </h2>
+            <p className="text-muted-foreground text-sm sm:text-base max-w-2xl leading-relaxed">
+              Search through premium resources, open product details, and jump to selling when you are ready to publish your own asset.
             </p>
           </div>
           
           <Button 
-            className="h-16 px-8 bg-foreground text-background hover:bg-foreground/90 font-black tracking-widest text-sm rounded-none group"
+            className="h-14 px-8 bg-foreground text-background hover:bg-foreground/90 font-black tracking-[0.18em] text-xs rounded-none group"
             onClick={() => navigate('/marketplace/sell')}
           >
-            <Plus className="w-5 h-5 mr-3 transition-transform group-hover:rotate-90" />
+            <Plus className="w-4 h-4 mr-3 transition-transform group-hover:rotate-90" />
             LIST YOUR ASSET
           </Button>
         </div>
 
-        {/* Search and Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-12">
+        <section className="border border-foreground/10 bg-background/70 px-4 py-4 sm:px-6 sm:py-5 mb-12">
+          <div className="flex flex-wrap gap-2 mb-5">
+            {categories.map((category) => (
+              <span
+                key={category}
+                className="inline-flex items-center border border-foreground/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+              >
+                {category}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input 
               placeholder="Search premium assets..." 
-              className="pl-12 h-14 bg-foreground/5 border-none focus-visible:ring-1 focus-visible:ring-primary rounded-none font-medium text-lg"
+              className="pl-12 h-14 bg-foreground/5 border-none focus-visible:ring-1 focus-visible:ring-primary rounded-none font-medium text-base sm:text-lg"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -175,8 +294,9 @@ const Marketplace = () => {
             <Filter className="w-4 h-4 mr-2" /> Filter
           </Button>
         </div>
+        </section>
 
-        {/* Grid */}
+        <section>
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
@@ -200,14 +320,14 @@ const Marketplace = () => {
                     alt={asset.name}
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute top-3 right-3 px-3 py-1 bg-background text-xs font-black italic border border-foreground/10">
+                  <div className="absolute top-3 right-3 px-3 py-1 bg-background text-xs font-black border border-foreground/10">
                     ${asset.price}
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="flex flex-col flex-grow space-y-3">
-                  <h3 className="text-xl font-black uppercase tracking-tight italic group-hover:text-primary transition-colors truncate">
+                  <h3 className="text-xl font-black uppercase tracking-[-0.04em] group-hover:text-primary transition-colors truncate">
                     {asset.name}
                   </h3>
                   
@@ -226,7 +346,7 @@ const Marketplace = () => {
                           <ArrowUpRight className="w-3 h-3 ml-2 transition-transform group-hover/trigger:translate-x-0.5 group-hover/trigger:-translate-y-0.5" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-3xl bg-background border-foreground/10 p-0 overflow-hidden rounded-none">
+                      <DialogContent className="marketplace-dialog-content max-w-3xl bg-background border-foreground/10 p-0 overflow-hidden rounded-none font-inter">
                         <DialogHeader className="sr-only">
                           <DialogTitle>{asset.name}</DialogTitle>
                         </DialogHeader>
@@ -237,7 +357,7 @@ const Marketplace = () => {
                               alt={asset.name}
                               className="w-full h-full object-cover"
                             />
-                            <div className="absolute top-4 left-4 px-4 py-2 bg-background border border-foreground/10 text-xs font-black italic">
+                            <div className="absolute top-4 left-4 px-4 py-2 bg-background border border-foreground/10 text-xs font-black">
                               ${asset.price}
                             </div>
                           </div>
@@ -245,7 +365,7 @@ const Marketplace = () => {
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none mb-4 w-fit">
                               <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">{asset.category || 'Elite Asset'}</span>
                             </div>
-                            <h2 className="text-3xl font-black uppercase italic tracking-tighter mb-4 decoration-primary decoration-4 underline underline-offset-4">
+                            <h2 className="text-3xl font-black uppercase tracking-[-0.05em] mb-4 decoration-primary decoration-4 underline underline-offset-4">
                               {asset.name}
                             </h2>
                             <p className="text-muted-foreground text-sm font-medium leading-relaxed mb-8 flex-grow">
@@ -255,7 +375,7 @@ const Marketplace = () => {
                             <div className="space-y-4 pt-6 border-t border-foreground/5">
                               <div className="flex items-center justify-between">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Price</span>
-                                <span className="text-3xl font-black italic text-primary">${asset.price}</span>
+                                <span className="text-3xl font-black text-primary">${asset.price}</span>
                               </div>
                               <Button 
                                 className="w-full h-16 bg-foreground text-background hover:bg-primary hover:text-primary-foreground transition-all duration-300 font-black tracking-[0.2em] text-xs rounded-none group/btn"
@@ -286,8 +406,8 @@ const Marketplace = () => {
           <div className="py-20 text-center space-y-6 border border-dashed border-foreground/10">
             <ShoppingBag className="w-16 h-16 mx-auto text-muted-foreground/30" />
             <div className="space-y-2">
-              <h3 className="text-2xl font-black italic uppercase">No Assets Found</h3>
-              <p className="text-muted-foreground italic">Be the first to list a premium design asset!</p>
+              <h3 className="text-2xl font-black uppercase tracking-[-0.04em]">No Assets Found</h3>
+              <p className="text-muted-foreground">Be the first to list a premium design asset!</p>
             </div>
             <Button 
               variant="outline"
@@ -297,14 +417,16 @@ const Marketplace = () => {
             </Button>
           </div>
         )}
+        </section>
+        </div>
+        
+        {/* Background decoration */}
+        <div className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] z-0 overflow-hidden">
+          <div className="absolute top-1/4 -left-20 w-80 h-80 border-8 border-foreground rotate-12" />
+          <div className="absolute bottom-1/4 -right-20 w-80 h-80 border-8 border-foreground -rotate-12" />
+        </div>
       </div>
-      
-      {/* Background decoration */}
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-[0.03] z-0 overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-80 h-80 border-8 border-foreground rotate-12" />
-        <div className="absolute bottom-1/4 -right-20 w-80 h-80 border-8 border-foreground -rotate-12" />
-      </div>
-    </div>
+    </ThemeProvider>
   );
 };
 

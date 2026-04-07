@@ -80,10 +80,10 @@ const MarketplaceSection = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none mb-2">
               <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">Marketplace</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 underline-offset-8">
+            <h2 className="text-4xl md:text-6xl font-black tracking-[-0.06em] uppercase underline decoration-primary decoration-4 underline-offset-8">
               Premium Assets
             </h2>
-            <p className="text-muted-foreground text-lg max-w-xl italic font-medium">
+            <p className="text-muted-foreground text-lg max-w-xl font-medium leading-relaxed">
               Elite UI kits, templates, and icons crafted by top designers.
             </p>
           </div>
@@ -119,12 +119,12 @@ const MarketplaceSection = () => {
                     alt={asset.name}
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute top-3 right-3 px-3 py-1 bg-background text-[10px] font-black italic border border-foreground/10">
+                  <div className="absolute top-3 right-3 px-3 py-1 bg-background text-[10px] font-black border border-foreground/10">
                     ${asset.price}
                   </div>
                 </div>
 
-                <h3 className="text-xl font-black uppercase tracking-tight italic group-hover:text-primary transition-colors mb-2">
+                <h3 className="text-xl font-black uppercase tracking-tight group-hover:text-primary transition-colors mb-2">
                   {asset.name}
                 </h3>
                 
@@ -163,7 +163,7 @@ const MarketplaceSection = () => {
                               alt={asset.name}
                               className="w-full h-full object-cover"
                             />
-                            <div className="absolute top-4 left-4 px-4 py-2 bg-background border border-foreground/10 text-xs font-black italic">
+                            <div className="absolute top-4 left-4 px-4 py-2 bg-background border border-foreground/10 text-xs font-black">
                               ${asset.price}
                             </div>
                           </div>
@@ -171,7 +171,7 @@ const MarketplaceSection = () => {
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none mb-4 w-fit">
                               <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">Elite Asset</span>
                             </div>
-                            <h2 className="text-3xl font-black uppercase italic tracking-tighter mb-4 decoration-primary decoration-4 underline underline-offset-4">
+                            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 decoration-primary decoration-4 underline underline-offset-4">
                               {asset.name}
                             </h2>
                             <p className="text-muted-foreground text-sm font-medium leading-relaxed mb-8 flex-grow">
@@ -181,7 +181,7 @@ const MarketplaceSection = () => {
                             <div className="space-y-4 pt-6 border-t border-foreground/5">
                               <div className="flex items-center justify-between">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Price</span>
-                                <span className="text-3xl font-black italic text-primary">${asset.price}</span>
+                                <span className="text-3xl font-black text-primary">${asset.price}</span>
                               </div>
                               <Button 
                                 className="w-full h-16 bg-foreground text-background hover:bg-primary hover:text-primary-foreground transition-all duration-300 font-black tracking-[0.2em] text-xs rounded-none group/btn"

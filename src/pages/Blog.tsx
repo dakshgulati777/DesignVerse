@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, User, Bookmark, BookmarkCheck, ArrowRight, Search, Filter, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { useBookmarks } from '@/hooks/useBookmarks';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 interface BlogPost {
   id: string;
@@ -28,12 +29,14 @@ interface BlogPost {
 }
 
 const Blog = () => {
+  const STORAGE_KEY = 'designverse-blog-state';
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const navigate = useNavigate();
+  const hasRestoredScroll = useRef(false);
 
   const fetchBlogs = async () => {
     setLoading(true);
@@ -166,7 +169,84 @@ const Blog = () => {
   };
 
   useEffect(() => {
+    const savedState = sessionStorage.getItem(STORAGE_KEY);
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState) as { searchQuery?: string; selectedCategory?: string | null };
+        if (typeof parsed.searchQuery === 'string') {
+          setSearchQuery(parsed.searchQuery);
+        }
+        if (parsed.selectedCategory !== undefined) {
+          setSelectedCategory(parsed.selectedCategory);
+        }
+      } catch (error) {
+        console.error('Failed to restore blog state:', error);
+      }
+    }
+
     fetchBlogs();
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        searchQuery,
+        selectedCategory,
+      })
+    );
+  }, [searchQuery, selectedCategory]);
+
+  useEffect(() => {
+    const handleScrollSave = () => {
+      const savedState = sessionStorage.getItem(STORAGE_KEY);
+      const parsedState = savedState ? JSON.parse(savedState) : {};
+      sessionStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          ...parsedState,
+          searchQuery,
+          selectedCategory,
+          scrollY: window.scrollY,
+        })
+      );
+    };
+
+    window.addEventListener('scroll', handleScrollSave, { passive: true });
+    return () => window.removeEventListener('scroll', handleScrollSave);
+  }, [searchQuery, selectedCategory]);
+
+  useEffect(() => {
+    if (loading || hasRestoredScroll.current) return;
+
+    const savedState = sessionStorage.getItem(STORAGE_KEY);
+    if (!savedState) return;
+
+    try {
+      const parsed = JSON.parse(savedState) as { scrollY?: number };
+      if (typeof parsed.scrollY === 'number') {
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: parsed.scrollY, behavior: 'auto' });
+          hasRestoredScroll.current = true;
+        });
+      }
+    } catch (error) {
+      console.error('Failed to restore blog scroll:', error);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    const refreshPageData = () => {
+      fetchBlogs();
+    };
+
+    window.addEventListener('focus', refreshPageData);
+    window.addEventListener('pageshow', refreshPageData);
+
+    return () => {
+      window.removeEventListener('focus', refreshPageData);
+      window.removeEventListener('pageshow', refreshPageData);
+    };
   }, []);
 
   const categories = ['All', 'Psychology', 'Layout', 'AI & Design', 'Typography', 'Systems', 'Motion', 'Sustainability', 'UX Research', 'Community'];
@@ -179,7 +259,8 @@ const Blog = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20">
+    <ThemeProvider>
+    <div className="blog-page min-h-screen bg-background text-foreground pb-20 font-inter">
       <Navigation />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
@@ -200,10 +281,10 @@ const Blog = () => {
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-none mb-2">
                 <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase">DesignVerse Blog</span>
               </div>
-              <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 sm:decoration-8 underline-offset-8">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tighter uppercase underline decoration-primary decoration-4 sm:decoration-8 underline-offset-8">
                 Latest Stories
               </h1>
-              <p className="text-muted-foreground text-base sm:text-xl max-w-2xl italic font-medium">
+              <p className="text-muted-foreground text-base sm:text-xl max-w-2xl font-medium">
                 Insights, tutorials, and thoughts from the design community.
               </p>
             </div>
@@ -278,7 +359,7 @@ const Blog = () => {
                     <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" /> {new Date(post.date).toLocaleDateString()}</span>
                   </div>
 
-                  <h3 className="text-xl font-black leading-tight group-hover:text-primary transition-colors line-clamp-2 italic">
+                  <h3 className="text-xl font-black leading-tight group-hover:text-primary transition-colors line-clamp-2">
                     {post.title}
                   </h3>
 
@@ -300,7 +381,7 @@ const Blog = () => {
                             <ArrowRight className="w-3 h-3 ml-1 transition-transform group-hover/trigger:translate-x-1" />
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background border-foreground/10 p-0 rounded-none">
+                        <DialogContent className="blog-dialog-content max-w-4xl max-h-[90vh] overflow-y-auto bg-background border-foreground/10 p-0 rounded-none font-inter">
                           <DialogHeader className="sr-only">
                             <DialogTitle>{post.title}</DialogTitle>
                           </DialogHeader>
@@ -315,7 +396,7 @@ const Blog = () => {
                               <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest mb-4">
                                 {post.category}
                               </div>
-                              <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-foreground decoration-primary decoration-4 underline underline-offset-8">
+                              <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-foreground decoration-primary decoration-4 underline underline-offset-8">
                                 {post.title}
                               </h2>
                             </div>
@@ -329,7 +410,7 @@ const Blog = () => {
                             </div>
 
                             <div className="prose prose-invert max-w-none">
-                              <p className="text-xl md:text-2xl font-medium leading-relaxed italic text-foreground/90 mb-8 border-l-4 border-primary pl-6">
+                              <p className="text-xl md:text-2xl font-medium leading-relaxed text-foreground/90 mb-8 border-l-4 border-primary pl-6">
                                 {post.excerpt}
                               </p>
                               <div className="text-lg leading-loose text-muted-foreground space-y-6 font-medium">
@@ -394,8 +475,8 @@ const Blog = () => {
               <Search className="w-8 h-8" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-black italic uppercase">No Articles Found</h3>
-              <p className="text-muted-foreground italic">Try adjusting your search or filter criteria.</p>
+              <h3 className="text-2xl font-black uppercase">No Articles Found</h3>
+              <p className="text-muted-foreground">Try adjusting your search or filter criteria.</p>
             </div>
           </div>
         )}
@@ -407,6 +488,7 @@ const Blog = () => {
         <div className="absolute bottom-1/4 -right-20 w-80 h-80 border-8 border-foreground -rotate-12" />
       </div>
     </div>
+    </ThemeProvider>
   );
 };
 

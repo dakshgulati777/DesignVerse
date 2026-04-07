@@ -185,7 +185,7 @@ const Profile = () => {
                     <Input disabled value={user.email || ''} className="glass-card pl-10 h-12 bg-muted/20" />
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   </div>
-                  <p className="text-[10px] text-muted-foreground italic">Email changes are restricted for security.</p>
+                  <p className="text-[10px] text-muted-foreground">Email changes are restricted for security.</p>
                 </div>
 
                 <div className="space-y-2">

@@ -128,10 +128,10 @@ const MarketplaceSell = () => {
           className="space-y-8 sm:space-y-12"
         >
           <div className="space-y-4">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter italic uppercase underline decoration-primary decoration-4 underline-offset-8">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter uppercase underline decoration-primary decoration-4 underline-offset-8">
               Sell Your Design
             </h1>
-            <p className="text-muted-foreground text-base sm:text-lg italic font-medium">
+            <p className="text-muted-foreground text-base sm:text-lg font-medium">
               Turn your pixels into profit. List your premium assets for the community.
             </p>
           </div>
