@@ -223,7 +223,7 @@ const Marketplace = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 xl:w-[34rem]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 xl:w-full xl:max-w-[34rem]">
               <div className="border border-foreground/10 bg-background/70 px-4 py-4">
                 <div className="flex items-center gap-3 mb-3 text-primary">
                   <Sparkles className="w-4 h-4" />

@@ -57,7 +57,7 @@ const Navigation = () => {
         animate={{ y: 0 }}
         className="fixed top-4 md:top-6 left-0 right-0 z-50 flex justify-center px-4"
       >
-        <div className="flex items-center justify-center gap-2 md:gap-3 lg:gap-4 px-3 md:px-5 lg:px-6 py-2 md:py-3 border border-foreground/10 bg-background/80 backdrop-blur-md max-w-fit">
+        <div className="w-full max-w-7xl flex items-center justify-between gap-2 md:gap-3 lg:gap-4 px-3 md:px-5 lg:px-6 py-2 md:py-3 border border-foreground/10 bg-background/80 backdrop-blur-md overflow-hidden">
           {/* Logo */}
           <motion.div 
             whileHover={{ scale: 1.02 }}
@@ -116,9 +116,9 @@ const Navigation = () => {
           </div>
 
           {/* Mobile/Tablet Navigation */}
-          <div className="flex lg:hidden items-center gap-1">
+          <div className="flex lg:hidden items-center gap-1 overflow-x-auto max-w-[calc(100vw-9rem)] sm:max-w-[calc(100vw-12rem)] whitespace-nowrap scrollbar-none">
             {navItems.map((item, index) => (
-              <div key={item.label} className="relative">
+              <div key={item.label} className="relative shrink-0">
                 {item.type === 'hash' ? (
                   <motion.a
                     href={item.href}
@@ -232,7 +232,7 @@ const Navigation = () => {
       {/* Geometric Scroll to Top */}
       <motion.button
         onClick={scrollToTop}
-        className="fixed bottom-8 right-8 z-50 w-12 h-12 border border-foreground/20 bg-background/80 backdrop-blur-sm flex items-center justify-center group"
+        className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 w-11 h-11 md:w-12 md:h-12 border border-foreground/20 bg-background/80 backdrop-blur-sm flex items-center justify-center group"
         whileHover={{ 
           scale: 1.1,
           borderColor: 'hsl(var(--foreground) / 0.4)',

@@ -111,14 +111,45 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
   }
 
   body {
     @apply bg-background text-foreground font-inter;
     background: var(--gradient-hero);
     min-height: 100vh;
+    max-width: 100vw;
+    overflow-x: clip;
   }
 
+  body,
+  #root {
+    width: 100%;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    max-width: 100%;
+  }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  
   .marketplace-page,
   .marketplace-page :is(h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label),
   .marketplace-dialog-content,
@@ -137,6 +168,10 @@
   @media (max-width: 640px) {
     html {
       font-size: 14px;
+    }
+
+    .blog-swiper .swiper-slide {
+      width: min(85vw, 350px);
     }
   }
   
