@@ -33,6 +33,7 @@ const Marketplace = () => {
   const [assets, setAssets] = useState<MarketplaceAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
   const hasRestoredScroll = useRef(false);
 
@@ -197,10 +198,12 @@ const Marketplace = () => {
     [assets]
   );
 
-  const filteredAssets = assets.filter(asset => 
-    asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    asset.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredAssets = assets.filter(asset => {
+    const matchesSearch = asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      asset.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = !selectedCategory || selectedCategory === 'All' || asset.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <ThemeProvider>
@@ -271,12 +274,17 @@ const Marketplace = () => {
         <section className="border border-foreground/10 bg-background/70 px-4 py-4 sm:px-6 sm:py-5 mb-12">
           <div className="flex flex-wrap gap-2 mb-5">
             {categories.map((category) => (
-              <span
+              <button
                 key={category}
-                className="inline-flex items-center border border-foreground/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
+                onClick={() => setSelectedCategory(category === 'All' ? null : category)}
+                className={`inline-flex items-center border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors ${
+                  (selectedCategory === category) || (!selectedCategory && category === 'All')
+                    ? 'bg-foreground text-background border-foreground'
+                    : 'border-foreground/10 text-muted-foreground hover:border-foreground/30'
+                }`}
               >
                 {category}
-              </span>
+              </button>
             ))}
           </div>
 
@@ -290,8 +298,12 @@ const Marketplace = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="outline" className="h-14 px-8 border-foreground/10 rounded-none font-black tracking-widest text-xs uppercase">
-            <Filter className="w-4 h-4 mr-2" /> Filter
+          <Button 
+            variant="outline" 
+            className="h-14 px-8 border-foreground/10 rounded-none font-black tracking-widest text-xs uppercase"
+            onClick={() => setSelectedCategory(null)}
+          >
+            <Filter className="w-4 h-4 mr-2" /> Reset
           </Button>
         </div>
         </section>

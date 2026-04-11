@@ -23,7 +23,8 @@ const MarketplaceSell = () => {
     description: '',
     price: '',
     previewUrl: '',
-    downloadUrl: ''
+    downloadUrl: '',
+    category: 'UI Kits'
   });
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +86,8 @@ const MarketplaceSell = () => {
           price: parseFloat(formData.price),
           preview_url: formData.previewUrl,
           download_url: formData.downloadUrl,
-          seller_id: user.id
+          seller_id: user.id,
+          category: formData.category
         }
       ]);
 
@@ -181,6 +183,28 @@ const MarketplaceSell = () => {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
+            </div>
+
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">
+                Category
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {['UI Kits', 'UI Components', 'Iconography', 'Web Templates', 'Assets', 'Motion', 'Illustrations', 'Fonts'].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, category: cat })}
+                    className={`px-4 py-2 text-xs font-black uppercase tracking-widest border transition-colors ${
+                      formData.category === cat
+                        ? 'bg-foreground text-background border-foreground'
+                        : 'border-foreground/10 text-muted-foreground hover:border-foreground/30'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-3">

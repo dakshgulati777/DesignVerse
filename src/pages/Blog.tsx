@@ -50,8 +50,10 @@ const Blog = () => {
           content,
           cover_image,
           created_at,
-          author_id
-        `);
+          author_id,
+          category
+        `)
+        .order('created_at', { ascending: false });
 
       if (!error && data) {
         blogPosts = data.map(blog => ({
@@ -61,7 +63,7 @@ const Blog = () => {
           author: 'Community Member',
           date: blog.created_at,
           readTime: '5 min read',
-          category: 'Community',
+          category: (blog as any).category || 'Community',
           imageUrl: blog.cover_image || 'https://images.unsplash.com/photo-1487058715912-ca02820ee39d',
           content: blog.content
         }));
