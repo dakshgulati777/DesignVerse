@@ -21,7 +21,8 @@ const BlogCreate = () => {
   const [formData, setFormData] = useState({
     title: '',
     coverImage: '',
-    content: ''
+    content: '',
+    category: 'Community'
   });
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +80,7 @@ const BlogCreate = () => {
           cover_image: formData.coverImage,
           content: formData.content,
           author_id: user.id,
-          category: 'Community'
+          category: formData.category
         }
       ]);
 
@@ -144,6 +145,26 @@ const BlogCreate = () => {
               />
             </div>
 
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">
+                Category
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {['Community', 'Psychology', 'Layout', 'AI & Design', 'Typography', 'Systems', 'Motion', 'Sustainability', 'UX Research'].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, category: cat })}
+                    className={`px-4 py-2 text-xs font-black uppercase tracking-widest border transition-colors ${
+                      formData.category === cat
+                        ? 'bg-foreground text-background border-foreground'
+                        : 'border-foreground/10 text-muted-foreground hover:border-foreground/30'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">
                 Cover Image
