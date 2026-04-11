@@ -165,6 +165,8 @@ const BlogCreate = () => {
                   </button>
                 ))}
               </div>
+            </div>
+
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">
                 Cover Image
