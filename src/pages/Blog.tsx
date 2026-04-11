@@ -61,7 +61,7 @@ const Blog = () => {
           author: 'Community Member',
           date: blog.created_at,
           readTime: '5 min read',
-          category: 'Community',
+          category: (blog as any).category || 'Community',
           imageUrl: blog.cover_image || 'https://images.unsplash.com/photo-1487058715912-ca02820ee39d',
           content: blog.content
         }));
