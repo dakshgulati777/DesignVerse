@@ -50,8 +50,10 @@ const Blog = () => {
           content,
           cover_image,
           created_at,
-          author_id
-        `);
+          author_id,
+          category
+        `)
+        .order('created_at', { ascending: false });
 
       if (!error && data) {
         blogPosts = data.map(blog => ({
