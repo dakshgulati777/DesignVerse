@@ -298,8 +298,12 @@ const Marketplace = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="outline" className="h-14 px-8 border-foreground/10 rounded-none font-black tracking-widest text-xs uppercase">
-            <Filter className="w-4 h-4 mr-2" /> Filter
+          <Button 
+            variant="outline" 
+            className="h-14 px-8 border-foreground/10 rounded-none font-black tracking-widest text-xs uppercase"
+            onClick={() => setSelectedCategory(null)}
+          >
+            <Filter className="w-4 h-4 mr-2" /> Reset
           </Button>
         </div>
         </section>
