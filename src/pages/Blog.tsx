@@ -89,6 +89,7 @@ const Blog = () => {
           title: blog.title,
           excerpt: blog.content ? `${blog.content.substring(0, 170)}...` : '',
           author: 'DesignVerse Community',
+          author_id: blog.author_id,
           date: blog.created_at,
           readTime: `${Math.max(1, Math.ceil(wordCount / 180))} min read`,
           category: blog.category || 'Community',
