@@ -11,7 +11,10 @@ import {
   Clock,
   Share2,
   BookOpen,
+  Trash2,
+  Edit3,
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -28,6 +31,7 @@ interface BlogPost {
   title: string;
   excerpt: string;
   author: string;
+  author_id?: string;
   date: string;
   readTime: string;
   category: string;
@@ -67,6 +71,7 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const hasRestoredScroll = useRef(false);
 
@@ -84,6 +89,7 @@ const Blog = () => {
           title: blog.title,
           excerpt: blog.content ? `${blog.content.substring(0, 170)}...` : '',
           author: 'DesignVerse Community',
+          author_id: blog.author_id,
           date: blog.created_at,
           readTime: `${Math.max(1, Math.ceil(wordCount / 180))} min read`,
           category: blog.category || 'Community',
@@ -185,6 +191,19 @@ const Blog = () => {
 
     await navigator.clipboard.writeText(shareText);
     toast({ title: 'Story copied', description: 'Story title and excerpt copied to clipboard.' });
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    if (!user) return;
+    if (!confirm('Are you sure you want to delete this post?')) return;
+    try {
+      const { error } = await supabase.from('blogs').delete().eq('id', postId).eq('author_id', user.id);
+      if (error) throw error;
+      setPosts(prev => prev.filter(p => p.id !== postId));
+      toast({ title: 'Post deleted', description: 'Your blog post has been removed.' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to delete post.', variant: 'destructive' });
+    }
   };
 
   return (
@@ -411,19 +430,29 @@ const Blog = () => {
                     </div>
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (isBookmarked('blog', post.id)) {
-                        removeBookmark('blog', post.id);
-                      } else {
-                        addBookmark('blog', post.id, post);
-                      }
-                    }}
-                    className="absolute top-6 right-6 p-2 bg-background/80 backdrop-blur-md rounded-none border border-foreground/10 opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-primary-foreground z-20"
-                  >
-                    {isBookmarked('blog', post.id) ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
-                  </button>
+                  <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-20">
+                    {user && post.author_id === user.id && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeletePost(post.id); }}
+                        className="p-2 bg-destructive/90 text-destructive-foreground backdrop-blur-md border border-destructive/20 hover:bg-destructive transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isBookmarked('blog', post.id)) {
+                          removeBookmark('blog', post.id);
+                        } else {
+                          addBookmark('blog', post.id, post);
+                        }
+                      }}
+                      className="p-2 bg-background/80 backdrop-blur-md border border-foreground/10 hover:bg-primary hover:text-primary-foreground transition-colors"
+                    >
+                      {isBookmarked('blog', post.id) ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </motion.div>
               ))}
             </div>

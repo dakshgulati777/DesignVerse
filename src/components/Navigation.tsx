@@ -15,6 +15,7 @@ import {
   ShoppingBag,
   PlusSquare,
   Menu,
+  LayoutDashboard,
 } from 'lucide-react';
 import { useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -254,6 +255,10 @@ const Navigation = () => {
                   <DropdownMenuItem onClick={() => navigate('/bookmarks')} className="flex items-center gap-2 px-2 py-2 text-xs font-bold tracking-wider cursor-pointer">
                     <Bookmark className="w-3.5 h-3.5" />
                     <span>MY BOOKMARKS</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')} className="flex items-center gap-2 px-2 py-2 text-xs font-bold tracking-wider cursor-pointer">
+                    <LayoutDashboard className="w-3.5 h-3.5" />
+                    <span>DASHBOARD</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/create-blog')} className="flex items-center gap-2 px-2 py-2 text-xs font-bold tracking-widest text-primary cursor-pointer">
                     <PlusSquare className="w-3.5 h-3.5" />

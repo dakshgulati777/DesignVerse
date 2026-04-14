@@ -10,6 +10,7 @@ import {
   Layers3,
   ShieldCheck,
   ExternalLink,
+  Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -19,6 +20,7 @@ import Navigation from '@/components/Navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MarketplaceAsset {
   id: string;
@@ -83,6 +85,7 @@ const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [purchasedAssets, setPurchasedAssets] = useState<string[]>([]);
   const navigate = useNavigate();
+  const { user } = useAuth();
   const hasRestoredScroll = useRef(false);
 
   const fetchAssets = async () => {
@@ -191,6 +194,19 @@ const Marketplace = () => {
   };
 
   const isPurchased = (assetId: string) => purchasedAssets.includes(assetId);
+
+  const handleDeleteAsset = async (assetId: string) => {
+    if (!user) return;
+    if (!confirm('Are you sure you want to delete this listing?')) return;
+    try {
+      const { error } = await supabase.from('marketplace_assets').delete().eq('id', assetId).eq('seller_id', user.id);
+      if (error) throw error;
+      setAssets(prev => prev.filter(a => a.id !== assetId));
+      toast({ title: 'Listing deleted', description: 'Your asset has been removed from the marketplace.' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to delete listing.', variant: 'destructive' });
+    }
+  };
 
   return (
     <ThemeProvider>
@@ -341,8 +357,18 @@ const Marketplace = () => {
                         alt={asset.name}
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute top-3 right-3 px-3 py-1 bg-background text-xs font-black border border-foreground/10">
-                        ${asset.price}
+                      <div className="absolute top-3 right-3 flex gap-2">
+                        {user && asset.seller_id === user.id && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteAsset(asset.id); }}
+                            className="px-3 py-1 bg-destructive/90 text-destructive-foreground text-xs font-black border border-destructive/20 hover:bg-destructive transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
+                        <div className="px-3 py-1 bg-background text-xs font-black border border-foreground/10">
+                          ${asset.price}
+                        </div>
                       </div>
                     </div>
 
