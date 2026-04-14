@@ -195,6 +195,19 @@ const Marketplace = () => {
 
   const isPurchased = (assetId: string) => purchasedAssets.includes(assetId);
 
+  const handleDeleteAsset = async (assetId: string) => {
+    if (!user) return;
+    if (!confirm('Are you sure you want to delete this listing?')) return;
+    try {
+      const { error } = await supabase.from('marketplace_assets').delete().eq('id', assetId).eq('seller_id', user.id);
+      if (error) throw error;
+      setAssets(prev => prev.filter(a => a.id !== assetId));
+      toast({ title: 'Listing deleted', description: 'Your asset has been removed from the marketplace.' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to delete listing.', variant: 'destructive' });
+    }
+  };
+
   return (
     <ThemeProvider>
       <div className="marketplace-page min-h-screen bg-background text-foreground pb-20 font-inter">
