@@ -11,7 +11,10 @@ import {
   Clock,
   Share2,
   BookOpen,
+  Trash2,
+  Edit3,
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
