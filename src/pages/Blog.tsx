@@ -430,19 +430,29 @@ const Blog = () => {
                     </div>
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (isBookmarked('blog', post.id)) {
-                        removeBookmark('blog', post.id);
-                      } else {
-                        addBookmark('blog', post.id, post);
-                      }
-                    }}
-                    className="absolute top-6 right-6 p-2 bg-background/80 backdrop-blur-md rounded-none border border-foreground/10 opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-primary-foreground z-20"
-                  >
-                    {isBookmarked('blog', post.id) ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
-                  </button>
+                  <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-20">
+                    {user && post.author_id === user.id && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeletePost(post.id); }}
+                        className="p-2 bg-destructive/90 text-destructive-foreground backdrop-blur-md border border-destructive/20 hover:bg-destructive transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isBookmarked('blog', post.id)) {
+                          removeBookmark('blog', post.id);
+                        } else {
+                          addBookmark('blog', post.id, post);
+                        }
+                      }}
+                      className="p-2 bg-background/80 backdrop-blur-md border border-foreground/10 hover:bg-primary hover:text-primary-foreground transition-colors"
+                    >
+                      {isBookmarked('blog', post.id) ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </motion.div>
               ))}
             </div>
