@@ -31,6 +31,7 @@ interface BlogPost {
   title: string;
   excerpt: string;
   author: string;
+  author_id?: string;
   date: string;
   readTime: string;
   category: string;
