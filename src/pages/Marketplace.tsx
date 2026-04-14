@@ -357,8 +357,18 @@ const Marketplace = () => {
                         alt={asset.name}
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute top-3 right-3 px-3 py-1 bg-background text-xs font-black border border-foreground/10">
-                        ${asset.price}
+                      <div className="absolute top-3 right-3 flex gap-2">
+                        {user && asset.seller_id === user.id && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteAsset(asset.id); }}
+                            className="px-3 py-1 bg-destructive/90 text-destructive-foreground text-xs font-black border border-destructive/20 hover:bg-destructive transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
+                        <div className="px-3 py-1 bg-background text-xs font-black border border-foreground/10">
+                          ${asset.price}
+                        </div>
                       </div>
                     </div>
 
