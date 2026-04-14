@@ -193,6 +193,19 @@ const Blog = () => {
     toast({ title: 'Story copied', description: 'Story title and excerpt copied to clipboard.' });
   };
 
+  const handleDeletePost = async (postId: string) => {
+    if (!user) return;
+    if (!confirm('Are you sure you want to delete this post?')) return;
+    try {
+      const { error } = await supabase.from('blogs').delete().eq('id', postId).eq('author_id', user.id);
+      if (error) throw error;
+      setPosts(prev => prev.filter(p => p.id !== postId));
+      toast({ title: 'Post deleted', description: 'Your blog post has been removed.' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to delete post.', variant: 'destructive' });
+    }
+  };
+
   return (
     <ThemeProvider>
       <div className="blog-page min-h-screen bg-background text-foreground pb-20 font-inter">
