@@ -71,6 +71,7 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const hasRestoredScroll = useRef(false);
 
