@@ -10,6 +10,7 @@ import {
   Layers3,
   ShieldCheck,
   ExternalLink,
+  Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -19,6 +20,7 @@ import Navigation from '@/components/Navigation';
 import { supabase } from '@/integrations/supabase/client';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MarketplaceAsset {
   id: string;
