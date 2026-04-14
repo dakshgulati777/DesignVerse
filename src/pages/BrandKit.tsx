@@ -17,6 +17,9 @@ export interface BrandProfile {
   logoUrl?: string;
   tagline: string;
   tone: string;
+  targetAudience: string;
+  brandUSP: string;
+  contentGoal: string;
 }
 
 export interface GeneratedContent {
@@ -86,24 +89,26 @@ const BrandKit = () => {
         <Navigation />
         <main className="pt-24 pb-16 px-4 md:px-6 max-w-7xl mx-auto">
           {/* Progress Steps */}
-          <div className="flex items-center justify-center gap-2 mb-12">
-            {['Brand Setup', 'Upload & Generate', 'Content Calendar'].map((label, i) => {
-              const stepKeys = ['setup', 'generate', 'calendar'] as const;
-              const isActive = stepKeys.indexOf(step) >= i;
-              return (
-                <div key={label} className="flex items-center gap-2">
-                  <div className={`w-8 h-8 flex items-center justify-center text-xs font-bold transition-colors ${
-                    isActive ? 'bg-foreground text-background' : 'border border-foreground/20 text-muted-foreground'
-                  }`}>
-                    {i + 1}
+          <div className="mb-12 overflow-x-auto scrollbar-none">
+            <div className="flex min-w-max items-center justify-center gap-2 px-2">
+              {['Brand Setup', 'Upload & Generate', 'Content Calendar'].map((label, i) => {
+                const stepKeys = ['setup', 'generate', 'calendar'] as const;
+                const isActive = stepKeys.indexOf(step) >= i;
+                return (
+                  <div key={label} className="flex items-center gap-2">
+                    <div className={`w-8 h-8 flex items-center justify-center text-xs font-bold transition-colors ${
+                      isActive ? 'bg-foreground text-background' : 'border border-foreground/20 text-muted-foreground'
+                    }`}>
+                      {i + 1}
+                    </div>
+                    <span className={`hidden md:block text-sm tracking-wider ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                      {label}
+                    </span>
+                    {i < 2 && <div className="w-8 md:w-16 h-[1px] bg-foreground/20" />}
                   </div>
-                  <span className={`hidden md:block text-sm tracking-wider ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
-                    {label}
-                  </span>
-                  {i < 2 && <div className="w-8 md:w-16 h-[1px] bg-foreground/20" />}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
           <AnimatePresence mode="wait">
