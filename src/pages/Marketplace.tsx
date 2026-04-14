@@ -85,6 +85,7 @@ const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [purchasedAssets, setPurchasedAssets] = useState<string[]>([]);
   const navigate = useNavigate();
+  const { user } = useAuth();
   const hasRestoredScroll = useRef(false);
 
   const fetchAssets = async () => {
