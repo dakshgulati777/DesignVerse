@@ -1,4 +1,5 @@
 import { useDeferredValue, useMemo, useRef, useState } from 'react';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -113,6 +114,7 @@ const BlogCreate = () => {
   };
 
   return (
+    <ThemeProvider>
     <div className="min-h-screen bg-background text-foreground pb-20">
       <Navigation />
 
@@ -303,6 +305,7 @@ const BlogCreate = () => {
         </div>
       </div>
     </div>
+    </ThemeProvider>
   );
 };
 
