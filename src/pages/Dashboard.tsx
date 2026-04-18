@@ -98,6 +98,62 @@ const Dashboard = () => {
     );
   }
 
+  const postCategories = useMemo(
+    () => ['All', ...Array.from(new Set(stats.recentPosts.map((p) => p.category).filter(Boolean)))],
+    [stats.recentPosts]
+  );
+  const listingCategories = useMemo(
+    () => ['All', ...Array.from(new Set(stats.recentListings.map((l) => l.category).filter(Boolean) as string[]))],
+    [stats.recentListings]
+  );
+
+  const filteredPosts = useMemo(
+    () => stats.recentPosts.filter((p) =>
+      (postCategory === 'All' || p.category === postCategory) &&
+      (postSearch === '' || p.title.toLowerCase().includes(postSearch.toLowerCase()))
+    ),
+    [stats.recentPosts, postSearch, postCategory]
+  );
+  const filteredListings = useMemo(
+    () => stats.recentListings.filter((l) =>
+      (listingCategory === 'All' || l.category === listingCategory) &&
+      (listingSearch === '' || l.name.toLowerCase().includes(listingSearch.toLowerCase()))
+    ),
+    [stats.recentListings, listingSearch, listingCategory]
+  );
+
+  const chartData = useMemo(() => {
+    const startOfWeek = (d: Date) => {
+      const x = new Date(d);
+      const day = (x.getDay() + 6) % 7;
+      x.setHours(0, 0, 0, 0);
+      x.setDate(x.getDate() - day);
+      return x;
+    };
+    const currentStart = startOfWeek(new Date());
+    const weeks = Array.from({ length: 12 }, (_, i) => {
+      const start = new Date(currentStart);
+      start.setDate(start.getDate() - (11 - i) * 7);
+      const end = new Date(start);
+      end.setDate(end.getDate() + 7);
+      return {
+        label: start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+        start, end,
+      };
+    });
+    return weeks.map((w) => ({
+      week: w.label,
+      Posts: stats.recentPosts.filter((p) => {
+        const d = new Date(p.created_at);
+        return d >= w.start && d < w.end;
+      }).length,
+      Listings: stats.recentListings.filter((l) => {
+        const d = new Date(l.created_at);
+        return d >= w.start && d < w.end;
+      }).length,
+    }));
+  }, [stats.recentPosts, stats.recentListings]);
+
   const statCards = [
     { label: 'Blog Posts', value: stats.totalPosts, icon: BookOpen, color: 'text-primary', action: () => navigate('/blog') },
     { label: 'Marketplace Listings', value: stats.totalListings, icon: ShoppingBag, color: 'text-primary', action: () => navigate('/marketplace') },
