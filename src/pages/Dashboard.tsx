@@ -22,40 +22,62 @@ interface DashboardStats {
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
     totalPosts: 0, totalListings: 0, totalBookmarks: 0, recentPosts: [], recentListings: [],
   });
   const [loading, setLoading] = useState(true);
 
+  const fetchStats = async (uid: string) => {
+    setLoading(true);
+    try {
+      const [postsRes, listingsRes, bookmarksRes] = await Promise.all([
+        supabase.from('blogs').select('id, title, created_at, category').eq('author_id', uid).order('created_at', { ascending: false }),
+        supabase.from('marketplace_assets').select('id, name, created_at, price').eq('seller_id', uid).order('created_at', { ascending: false }),
+        supabase.from('bookmarks').select('id').eq('user_id', uid),
+      ]);
+
+      setStats({
+        totalPosts: postsRes.data?.length ?? 0,
+        totalListings: listingsRes.data?.length ?? 0,
+        totalBookmarks: bookmarksRes.data?.length ?? 0,
+        recentPosts: (postsRes.data ?? []) as any,
+        recentListings: (listingsRes.data ?? []) as any,
+      });
+    } catch (err) {
+      console.error('Dashboard fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (authLoading) return;
     if (!user) { navigate('/auth'); return; }
-
-    const fetchStats = async () => {
-      setLoading(true);
-      try {
-        const [postsRes, listingsRes, bookmarksRes] = await Promise.all([
-          supabase.from('blogs').select('id, title, created_at, category').eq('author_id', user.id).order('created_at', { ascending: false }).limit(5),
-          supabase.from('marketplace_assets').select('id, name, created_at, price').eq('seller_id', user.id).order('created_at', { ascending: false }).limit(5),
-          supabase.from('bookmarks').select('id').eq('user_id', user.id),
-        ]);
-
-        setStats({
-          totalPosts: postsRes.data?.length ?? 0,
-          totalListings: listingsRes.data?.length ?? 0,
-          totalBookmarks: bookmarksRes.data?.length ?? 0,
-          recentPosts: (postsRes.data ?? []) as any,
-          recentListings: (listingsRes.data ?? []) as any,
-        });
-      } catch (err) {
-        console.error('Dashboard fetch error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
+    fetchStats(user.id);
   }, [user, authLoading, navigate]);
+
+  const handleDeletePost = async (id: string) => {
+    if (!user || !confirm('Delete this blog post?')) return;
+    const { error } = await supabase.from('blogs').delete().eq('id', id).eq('author_id', user.id);
+    if (error) {
+      toast({ title: 'Error', description: 'Could not delete post.', variant: 'destructive' });
+      return;
+    }
+    toast({ title: 'Post deleted' });
+    setStats((s) => ({ ...s, totalPosts: s.totalPosts - 1, recentPosts: s.recentPosts.filter((p) => p.id !== id) }));
+  };
+
+  const handleDeleteListing = async (id: string) => {
+    if (!user || !confirm('Delete this listing?')) return;
+    const { error } = await supabase.from('marketplace_assets').delete().eq('id', id).eq('seller_id', user.id);
+    if (error) {
+      toast({ title: 'Error', description: 'Could not delete listing.', variant: 'destructive' });
+      return;
+    }
+    toast({ title: 'Listing deleted' });
+    setStats((s) => ({ ...s, totalListings: s.totalListings - 1, recentListings: s.recentListings.filter((l) => l.id !== id) }));
+  };
 
   if (authLoading || loading) {
     return (
