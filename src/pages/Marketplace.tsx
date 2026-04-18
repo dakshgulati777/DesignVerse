@@ -359,12 +359,22 @@ const Marketplace = () => {
                       />
                       <div className="absolute top-3 right-3 flex gap-2">
                         {user && asset.seller_id === user.id && (
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleDeleteAsset(asset.id); }}
-                            className="px-3 py-1 bg-destructive/90 text-destructive-foreground text-xs font-black border border-destructive/20 hover:bg-destructive transition-colors"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
+                          <>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); navigate(`/marketplace/sell/${asset.id}`); }}
+                              className="px-3 py-1 bg-background text-foreground text-xs font-black border border-foreground/10 hover:bg-primary hover:text-primary-foreground transition-colors"
+                              aria-label="Edit listing"
+                            >
+                              <Edit3 className="w-3 h-3" />
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleDeleteAsset(asset.id); }}
+                              className="px-3 py-1 bg-destructive/90 text-destructive-foreground text-xs font-black border border-destructive/20 hover:bg-destructive transition-colors"
+                              aria-label="Delete listing"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </>
                         )}
                         <div className="px-3 py-1 bg-background text-xs font-black border border-foreground/10">
                           ${asset.price}

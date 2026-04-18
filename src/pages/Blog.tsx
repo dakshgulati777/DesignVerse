@@ -432,12 +432,22 @@ const Blog = () => {
 
                   <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-20">
                     {user && post.author_id === user.id && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleDeletePost(post.id); }}
-                        className="p-2 bg-destructive/90 text-destructive-foreground backdrop-blur-md border border-destructive/20 hover:bg-destructive transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); navigate(`/create-blog/${post.id}`); }}
+                          className="p-2 bg-background/90 text-foreground backdrop-blur-md border border-foreground/10 hover:bg-primary hover:text-primary-foreground transition-colors"
+                          aria-label="Edit post"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDeletePost(post.id); }}
+                          className="p-2 bg-destructive/90 text-destructive-foreground backdrop-blur-md border border-destructive/20 hover:bg-destructive transition-colors"
+                          aria-label="Delete post"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </>
                     )}
                     <button
                       onClick={(e) => {
