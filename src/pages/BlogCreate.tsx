@@ -114,27 +114,28 @@ const BlogCreate = () => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('blogs').insert([
-        {
-          title: formData.title.trim(),
-          cover_image: formData.coverImage || null,
-          content: formData.content.trim(),
-          author_id: user.id,
-          category: formData.category,
-        },
-      ]);
+      const payload = {
+        title: formData.title.trim(),
+        cover_image: formData.coverImage || null,
+        content: formData.content.trim(),
+        category: formData.category,
+      };
+
+      const { error } = isEditMode
+        ? await supabase.from('blogs').update(payload).eq('id', editId!).eq('author_id', user.id)
+        : await supabase.from('blogs').insert([{ ...payload, author_id: user.id }]);
 
       if (error) throw error;
 
       toast({
-        title: 'Blog published',
-        description: 'Your story is now live in the community feed.',
+        title: isEditMode ? 'Blog updated' : 'Blog published',
+        description: isEditMode ? 'Your changes are live.' : 'Your story is now live in the community feed.',
       });
       navigate('/blog');
     } catch (error) {
       toast({
-        title: 'Error publishing blog',
-        description: error instanceof Error ? error.message : 'Unable to publish blog.',
+        title: isEditMode ? 'Error updating blog' : 'Error publishing blog',
+        description: error instanceof Error ? error.message : 'Unable to save blog.',
         variant: 'destructive',
       });
     } finally {
