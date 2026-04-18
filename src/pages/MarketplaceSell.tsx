@@ -17,6 +17,8 @@ const MarketplaceSell = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { id: editId } = useParams();
+  const isEditMode = !!editId;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -29,6 +31,32 @@ const MarketplaceSell = () => {
     downloadUrl: '',
     category: 'UI Kits',
   });
+
+  useEffect(() => {
+    if (!editId || !user) return;
+    (async () => {
+      const { data, error } = await supabase.from('marketplace_assets').select('*').eq('id', editId).maybeSingle();
+      if (error || !data) {
+        toast({ title: 'Could not load listing', variant: 'destructive' });
+        navigate('/marketplace');
+        return;
+      }
+      if (data.seller_id !== user.id) {
+        toast({ title: 'Not authorized', description: 'You can only edit your own listings.', variant: 'destructive' });
+        navigate('/marketplace');
+        return;
+      }
+      setFormData({
+        name: data.name,
+        description: data.description,
+        price: String(data.price),
+        previewUrl: data.preview_url || '',
+        downloadUrl: data.download_url || '',
+        category: data.category || 'UI Kits',
+      });
+      if (data.preview_url) setPreviewImage(data.preview_url);
+    })();
+  }, [editId, user]);
 
   const isFormValid = useMemo(() => {
     return (
