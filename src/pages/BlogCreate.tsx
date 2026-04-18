@@ -19,9 +19,12 @@ const BlogCreate = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { id: editId } = useParams();
+  const isEditMode = !!editId;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(isEditMode);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -33,6 +36,32 @@ const BlogCreate = () => {
   const deferredContent = useDeferredValue(formData.content);
   const wordCount = useMemo(() => formData.content.trim().split(/\s+/).filter(Boolean).length, [formData.content]);
   const estimatedReadTime = Math.max(1, Math.ceil(wordCount / 180));
+
+  useEffect(() => {
+    if (!editId || !user) return;
+    (async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase.from('blogs').select('*').eq('id', editId).maybeSingle();
+      if (error || !data) {
+        toast({ title: 'Could not load post', variant: 'destructive' });
+        navigate('/blog');
+        return;
+      }
+      if (data.author_id !== user.id) {
+        toast({ title: 'Not authorized', description: 'You can only edit your own posts.', variant: 'destructive' });
+        navigate('/blog');
+        return;
+      }
+      setFormData({
+        title: data.title,
+        coverImage: data.cover_image || '',
+        content: data.content,
+        category: data.category || 'Community',
+      });
+      if (data.cover_image) setCoverPreview(data.cover_image);
+      setIsLoading(false);
+    })();
+  }, [editId, user]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
