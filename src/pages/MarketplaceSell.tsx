@@ -1,9 +1,9 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,6 +17,8 @@ const MarketplaceSell = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { id: editId } = useParams();
+  const isEditMode = !!editId;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -29,6 +31,32 @@ const MarketplaceSell = () => {
     downloadUrl: '',
     category: 'UI Kits',
   });
+
+  useEffect(() => {
+    if (!editId || !user) return;
+    (async () => {
+      const { data, error } = await supabase.from('marketplace_assets').select('*').eq('id', editId).maybeSingle();
+      if (error || !data) {
+        toast({ title: 'Could not load listing', variant: 'destructive' });
+        navigate('/marketplace');
+        return;
+      }
+      if (data.seller_id !== user.id) {
+        toast({ title: 'Not authorized', description: 'You can only edit your own listings.', variant: 'destructive' });
+        navigate('/marketplace');
+        return;
+      }
+      setFormData({
+        name: data.name,
+        description: data.description,
+        price: String(data.price),
+        previewUrl: data.preview_url || '',
+        downloadUrl: data.download_url || '',
+        category: data.category || 'UI Kits',
+      });
+      if (data.preview_url) setPreviewImage(data.preview_url);
+    })();
+  }, [editId, user]);
 
   const isFormValid = useMemo(() => {
     return (
@@ -92,29 +120,30 @@ const MarketplaceSell = () => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('marketplace_assets').insert([
-        {
-          name: formData.name.trim(),
-          description: formData.description.trim(),
-          price: Number(formData.price),
-          preview_url: formData.previewUrl || null,
-          download_url: formData.downloadUrl.trim(),
-          category: formData.category,
-          seller_id: user.id,
-        },
-      ]);
+      const payload = {
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        price: Number(formData.price),
+        preview_url: formData.previewUrl || null,
+        download_url: formData.downloadUrl.trim(),
+        category: formData.category,
+      };
+
+      const { error } = isEditMode
+        ? await supabase.from('marketplace_assets').update(payload).eq('id', editId!).eq('seller_id', user.id)
+        : await supabase.from('marketplace_assets').insert([{ ...payload, seller_id: user.id }]);
 
       if (error) throw error;
 
       toast({
-        title: 'Asset listed',
-        description: 'Your design is now live in the marketplace.',
+        title: isEditMode ? 'Listing updated' : 'Asset listed',
+        description: isEditMode ? 'Your changes are live.' : 'Your design is now live in the marketplace.',
       });
       navigate('/marketplace');
     } catch (error) {
       toast({
-        title: 'Error listing asset',
-        description: error instanceof Error ? error.message : 'Unable to list asset.',
+        title: isEditMode ? 'Error updating listing' : 'Error listing asset',
+        description: error instanceof Error ? error.message : 'Unable to save listing.',
         variant: 'destructive',
       });
     } finally {
@@ -142,7 +171,7 @@ const MarketplaceSell = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 sm:space-y-10">
             <div className="space-y-4">
               <h1 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter uppercase underline decoration-primary decoration-4 underline-offset-8">
-                Sell Your Design
+                {isEditMode ? 'Edit Listing' : 'Sell Your Design'}
               </h1>
               <p className="text-muted-foreground text-base sm:text-lg font-medium max-w-2xl">
                 Publish templates, UI kits, icon packs, motion assets, or other downloadable design products with a clear preview and instant destination link.
@@ -268,9 +297,9 @@ const MarketplaceSell = () => {
                   disabled={isSubmitting || !isFormValid}
                   className="h-14 sm:h-16 px-10 sm:px-16 bg-foreground text-background hover:bg-primary hover:text-primary-foreground font-black tracking-widest text-sm rounded-none group shadow-2xl transition-all"
                 >
-                  {isSubmitting ? 'LISTING ASSET...' : (
+                  {isSubmitting ? (isEditMode ? 'UPDATING...' : 'LISTING ASSET...') : (
                     <div className="flex items-center gap-3">
-                      LIST ASSET NOW
+                      {isEditMode ? 'UPDATE LISTING' : 'LIST ASSET NOW'}
                       <Upload className="w-5 h-5 transition-transform group-hover:-translate-y-1" />
                     </div>
                   )}

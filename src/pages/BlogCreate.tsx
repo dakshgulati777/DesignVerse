@@ -1,9 +1,9 @@
-import { useDeferredValue, useMemo, useRef, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,9 +19,12 @@ const BlogCreate = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { id: editId } = useParams();
+  const isEditMode = !!editId;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(isEditMode);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -33,6 +36,32 @@ const BlogCreate = () => {
   const deferredContent = useDeferredValue(formData.content);
   const wordCount = useMemo(() => formData.content.trim().split(/\s+/).filter(Boolean).length, [formData.content]);
   const estimatedReadTime = Math.max(1, Math.ceil(wordCount / 180));
+
+  useEffect(() => {
+    if (!editId || !user) return;
+    (async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase.from('blogs').select('*').eq('id', editId).maybeSingle();
+      if (error || !data) {
+        toast({ title: 'Could not load post', variant: 'destructive' });
+        navigate('/blog');
+        return;
+      }
+      if (data.author_id !== user.id) {
+        toast({ title: 'Not authorized', description: 'You can only edit your own posts.', variant: 'destructive' });
+        navigate('/blog');
+        return;
+      }
+      setFormData({
+        title: data.title,
+        coverImage: data.cover_image || '',
+        content: data.content,
+        category: data.category || 'Community',
+      });
+      if (data.cover_image) setCoverPreview(data.cover_image);
+      setIsLoading(false);
+    })();
+  }, [editId, user]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -85,27 +114,28 @@ const BlogCreate = () => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('blogs').insert([
-        {
-          title: formData.title.trim(),
-          cover_image: formData.coverImage || null,
-          content: formData.content.trim(),
-          author_id: user.id,
-          category: formData.category,
-        },
-      ]);
+      const payload = {
+        title: formData.title.trim(),
+        cover_image: formData.coverImage || null,
+        content: formData.content.trim(),
+        category: formData.category,
+      };
+
+      const { error } = isEditMode
+        ? await supabase.from('blogs').update(payload).eq('id', editId!).eq('author_id', user.id)
+        : await supabase.from('blogs').insert([{ ...payload, author_id: user.id }]);
 
       if (error) throw error;
 
       toast({
-        title: 'Blog published',
-        description: 'Your story is now live in the community feed.',
+        title: isEditMode ? 'Blog updated' : 'Blog published',
+        description: isEditMode ? 'Your changes are live.' : 'Your story is now live in the community feed.',
       });
       navigate('/blog');
     } catch (error) {
       toast({
-        title: 'Error publishing blog',
-        description: error instanceof Error ? error.message : 'Unable to publish blog.',
+        title: isEditMode ? 'Error updating blog' : 'Error publishing blog',
+        description: error instanceof Error ? error.message : 'Unable to save blog.',
         variant: 'destructive',
       });
     } finally {
@@ -133,7 +163,7 @@ const BlogCreate = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 sm:space-y-10">
             <div className="space-y-4">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase underline decoration-primary decoration-4 underline-offset-8">
-                Write a Story
+                {isEditMode ? 'Edit Story' : 'Write a Story'}
               </h1>
               <p className="text-muted-foreground text-base sm:text-lg">
                 Publish tutorials, breakdowns, case studies, and design thinking from the DesignVerse community.
@@ -243,11 +273,11 @@ const BlogCreate = () => {
                   {isSubmitting ? (
                     <div className="flex items-center gap-3">
                       <div className="w-4 h-4 border-2 border-background/30 border-t-background animate-spin rounded-full" />
-                      PUBLISHING...
+                      {isEditMode ? 'UPDATING...' : 'PUBLISHING...'}
                     </div>
                   ) : (
                     <div className="flex items-center gap-3">
-                      PUBLISH STORY
+                      {isEditMode ? 'UPDATE STORY' : 'PUBLISH STORY'}
                       <Send className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                     </div>
                   )}
