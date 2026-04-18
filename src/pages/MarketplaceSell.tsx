@@ -171,7 +171,7 @@ const MarketplaceSell = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 sm:space-y-10">
             <div className="space-y-4">
               <h1 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-tighter uppercase underline decoration-primary decoration-4 underline-offset-8">
-                Sell Your Design
+                {isEditMode ? 'Edit Listing' : 'Sell Your Design'}
               </h1>
               <p className="text-muted-foreground text-base sm:text-lg font-medium max-w-2xl">
                 Publish templates, UI kits, icon packs, motion assets, or other downloadable design products with a clear preview and instant destination link.
@@ -297,9 +297,9 @@ const MarketplaceSell = () => {
                   disabled={isSubmitting || !isFormValid}
                   className="h-14 sm:h-16 px-10 sm:px-16 bg-foreground text-background hover:bg-primary hover:text-primary-foreground font-black tracking-widest text-sm rounded-none group shadow-2xl transition-all"
                 >
-                  {isSubmitting ? 'LISTING ASSET...' : (
+                  {isSubmitting ? (isEditMode ? 'UPDATING...' : 'LISTING ASSET...') : (
                     <div className="flex items-center gap-3">
-                      LIST ASSET NOW
+                      {isEditMode ? 'UPDATE LISTING' : 'LIST ASSET NOW'}
                       <Upload className="w-5 h-5 transition-transform group-hover:-translate-y-1" />
                     </div>
                   )}
