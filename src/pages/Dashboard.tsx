@@ -6,8 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import {
-  BookOpen, ShoppingBag, Bookmark, Activity, ArrowRight, Plus, Clock, TrendingUp,
+  BookOpen, ShoppingBag, Bookmark, Activity, ArrowRight, Plus, Clock, TrendingUp, Edit3, Trash2,
 } from 'lucide-react';
 
 interface DashboardStats {
