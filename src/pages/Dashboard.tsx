@@ -85,19 +85,6 @@ const Dashboard = () => {
     setStats((s) => ({ ...s, totalListings: s.totalListings - 1, recentListings: s.recentListings.filter((l) => l.id !== id) }));
   };
 
-  if (authLoading || loading) {
-    return (
-      <ThemeProvider>
-        <div className="min-h-screen bg-background text-foreground">
-          <Navigation />
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground animate-spin rounded-full" />
-          </div>
-        </div>
-      </ThemeProvider>
-    );
-  }
-
   const postCategories = useMemo(
     () => ['All', ...Array.from(new Set(stats.recentPosts.map((p) => p.category).filter(Boolean)))],
     [stats.recentPosts]
@@ -153,6 +140,19 @@ const Dashboard = () => {
       }).length,
     }));
   }, [stats.recentPosts, stats.recentListings]);
+
+  if (authLoading || loading) {
+    return (
+      <ThemeProvider>
+        <div className="min-h-screen bg-background text-foreground">
+          <Navigation />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-32 flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground animate-spin rounded-full" />
+          </div>
+        </div>
+      </ThemeProvider>
+    );
+  }
 
   const statCards = [
     { label: 'Blog Posts', value: stats.totalPosts, icon: BookOpen, color: 'text-primary', action: () => navigate('/blog') },
