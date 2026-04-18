@@ -35,7 +35,7 @@ const Dashboard = () => {
     try {
       const [postsRes, listingsRes, bookmarksRes] = await Promise.all([
         supabase.from('blogs').select('id, title, created_at, category').eq('author_id', uid).order('created_at', { ascending: false }),
-        supabase.from('marketplace_assets').select('id, name, created_at, price').eq('seller_id', uid).order('created_at', { ascending: false }),
+        supabase.from('marketplace_assets').select('id, name, created_at, price, category').eq('seller_id', uid).order('created_at', { ascending: false }),
         supabase.from('bookmarks').select('id').eq('user_id', uid),
       ]);
 
