@@ -120,29 +120,30 @@ const MarketplaceSell = () => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('marketplace_assets').insert([
-        {
-          name: formData.name.trim(),
-          description: formData.description.trim(),
-          price: Number(formData.price),
-          preview_url: formData.previewUrl || null,
-          download_url: formData.downloadUrl.trim(),
-          category: formData.category,
-          seller_id: user.id,
-        },
-      ]);
+      const payload = {
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        price: Number(formData.price),
+        preview_url: formData.previewUrl || null,
+        download_url: formData.downloadUrl.trim(),
+        category: formData.category,
+      };
+
+      const { error } = isEditMode
+        ? await supabase.from('marketplace_assets').update(payload).eq('id', editId!).eq('seller_id', user.id)
+        : await supabase.from('marketplace_assets').insert([{ ...payload, seller_id: user.id }]);
 
       if (error) throw error;
 
       toast({
-        title: 'Asset listed',
-        description: 'Your design is now live in the marketplace.',
+        title: isEditMode ? 'Listing updated' : 'Asset listed',
+        description: isEditMode ? 'Your changes are live.' : 'Your design is now live in the marketplace.',
       });
       navigate('/marketplace');
     } catch (error) {
       toast({
-        title: 'Error listing asset',
-        description: error instanceof Error ? error.message : 'Unable to list asset.',
+        title: isEditMode ? 'Error updating listing' : 'Error listing asset',
+        description: error instanceof Error ? error.message : 'Unable to save listing.',
         variant: 'destructive',
       });
     } finally {
