@@ -29,6 +29,10 @@ const Dashboard = () => {
     totalPosts: 0, totalListings: 0, totalBookmarks: 0, recentPosts: [], recentListings: [],
   });
   const [loading, setLoading] = useState(true);
+  const [postSearch, setPostSearch] = useState('');
+  const [postCategory, setPostCategory] = useState('All');
+  const [listingSearch, setListingSearch] = useState('');
+  const [listingCategory, setListingCategory] = useState('All');
 
   const fetchStats = async (uid: string) => {
     setLoading(true);
