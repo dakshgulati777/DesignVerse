@@ -163,7 +163,7 @@ const BlogCreate = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 sm:space-y-10">
             <div className="space-y-4">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase underline decoration-primary decoration-4 underline-offset-8">
-                Write a Story
+                {isEditMode ? 'Edit Story' : 'Write a Story'}
               </h1>
               <p className="text-muted-foreground text-base sm:text-lg">
                 Publish tutorials, breakdowns, case studies, and design thinking from the DesignVerse community.
