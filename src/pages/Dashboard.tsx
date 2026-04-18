@@ -141,23 +141,39 @@ const Dashboard = () => {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-primary" />
-                  <h2 className="text-sm font-black uppercase tracking-[0.2em]">Recent Posts</h2>
+                  <h2 className="text-sm font-black uppercase tracking-[0.2em]">My Posts</h2>
                 </div>
                 <Button variant="ghost" size="sm" className="text-[10px] font-black tracking-widest" onClick={() => navigate('/create-blog')}>
                   <Plus className="w-3 h-3 mr-1" /> NEW
                 </Button>
               </div>
               {stats.recentPosts.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
                   {stats.recentPosts.map((post) => (
-                    <div key={post.id} className="flex items-center justify-between p-3 border border-foreground/5 hover:border-foreground/20 transition-colors">
-                      <div className="min-w-0">
+                    <div key={post.id} className="flex items-center justify-between gap-3 p-3 border border-foreground/5 hover:border-foreground/20 transition-colors group">
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-bold truncate">{post.title}</p>
                         <p className="text-[10px] text-muted-foreground uppercase tracking-widest flex items-center gap-2 mt-1">
                           <Clock className="w-3 h-3" />
                           {new Date(post.created_at).toLocaleDateString()}
                           <span className="text-primary">{post.category}</span>
                         </p>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => navigate(`/create-blog/${post.id}`)}
+                          className="p-2 border border-foreground/10 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                          aria-label="Edit post"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeletePost(post.id)}
+                          className="p-2 border border-foreground/10 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
+                          aria-label="Delete post"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -171,24 +187,40 @@ const Dashboard = () => {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <ShoppingBag className="w-4 h-4 text-primary" />
-                  <h2 className="text-sm font-black uppercase tracking-[0.2em]">Recent Listings</h2>
+                  <h2 className="text-sm font-black uppercase tracking-[0.2em]">My Listings</h2>
                 </div>
                 <Button variant="ghost" size="sm" className="text-[10px] font-black tracking-widest" onClick={() => navigate('/marketplace/sell')}>
                   <Plus className="w-3 h-3 mr-1" /> NEW
                 </Button>
               </div>
               {stats.recentListings.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
                   {stats.recentListings.map((listing) => (
-                    <div key={listing.id} className="flex items-center justify-between p-3 border border-foreground/5 hover:border-foreground/20 transition-colors">
-                      <div className="min-w-0">
+                    <div key={listing.id} className="flex items-center justify-between gap-3 p-3 border border-foreground/5 hover:border-foreground/20 transition-colors">
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-bold truncate">{listing.name}</p>
                         <p className="text-[10px] text-muted-foreground uppercase tracking-widest flex items-center gap-2 mt-1">
                           <Clock className="w-3 h-3" />
                           {new Date(listing.created_at).toLocaleDateString()}
                         </p>
                       </div>
-                      <span className="text-sm font-black">${listing.price}</span>
+                      <span className="text-sm font-black shrink-0">${listing.price}</span>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => navigate(`/marketplace/sell/${listing.id}`)}
+                          className="p-2 border border-foreground/10 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                          aria-label="Edit listing"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteListing(listing.id)}
+                          className="p-2 border border-foreground/10 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
+                          aria-label="Delete listing"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
