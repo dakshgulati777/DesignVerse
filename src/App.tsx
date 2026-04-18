@@ -94,8 +94,10 @@ const AnimatedRoutes = () => {
             <Route path="/brand-kit" element={<BrandKit />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/marketplace/sell" element={<MarketplaceSell />} />
+            <Route path="/marketplace/sell/:id" element={<MarketplaceSell />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/create-blog" element={<BlogCreate />} />
+            <Route path="/create-blog/:id" element={<BlogCreate />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
