@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,17 +6,19 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import {
-  BookOpen, ShoppingBag, Bookmark, Activity, ArrowRight, Plus, Clock, TrendingUp, Edit3, Trash2,
+  BookOpen, ShoppingBag, Bookmark, Activity, ArrowRight, Plus, Clock, TrendingUp, Edit3, Trash2, Search, BarChart3,
 } from 'lucide-react';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 interface DashboardStats {
   totalPosts: number;
   totalListings: number;
   totalBookmarks: number;
   recentPosts: { id: string; title: string; created_at: string; category: string }[];
-  recentListings: { id: string; name: string; created_at: string; price: number }[];
+  recentListings: { id: string; name: string; created_at: string; price: number; category: string | null }[];
 }
 
 const Dashboard = () => {
