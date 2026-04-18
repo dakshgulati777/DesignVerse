@@ -273,11 +273,11 @@ const BlogCreate = () => {
                   {isSubmitting ? (
                     <div className="flex items-center gap-3">
                       <div className="w-4 h-4 border-2 border-background/30 border-t-background animate-spin rounded-full" />
-                      PUBLISHING...
+                      {isEditMode ? 'UPDATING...' : 'PUBLISHING...'}
                     </div>
                   ) : (
                     <div className="flex items-center gap-3">
-                      PUBLISH STORY
+                      {isEditMode ? 'UPDATE STORY' : 'PUBLISH STORY'}
                       <Send className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                     </div>
                   )}
