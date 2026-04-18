@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,17 +6,19 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import {
-  BookOpen, ShoppingBag, Bookmark, Activity, ArrowRight, Plus, Clock, TrendingUp, Edit3, Trash2,
+  BookOpen, ShoppingBag, Bookmark, Activity, ArrowRight, Plus, Clock, TrendingUp, Edit3, Trash2, Search, BarChart3,
 } from 'lucide-react';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 interface DashboardStats {
   totalPosts: number;
   totalListings: number;
   totalBookmarks: number;
   recentPosts: { id: string; title: string; created_at: string; category: string }[];
-  recentListings: { id: string; name: string; created_at: string; price: number }[];
+  recentListings: { id: string; name: string; created_at: string; price: number; category: string | null }[];
 }
 
 const Dashboard = () => {
@@ -27,13 +29,17 @@ const Dashboard = () => {
     totalPosts: 0, totalListings: 0, totalBookmarks: 0, recentPosts: [], recentListings: [],
   });
   const [loading, setLoading] = useState(true);
+  const [postSearch, setPostSearch] = useState('');
+  const [postCategory, setPostCategory] = useState('All');
+  const [listingSearch, setListingSearch] = useState('');
+  const [listingCategory, setListingCategory] = useState('All');
 
   const fetchStats = async (uid: string) => {
     setLoading(true);
     try {
       const [postsRes, listingsRes, bookmarksRes] = await Promise.all([
         supabase.from('blogs').select('id, title, created_at, category').eq('author_id', uid).order('created_at', { ascending: false }),
-        supabase.from('marketplace_assets').select('id, name, created_at, price').eq('seller_id', uid).order('created_at', { ascending: false }),
+        supabase.from('marketplace_assets').select('id, name, created_at, price, category').eq('seller_id', uid).order('created_at', { ascending: false }),
         supabase.from('bookmarks').select('id').eq('user_id', uid),
       ]);
 
@@ -78,6 +84,62 @@ const Dashboard = () => {
     toast({ title: 'Listing deleted' });
     setStats((s) => ({ ...s, totalListings: s.totalListings - 1, recentListings: s.recentListings.filter((l) => l.id !== id) }));
   };
+
+  const postCategories = useMemo(
+    () => ['All', ...Array.from(new Set(stats.recentPosts.map((p) => p.category).filter(Boolean)))],
+    [stats.recentPosts]
+  );
+  const listingCategories = useMemo(
+    () => ['All', ...Array.from(new Set(stats.recentListings.map((l) => l.category).filter(Boolean) as string[]))],
+    [stats.recentListings]
+  );
+
+  const filteredPosts = useMemo(
+    () => stats.recentPosts.filter((p) =>
+      (postCategory === 'All' || p.category === postCategory) &&
+      (postSearch === '' || p.title.toLowerCase().includes(postSearch.toLowerCase()))
+    ),
+    [stats.recentPosts, postSearch, postCategory]
+  );
+  const filteredListings = useMemo(
+    () => stats.recentListings.filter((l) =>
+      (listingCategory === 'All' || l.category === listingCategory) &&
+      (listingSearch === '' || l.name.toLowerCase().includes(listingSearch.toLowerCase()))
+    ),
+    [stats.recentListings, listingSearch, listingCategory]
+  );
+
+  const chartData = useMemo(() => {
+    const startOfWeek = (d: Date) => {
+      const x = new Date(d);
+      const day = (x.getDay() + 6) % 7;
+      x.setHours(0, 0, 0, 0);
+      x.setDate(x.getDate() - day);
+      return x;
+    };
+    const currentStart = startOfWeek(new Date());
+    const weeks = Array.from({ length: 12 }, (_, i) => {
+      const start = new Date(currentStart);
+      start.setDate(start.getDate() - (11 - i) * 7);
+      const end = new Date(start);
+      end.setDate(end.getDate() + 7);
+      return {
+        label: start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+        start, end,
+      };
+    });
+    return weeks.map((w) => ({
+      week: w.label,
+      Posts: stats.recentPosts.filter((p) => {
+        const d = new Date(p.created_at);
+        return d >= w.start && d < w.end;
+      }).length,
+      Listings: stats.recentListings.filter((l) => {
+        const d = new Date(l.created_at);
+        return d >= w.start && d < w.end;
+      }).length,
+    }));
+  }, [stats.recentPosts, stats.recentListings]);
 
   if (authLoading || loading) {
     return (
@@ -136,9 +198,42 @@ const Dashboard = () => {
             ))}
           </div>
 
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="border border-foreground/10 p-6 mb-6"
+          >
+            <div className="flex items-center gap-2 mb-6">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-black uppercase tracking-[0.2em]">Activity · Last 12 Weeks</h2>
+            </div>
+            <div className="w-full h-[260px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--foreground) / 0.08)" />
+                  <XAxis dataKey="week" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} interval={1} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} />
+                  <Tooltip
+                    contentStyle={{
+                      background: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--foreground) / 0.1)',
+                      borderRadius: 0,
+                      fontSize: 12,
+                    }}
+                    cursor={{ fill: 'hsl(var(--foreground) / 0.04)' }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em' }} />
+                  <Bar dataKey="Posts" fill="hsl(var(--primary))" />
+                  <Bar dataKey="Listings" fill="hsl(var(--foreground))" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </motion.div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="border border-foreground/10 p-6">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Activity className="w-4 h-4 text-primary" />
                   <h2 className="text-sm font-black uppercase tracking-[0.2em]">My Posts</h2>
@@ -147,44 +242,78 @@ const Dashboard = () => {
                   <Plus className="w-3 h-3 mr-1" /> NEW
                 </Button>
               </div>
-              {stats.recentPosts.length > 0 ? (
-                <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
-                  {stats.recentPosts.map((post) => (
-                    <div key={post.id} className="flex items-center justify-between gap-3 p-3 border border-foreground/5 hover:border-foreground/20 transition-colors group">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-bold truncate">{post.title}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest flex items-center gap-2 mt-1">
-                          <Clock className="w-3 h-3" />
-                          {new Date(post.created_at).toLocaleDateString()}
-                          <span className="text-primary">{post.category}</span>
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          onClick={() => navigate(`/create-blog/${post.id}`)}
-                          className="p-2 border border-foreground/10 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
-                          aria-label="Edit post"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeletePost(post.id)}
-                          className="p-2 border border-foreground/10 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
-                          aria-label="Delete post"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+
+              {stats.recentPosts.length > 0 && (
+                <div className="space-y-3 mb-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                    <Input
+                      placeholder="Search posts..."
+                      className="pl-9 h-9 text-sm bg-foreground/5 border-none rounded-none"
+                      value={postSearch}
+                      onChange={(e) => setPostSearch(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {postCategories.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setPostCategory(cat)}
+                        className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest border transition-all ${
+                          postCategory === cat
+                            ? 'bg-foreground text-background border-foreground'
+                            : 'bg-transparent text-muted-foreground border-foreground/10 hover:border-foreground/30'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+              )}
+
+              {stats.recentPosts.length > 0 ? (
+                filteredPosts.length > 0 ? (
+                  <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
+                    {filteredPosts.map((post) => (
+                      <div key={post.id} className="flex items-center justify-between gap-3 p-3 border border-foreground/5 hover:border-foreground/20 transition-colors group">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-bold truncate">{post.title}</p>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest flex items-center gap-2 mt-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(post.created_at).toLocaleDateString()}
+                            <span className="text-primary">{post.category}</span>
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={() => navigate(`/create-blog/${post.id}`)}
+                            className="p-2 border border-foreground/10 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                            aria-label="Edit post"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeletePost(post.id)}
+                            className="p-2 border border-foreground/10 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
+                            aria-label="Delete post"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-8">No posts match your filters.</p>
+                )
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-8">No blog posts yet. Write your first story!</p>
               )}
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="border border-foreground/10 p-6">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <ShoppingBag className="w-4 h-4 text-primary" />
                   <h2 className="text-sm font-black uppercase tracking-[0.2em]">My Listings</h2>
@@ -193,37 +322,72 @@ const Dashboard = () => {
                   <Plus className="w-3 h-3 mr-1" /> NEW
                 </Button>
               </div>
-              {stats.recentListings.length > 0 ? (
-                <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
-                  {stats.recentListings.map((listing) => (
-                    <div key={listing.id} className="flex items-center justify-between gap-3 p-3 border border-foreground/5 hover:border-foreground/20 transition-colors">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-bold truncate">{listing.name}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest flex items-center gap-2 mt-1">
-                          <Clock className="w-3 h-3" />
-                          {new Date(listing.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <span className="text-sm font-black shrink-0">${listing.price}</span>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          onClick={() => navigate(`/marketplace/sell/${listing.id}`)}
-                          className="p-2 border border-foreground/10 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
-                          aria-label="Edit listing"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteListing(listing.id)}
-                          className="p-2 border border-foreground/10 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
-                          aria-label="Delete listing"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+
+              {stats.recentListings.length > 0 && (
+                <div className="space-y-3 mb-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                    <Input
+                      placeholder="Search listings..."
+                      className="pl-9 h-9 text-sm bg-foreground/5 border-none rounded-none"
+                      value={listingSearch}
+                      onChange={(e) => setListingSearch(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {listingCategories.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setListingCategory(cat)}
+                        className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest border transition-all ${
+                          listingCategory === cat
+                            ? 'bg-foreground text-background border-foreground'
+                            : 'bg-transparent text-muted-foreground border-foreground/10 hover:border-foreground/30'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+              )}
+
+              {stats.recentListings.length > 0 ? (
+                filteredListings.length > 0 ? (
+                  <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
+                    {filteredListings.map((listing) => (
+                      <div key={listing.id} className="flex items-center justify-between gap-3 p-3 border border-foreground/5 hover:border-foreground/20 transition-colors">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-bold truncate">{listing.name}</p>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-widest flex items-center gap-2 mt-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(listing.created_at).toLocaleDateString()}
+                            {listing.category && <span className="text-primary">{listing.category}</span>}
+                          </p>
+                        </div>
+                        <span className="text-sm font-black shrink-0">${listing.price}</span>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            onClick={() => navigate(`/marketplace/sell/${listing.id}`)}
+                            className="p-2 border border-foreground/10 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                            aria-label="Edit listing"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteListing(listing.id)}
+                            className="p-2 border border-foreground/10 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
+                            aria-label="Delete listing"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-8">No listings match your filters.</p>
+                )
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-8">No marketplace listings yet. List your first design asset!</p>
               )}
